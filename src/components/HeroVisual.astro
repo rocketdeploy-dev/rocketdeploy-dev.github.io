@@ -1,0 +1,66 @@
+---
+const {
+  src = "/img/hero-rocket.png",
+  alt = "",
+} = Astro.props;
+---
+
+<div class="hero-visual" aria-hidden={alt ? undefined : "true"}>
+  <img src={src} alt={alt} loading="eager" decoding="async" />
+</div>
+
+<style>
+  .hero-visual {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+
+    /* bezpiecznik, żeby nie było zbyt niskie */
+    min-height: 220px;
+
+    border-radius: 18px;
+    overflow: hidden;
+
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.02);
+  }
+
+  .hero-visual img {
+    width: 100%;
+    height: 100%;
+    display: block;
+
+    object-fit: contain;
+    object-position: center;
+
+    filter: saturate(.95) contrast(1.02);
+    transform: none;
+  }
+
+  .hero-visual::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(120% 120% at 10% 20%, rgba(0,0,0,.55) 0%, rgba(0,0,0,0) 60%),
+      linear-gradient(90deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,.10) 40%, rgba(0,0,0,0) 75%);
+    pointer-events: none;
+  }
+
+  .hero-visual::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.03),
+      inset 0 0 90px rgba(0,0,0,.45);
+    pointer-events: none;
+  }
+
+  @media (max-width: 900px) {
+    .hero-visual {
+      min-height: 180px;
+      border-radius: 16px;
+    }
+  }
+</style>

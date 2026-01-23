@@ -1,13 +1,14 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import HeroTerminal from "../../components/HeroTerminal.astro";
+import HeroVisual from "../../components/HeroVisual.astro";
 ---
 
 <BaseLayout lang="en" title="Home">
   <section class="hero">
     <div>
       <div style="font-family: var(--mono); color: rgba(255,255,255,.55); font-size: 13px;">
-        systems · delivery · ops
+        architecture · build · production
       </div>
 
       <h1>We design & ship systems.</h1>
@@ -43,9 +44,24 @@ import HeroTerminal from "../../components/HeroTerminal.astro";
       </div>
     </div>
 
-    <div>
-      <HeroTerminal lang="en" />
+    <div class="hero-right">
+      <HeroVisual src="/img/hero-rocket.png" />
+      <div class="hero-terminal-wrap">
+        <HeroTerminal lang="en" />
+      </div>
     </div>
+
+    <style>
+      .hero-right {
+      display: grid;
+      gap: 14px;
+      }
+      @media (max-width: 900px) {
+        .hero-visual-slot {
+        display: none;
+        }
+      }
+    </style>
   </section>
 
   <section class="section">

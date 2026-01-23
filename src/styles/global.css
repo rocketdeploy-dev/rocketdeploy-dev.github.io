@@ -147,7 +147,7 @@ a:hover{ border-bottom-color: rgba(122,162,255,.85); }
   }
 }
 
-main{ padding: 58px 0 70px; }
+main{ padding: 10px 0 70px; }
 
 .hero{
   display:grid;
