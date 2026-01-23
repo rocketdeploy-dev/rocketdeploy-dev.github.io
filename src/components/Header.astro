@@ -1,0 +1,30 @@
+---
+import LanguageSwitch from "./LanguageSwitch.astro";
+
+const { lang } = Astro.props;
+
+const nav = lang === "pl"
+  ? [
+      { href: "/pl/", label: "Start" },
+      { href: "/pl/case-studies/", label: "Realizacje" },
+      { href: "/pl/kontakt/", label: "Kontakt" },
+    ]
+  : [
+      { href: "/en/", label: "Home" },
+      { href: "/en/case-studies/", label: "Case studies" },
+      { href: "/en/contact/", label: "Contact" },
+    ];
+---
+<nav class="nav">
+  <div class="brand">
+    <b>rocketdeploy</b>
+    <small>systems · delivery · ops</small>
+  </div>
+
+  <div class="navlinks">
+    {nav.map((i) => (
+      <a href={i.href}>{i.label}</a>
+    ))}
+    <LanguageSwitch lang={lang} />
+  </div>
+</nav>

@@ -1,0 +1,152 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import HeroTerminal from "../../components/HeroTerminal.astro";
+---
+
+<BaseLayout lang="pl" title="Start">
+  <section class="hero">
+    <div>
+      <div style="font-family: var(--mono); color: rgba(255,255,255,.55); font-size: 13px;">
+        systems · delivery · ops
+      </div>
+
+      <h1>Projektujemy i dowozimy systemy.</h1>
+
+      <p class="lead">
+        RocketDeploy to zespół senior inżynierów skoncentrowany na
+        <strong>dostarczaniu działających systemów end-to-end</strong> —
+        od MVP i prototypów po stabilne, produkcyjne platformy.
+      </p>
+
+      <p class="lead" style="margin-top: 10px;">
+        Budujemy tam, gdzie systemy stają się realne:
+        cloud, backend, frontend, mobile oraz oprogramowanie współpracujące
+        z fizycznymi urządzeniami.
+      </p>
+
+      <div class="cta">
+        <a class="btn primary" href="/pl/kontakt/">Porozmawiajmy</a>
+        <a class="btn" href="/pl/case-studies/">Zobacz case studies</a>
+      </div>
+
+      <div class="section">
+        <h2>stack / focus</h2>
+        <div class="badges">
+          <span class="badge">microservices</span>
+          <span class="badge">event-driven (RabbitMQ)</span>
+          <span class="badge">Kubernetes</span>
+          <span class="badge">GitOps</span>
+          <span class="badge">PostgreSQL</span>
+          <span class="badge">Keycloak</span>
+          <span class="badge">Vault</span>
+          <span class="badge">observability</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <HeroTerminal lang="pl" />
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>problem, który rozwiązujemy</h2>
+
+    <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+      <div class="card">
+        <div class="kicker">01</div>
+        <h3>Prototyp nie trafia do produkcji</h3>
+        <p>Pomagamy przejść od “działa lokalnie” do stabilnego wdrożenia w realnym użyciu.</p>
+      </div>
+      <div class="card">
+        <div class="kicker">02</div>
+        <h3>Złożoność rośnie szybciej niż zespół</h3>
+        <p>Wprowadzamy granice domen, kontrakty i podejście, które pozwala skalować rozwój.</p>
+      </div>
+      <div class="card">
+        <div class="kicker">03</div>
+        <h3>Cloud + urządzenia = trudne integracje</h3>
+        <p>Projektujemy przepływy, komunikację i operacje tam, gdzie dochodzi fizyczny świat.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>co robimy</h2>
+
+    <div class="grid">
+      <div class="card">
+        <div class="kicker">&lt;/&gt;</div>
+        <h3>End-to-End System Delivery</h3>
+        <p>Od koncepcji i architektury po wdrożenie produkcyjne — bierzemy odpowiedzialność za dowiezienie.</p>
+      </div>
+
+      <div class="card">
+        <div class="kicker">#</div>
+        <h3>Cloud & Kubernetes</h3>
+        <p>CI/CD, GitOps, sieć, bezpieczeństwo, obserwowalność — tak, żeby środowiska były przewidywalne.</p>
+      </div>
+
+      <div class="card">
+        <div class="kicker">◎</div>
+        <h3>Backend, API & EDA</h3>
+        <p>API-first, BFF, integracje, event-driven — architektura, która wytrzymuje rozwój i zmiany.</p>
+      </div>
+    </div>
+
+    <div class="grid" style="margin-top: 14px;">
+      <div class="card">
+        <div class="kicker">UI</div>
+        <h3>Frontend & Mobile</h3>
+        <p>Aplikacje webowe, panele administracyjne, kioski i narzędzia operacyjne dla zespołów w terenie.</p>
+      </div>
+
+      <div class="card">
+        <div class="kicker">UX</div>
+        <h3>UI/UX Collaboration</h3>
+        <p>Pracujemy z UI/UX dostarczonym przez klienta lub organizujemy projekt i dowozimy go z podwykonawcami.</p>
+      </div>
+
+      <div class="card">
+        <div class="kicker">MVP</div>
+        <h3>MVP & prototypy techniczne</h3>
+        <p>Szybka walidacja pomysłów — z jasnymi kompromisami i planem przejścia do produkcji.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>jak pracujemy</h2>
+
+    <div class="card">
+      <ul style="margin: 0; padding-left: 18px; color: rgba(255,255,255,.72);">
+        <li>microservices zamiast monolitów</li>
+        <li>wyraźne granice odpowiedzialności i kontrakty</li>
+        <li>API-first i event-driven tam, gdzie to daje przewagę</li>
+        <li>Docker w developmentcie, Kubernetes w produkcji</li>
+        <li><strong>production mindset od pierwszego dnia</strong></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>doświadczenie</h2>
+
+    <div class="card">
+      <p style="margin-top:0; color: rgba(255,255,255,.72);">
+        Projektowaliśmy i wdrażaliśmy systemy m.in. w obszarach:
+      </p>
+      <ul style="margin: 0; padding-left: 18px; color: rgba(255,255,255,.72);">
+        <li>platformy e-commerce zintegrowane z logistyką i automatyzacją</li>
+        <li>systemy rozproszone łączące cloud z fizycznymi urządzeniami</li>
+        <li>platformy operacyjne używane codziennie przez zespoły nietechniczne</li>
+        <li>systemy mikroserwisowe działające 24/7 w produkcji</li>
+        <li>systemy rozwijane od MVP do pełnej skali</li>
+      </ul>
+
+      <div style="margin-top: 14px;">
+        <a class="btn" href="/pl/case-studies/">Zobacz przykłady →</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

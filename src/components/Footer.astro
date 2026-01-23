@@ -1,0 +1,24 @@
+---
+const { lang } = Astro.props;
+
+const text = lang === "pl"
+  ? {
+      line1: "Szczecin / Europe-Warsaw · Dostępność: konsulting + wdrożenia",
+      line2: "GitHub + LinkedIn + mail po ustaleniu współpracy (platform rules friendly).",
+    }
+  : {
+      line1: "Szczecin / Europe-Warsaw · Availability: consulting + delivery",
+      line2: "GitHub + LinkedIn + email after engagement (platform rules friendly).",
+    };
+---
+<div style="display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap;">
+  <div>
+    <div>{text.line1}</div>
+    <div style="margin-top:6px; color: rgba(255,255,255,.5)">{text.line2}</div>
+  </div>
+
+  <div style="display:flex; gap:14px; align-items:center;">
+    <a href="https://github.com/rocketdeploy-dev" target="_blank" rel="noreferrer">GitHub</a>
+    <a href="#" aria-disabled="true" style="opacity:.65; border-bottom: none;">LinkedIn</a>
+  </div>
+</div>

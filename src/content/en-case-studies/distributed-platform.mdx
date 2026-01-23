@@ -1,0 +1,136 @@
+---
+title: Distributed production system connecting cloud and physical devices
+summary: Design, deployment, and long-term evolution of a 24/7 production system integrating microservices with physical infrastructure.
+---
+
+## Business context
+
+The system was designed as a **central operational platform** responsible for managing
+a large number of physical devices deployed across multiple locations.
+
+Key requirements included:
+- continuous 24/7 operation,
+- resilience to network and device failures,
+- independent evolution of system domains,
+- support for both end users and internal operational teams.
+
+From the beginning, the platform was treated as a **long-living system**,
+expected to evolve over years rather than as a one-off delivery.
+
+---
+
+## Technical challenges
+
+### 1. Asynchronous physical world
+Devices operated under unstable conditions:
+- intermittent connectivity,
+- network latency,
+- power interruptions,
+- no guarantee of real-time responses.
+
+The system could not assume that devices were always reachable or responsive.
+
+### 2. Scaling without a single point of failure
+As the number of devices and operations grew,
+the architecture had to avoid any central bottleneck or coordinator.
+
+### 3. Operability
+This was not just an API platform.
+It was used daily by:
+- operational teams,
+- technical staff,
+- customer support.
+
+This required full observability, auditability,
+and production-grade diagnostics.
+
+---
+
+## Architecture approach
+
+The system was built using a **microservices architecture**
+with clear responsibility boundaries.
+
+Key principles:
+- no monolith,
+- asynchronous communication where appropriate,
+- API-first design for frontend and external integrations,
+- event-driven workflows for business processes.
+
+The system consisted of:
+- edge-level device software,
+- communication and gateway layers,
+- backend microservices,
+- operational and user-facing interfaces.
+
+---
+
+## Event-driven communication
+
+At the core of the platform was **event-driven communication**.
+
+Events:
+- represented business facts,
+- were safe to reprocess,
+- enabled reconstruction of system state over time.
+
+The solution used:
+- message queues and brokers,
+- retry and idempotency mechanisms,
+- separation of write and read paths where beneficial.
+
+This allowed the system to:
+- tolerate delays,
+- survive partial failures,
+- evolve without global rewrites.
+
+---
+
+## Deployment and infrastructure
+
+From day one:
+**Docker for development, Kubernetes for production**.
+
+Environments:
+- local,
+- staging,
+- production
+
+were kept as close as possible,
+reducing environment-specific issues.
+
+Deployments were:
+- automated,
+- repeatable,
+- reversible.
+
+---
+
+## Observability and maintenance
+
+The platform was designed for long-term maintenance.
+
+Implemented features included:
+- centralized logging,
+- metrics and alerting,
+- traceability of event flows.
+
+This enabled teams to:
+- diagnose issues faster,
+- understand system behavior,
+- introduce changes safely.
+
+---
+
+## Outcome
+
+The result was a **stable production-grade system** that:
+- ran continuously 24/7,
+- evolved iteratively over time,
+- supported real business operations,
+- successfully connected cloud services with the physical world.
+
+The architecture enabled:
+- further functional growth,
+- scaling alongside the business,
+- gradual replacement of components without downtime.

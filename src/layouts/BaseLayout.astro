@@ -1,0 +1,32 @@
+---
+const { title, lang = "en" } = Astro.props;
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>{title ? `${title} · rocketdeploy` : "rocketdeploy"}</title>
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <Header lang={lang} />
+      </div>
+    </div>
+
+    <main class="container">
+      <slot />
+    </main>
+
+    <div class="footer">
+      <div class="container">
+        <Footer lang={lang} />
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+const { title, lang = "en", tags = [] } = Astro.props;
+---
+
+<BaseLayout lang={lang} title={title}>
+  <div style="max-width: 78ch;">
+    <div style="font-family: var(--mono); color: rgba(122,162,255,.85); font-size: 12px;">case study</div>
+    <h1 style="margin-top:10px;">{title}</h1>
+
+    {tags?.length ? (
+      <div class="badges" style="margin: 10px 0 18px;">
+        {tags.map((t) => <span class="badge">{t}</span>)}
+      </div>
+    ) : null}
+
+    <div class="card" style="padding: 18px;">
+      <slot />
+    </div>
+
+    <div style="margin-top: 18px;">
+      <a href={lang === "pl" ? "/pl/case-studies/" : "/en/case-studies/"}>← back</a>
+    </div>
+  </div>
+</BaseLayout>

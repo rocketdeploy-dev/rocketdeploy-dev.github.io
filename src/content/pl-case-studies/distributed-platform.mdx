@@ -1,0 +1,141 @@
+---
+title: Rozproszony system produkcyjny łączący cloud z fizycznymi urządzeniami
+summary: Projekt, wdrożenie i rozwój systemu działającego 24/7, łączącego architekturę microservices z fizyczną infrastrukturą.
+---
+
+## Kontekst biznesowy
+
+System był projektowany jako **centralna platforma operacyjna**, której zadaniem było
+zarządzanie dużą liczbą fizycznych urządzeń rozmieszczonych w wielu lokalizacjach.
+
+Kluczowym wymaganiem było:
+- działanie w trybie ciągłym (24/7),
+- odporność na awarie sieci i urządzeń,
+- możliwość niezależnego rozwoju poszczególnych obszarów systemu,
+- obsługa zarówno użytkowników końcowych, jak i zespołów operacyjnych.
+
+Platforma od początku była planowana jako **system długowieczny**,
+rozwijany iteracyjnie przez lata, a nie jednorazowy projekt.
+
+---
+
+## Wyzwania techniczne
+
+Największe problemy, które należało rozwiązać:
+
+### 1. Asynchroniczność świata fizycznego
+Urządzenia działały w niestabilnych warunkach:
+- nieregularne połączenie z siecią,
+- opóźnienia,
+- przerwy w zasilaniu,
+- brak gwarancji natychmiastowej odpowiedzi.
+
+System musiał być zaprojektowany tak,
+aby **nie zakładać dostępności urządzeń w czasie rzeczywistym**.
+
+### 2. Skalowanie bez centralnego punktu awarii
+Liczba urządzeń i operacji rosła wraz z rozwojem platformy.
+Architektura nie mogła opierać się na jednym „centralnym” komponencie.
+
+### 3. Operacyjność
+System nie był tylko API — był używany codziennie przez:
+- zespoły operacyjne,
+- techniczne,
+- wsparcie klienta.
+
+To oznaczało konieczność:
+- pełnej obserwowalności,
+- audytowalności,
+- możliwości diagnozowania problemów w produkcji.
+
+---
+
+## Architektura rozwiązania
+
+System został zaprojektowany w oparciu o **architekturę microservices**,
+z wyraźnym podziałem odpowiedzialności.
+
+### Kluczowe założenia:
+- brak monolitu,
+- komunikacja asynchroniczna tam, gdzie było to możliwe,
+- API-first dla integracji frontendów i systemów zewnętrznych,
+- event-driven communication dla procesów biznesowych.
+
+### Warstwy systemu:
+- warstwa urządzeń (edge),
+- warstwa komunikacyjna,
+- backendowe microservices,
+- warstwa prezentacji (panele operacyjne, interfejsy użytkowników).
+
+---
+
+## Komunikacja i przetwarzanie zdarzeń
+
+Centralnym elementem była **komunikacja event-driven**.
+
+Zdarzenia:
+- reprezentowały fakty biznesowe,
+- były odporne na ponowne przetwarzanie,
+- umożliwiały rekonstrukcję stanu systemu.
+
+Zastosowano:
+- kolejki i wymianę komunikatów,
+- mechanizmy retry i idempotencji,
+- separację zapisu od odczytu tam, gdzie miało to sens.
+
+Dzięki temu system:
+- dobrze znosił opóźnienia,
+- był odporny na chwilowe awarie,
+- mógł być rozwijany bez globalnych migracji.
+
+---
+
+## Deployment i infrastruktura
+
+Od początku przyjęto podejście:
+**Docker w developmentcie, Kubernetes w produkcji**.
+
+Środowiska:
+- lokalne,
+- testowe,
+- produkcyjne
+
+były możliwie zbliżone do siebie,
+co znacząco redukowało problemy typu „działa u mnie”.
+
+Wdrożenia realizowano w sposób:
+- powtarzalny,
+- automatyczny,
+- możliwy do cofnięcia.
+
+---
+
+## Obserwowalność i utrzymanie
+
+System był projektowany z myślą o utrzymaniu.
+
+Zadbano o:
+- centralne logowanie,
+- metryki,
+- alerting,
+- możliwość śledzenia przepływu zdarzeń w czasie.
+
+Pozwoliło to zespołom:
+- szybciej diagnozować problemy,
+- analizować zachowanie systemu,
+- bezpiecznie wprowadzać zmiany.
+
+---
+
+## Efekt końcowy
+
+Powstał **stabilny system produkcyjny**, który:
+- działał w trybie 24/7,
+- był rozwijany iteracyjnie,
+- obsługiwał realne procesy biznesowe,
+- integrował cloud z fizycznym światem.
+
+Architektura umożliwiła:
+- dalszą rozbudowę funkcjonalną,
+- skalowanie wraz z biznesem,
+- stopniową wymianę komponentów bez przestojów.

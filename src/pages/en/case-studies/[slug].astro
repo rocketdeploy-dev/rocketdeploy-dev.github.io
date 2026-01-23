@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("en-case-studies");
+  return entries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<BaseLayout lang="en" title={entry.data.title}>
+  <section class="section">
+    <a class="btn" href="/en/case-studies/">← Back to list</a>
+  </section>
+
+  <section class="section">
+    <h1>{entry.data.title}</h1>
+    <p class="lead">{entry.data.summary}</p>
+  </section>
+
+  <section class="section">
+    <article class="prose">
+      <Content />
+    </article>
+  </section>
+</BaseLayout>
