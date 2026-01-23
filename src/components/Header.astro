@@ -16,15 +16,40 @@ const nav = lang === "pl"
     ];
 ---
 <nav class="nav">
-  <div class="brand">
-    <b>rocketdeploy</b>
-    <small>systems · delivery · ops</small>
+  <div class="nav-header">
+    <div class="brand">
+      <b>rocketdeploy</b>
+      <small>systems · delivery · ops</small>
+    </div>
+    <button
+      class="nav-toggle"
+      type="button"
+      aria-controls="primary-nav"
+      aria-expanded="false"
+    >
+      Menu
+    </button>
   </div>
 
-  <div class="navlinks">
+  <div class="navlinks" id="primary-nav" data-open="false">
     {nav.map((i) => (
       <a href={i.href}>{i.label}</a>
     ))}
     <LanguageSwitch lang={lang} />
   </div>
 </nav>
+
+<script is:inline>
+  const navToggle = document.querySelector(".nav-toggle");
+  const navLinks = document.querySelector("#primary-nav");
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener("click", () => {
+      const isOpen = navToggle.getAttribute("aria-expanded") === "true";
+      const nextState = String(!isOpen);
+
+      navToggle.setAttribute("aria-expanded", nextState);
+      navLinks.dataset.open = nextState;
+    });
+  }
+</script>
