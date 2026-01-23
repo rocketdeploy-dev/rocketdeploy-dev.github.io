@@ -1,5 +1,5 @@
 :root{
-  --bg: #0b1020;          /* soft dark (nie czarny) */
+  --bg: #05070e;          /* soft dark (nie czarny) */
   --panel: rgba(255,255,255,.03);
   --border: rgba(255,255,255,.08);
   --text: rgba(255,255,255,.86);
@@ -45,7 +45,7 @@ a:hover{ border-bottom-color: rgba(122,162,255,.85); }
   top: 0;
   z-index: 10;
   backdrop-filter: blur(10px);
-  background: rgba(11,16,32,.65);
+  background: #070a14a6;
   border-bottom: 1px solid var(--border);
 }
 
