@@ -367,3 +367,46 @@ h1{
   font-family: var(--mono);
   color: var(--faint);
 }
+
+.email-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.email-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.email-link:hover {
+  text-decoration: underline;
+}
+
+.email-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border, rgba(255,255,255,0.15));
+  background: transparent;
+  color: inherit;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.icon-btn:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+.icon-btn:disabled {
+  cursor: default;
+  opacity: 0.9;
+}

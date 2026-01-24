@@ -15,7 +15,43 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 
     <div class="card">
       <div class="kicker">email</div>
-      <h3>hello@rocketdeploy.dev</h3>
+
+      <div class="email-row">
+        <h3>
+          <a
+            href="mailto:hello@rocketdeploy.dev"
+            target="_blank"
+            rel="noopener"
+            class="email-link"
+          >
+            hello@rocketdeploy.dev
+          </a>
+        </h3>
+
+        <div class="email-actions">
+          <button
+            class="icon-btn"
+            aria-label="Kopiuj adres email"
+            title="Kopiuj"
+            type="button"
+            onclick="window.copyEmail(this)"
+          >
+            ⧉
+          </button>
+
+          <a
+            class="icon-btn"
+            href="mailto:hello@rocketdeploy.dev"
+            target="_blank"
+            rel="noopener"
+            aria-label="Napisz email"
+            title="Napisz"
+          >
+            ✉
+          </a>
+        </div>
+      </div>
+
       <p>
         Punkt startowy do rozmowy o współpracy.
       </p>
@@ -47,4 +83,43 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       </div>
     </div>
   </div>
+
+  <script is:inline>
+    window.copyEmail = async (button) => {
+      if (!(button instanceof HTMLButtonElement)) return;
+
+      const email = "hello@rocketdeploy.dev";
+      const original = button.textContent ?? "⧉";
+
+      const showTick = () => {
+        button.textContent = "✔";
+        button.disabled = true;
+        setTimeout(() => {
+          button.textContent = original;
+          button.disabled = false;
+        }, 1500);
+      };
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(email);
+        } else {
+          const ta = document.createElement("textarea");
+          ta.value = email;
+          ta.setAttribute("readonly", "");
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+        }
+      } catch (err) {
+        console.warn("Copy failed:", err);
+      }
+
+      showTick();
+    };
+  </script>
 </BaseLayout>
