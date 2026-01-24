@@ -3,6 +3,8 @@ import LanguageSwitch from "./LanguageSwitch.astro";
 
 const { lang } = Astro.props;
 
+const homeHref = lang === "pl" ? "/pl/" : "/en/";
+
 const nav = lang === "pl"
   ? [
       { href: "/pl/", label: "Start" },
@@ -17,12 +19,14 @@ const nav = lang === "pl"
       { href: "/en/contact/", label: "Contact" },
     ];
 ---
+
 <nav class="nav">
   <div class="nav-header">
-    <div class="brand">
+    <a href={homeHref} class="brand" aria-label="Go to homepage">
       <b>rocketdeploy</b>
       <small>systems · delivery · ops</small>
-    </div>
+    </a>
+
     <button
       class="nav-toggle"
       type="button"
