@@ -7,11 +7,11 @@ import HeroVisual from "../../components/HeroVisual.astro";
 <BaseLayout lang="en" title="Home">
   <section class="hero">
     <div>
-      <div style="font-family: var(--mono); color: rgba(255,255,255,.55); font-size: 13px;">
+      <div class="hero-kicker" aria-label="architecture build production">
         architecture · build · production
       </div>
 
-      <h1>We design & ship systems.</h1>
+      <h1>We design &amp; ship systems.<span class="cursor" aria-hidden="true">│</span></h1>
 
       <p class="lead">
         RocketDeploy is a senior engineering team focused on
@@ -53,12 +53,12 @@ import HeroVisual from "../../components/HeroVisual.astro";
 
     <style>
       .hero-right {
-      display: grid;
-      gap: 14px;
+        display: grid;
+        gap: 14px;
       }
       @media (max-width: 900px) {
         .hero-visual-slot {
-        display: none;
+          display: none;
         }
       }
     </style>
@@ -131,10 +131,10 @@ import HeroVisual from "../../components/HeroVisual.astro";
   </section>
 
   <section class="section">
-    <h2>how we work</h2>
+    <h2 class="typing">how we work<span class="cursor" aria-hidden="true">█</span></h2>
 
     <div class="card">
-      <ul style="margin: 0; padding-left: 18px; color: rgba(255,255,255,.72);">
+      <ul class="cli-list" style="margin: 0; color: rgba(255,255,255,.72);">
         <li>microservices over monoliths</li>
         <li>clear boundaries and contracts</li>
         <li>API-first and event-driven where it makes sense</li>
@@ -151,7 +151,7 @@ import HeroVisual from "../../components/HeroVisual.astro";
       <p style="margin-top:0; color: rgba(255,255,255,.72);">
         We have designed and delivered systems across areas such as:
       </p>
-      <ul style="margin: 0; padding-left: 18px; color: rgba(255,255,255,.72);">
+      <ul class="check-list" style="margin: 0; color: rgba(255,255,255,.72);">
         <li>e-commerce platforms integrated with logistics and automation</li>
         <li>distributed systems connecting cloud services and physical devices</li>
         <li>operational platforms used daily by non-technical teams</li>

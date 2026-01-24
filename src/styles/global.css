@@ -268,3 +268,102 @@ h1{
   .btn, .card{ transition: none; }
   .btn:hover, .card:hover{ transform: none; }
 }
+
+/* Hero kicker (index) — monospace + subtelny vibe */
+.hero-kicker{
+  font-family: var(--mono);
+  color: rgba(255,255,255,.55);
+  font-size: 13px;
+  letter-spacing: .2px;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  user-select: none;
+}
+
+/* Cursor █ (hero + typing header) */
+.cursor{
+  font-family: var(--mono);
+  color: rgba(255,255,255,.62);
+  animation: blink 1.35s steps(1, end) infinite;
+  transform: translateY(-0.05em);
+}
+@keyframes blink{
+  50%{ opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce){
+  .cursor{ animation: none; }
+}
+
+/* H2: CLI prefix + execution line (GLOBAL) */
+.section h2{
+  position: relative;
+  display: inline-block;
+  padding-left: 18px;
+}
+
+/* Prefix: na razie ">" */
+.section h2::before{
+  content: ">";
+  position: absolute;
+  left: 0;
+  top: .15em;
+  font-family: var(--mono);
+  font-size: .9em;
+  color: var(--faint);
+  transform: translateY(1px);
+}
+
+/* Execution line */
+.section h2::after{
+  content: "";
+  display: block;
+  height: 1px;
+  width: min(360px, 100%);
+  margin-top: 10px;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,.16) 0%,
+    rgba(255,255,255,.08) 55%,
+    rgba(255,255,255,0) 100%
+  );
+  opacity: .9;
+}
+
+/* Typing cue — tylko tam gdzie dodana klasa */
+.section h2.typing{
+  padding-right: 10px;
+}
+
+/* Terminalowe listy (opt-in przez klasy) */
+.cli-list,
+.check-list{
+  list-style: none;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.cli-list li,
+.check-list li{
+  position: relative;
+  padding-left: 22px;
+  line-height: 1.5;
+}
+
+.cli-list li::before{
+  content: "→";
+  position: absolute;
+  left: 0;
+  top: .05em;
+  font-family: var(--mono);
+  color: var(--faint);
+}
+
+.check-list li::before{
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: .05em;
+  font-family: var(--mono);
+  color: var(--faint);
+}

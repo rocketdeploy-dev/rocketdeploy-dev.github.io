@@ -7,11 +7,13 @@ import HeroVisual from "../../components/HeroVisual.astro";
 <BaseLayout lang="pl" title="Start">
   <section class="hero">
     <div>
-      <div style="font-family: var(--mono); color: rgba(255,255,255,.55); font-size: 13px;">
+      <div class="hero-kicker" aria-label="architecture build production">
         architecture · build · production
       </div>
 
-      <h1>Projektujemy i dowozimy systemy.</h1>
+      <h1>
+        Projektujemy i dowozimy systemy.<span class="cursor" aria-hidden="true">│</span>
+      </h1>
 
       <p class="lead">
         RocketDeploy to zespół senior inżynierów skoncentrowany na
@@ -54,12 +56,12 @@ import HeroVisual from "../../components/HeroVisual.astro";
 
     <style>
       .hero-right {
-      display: grid;
-      gap: 14px;
+        display: grid;
+        gap: 14px;
       }
       @media (max-width: 900px) {
         .hero-visual-slot {
-        display: none;
+          display: none;
         }
       }
     </style>
@@ -132,10 +134,12 @@ import HeroVisual from "../../components/HeroVisual.astro";
   </section>
 
   <section class="section">
-    <h2>jak pracujemy</h2>
+    <h2 class="typing">
+      jak pracujemy<span class="cursor" aria-hidden="true">█</span>
+    </h2>
 
     <div class="card">
-      <ul style="margin: 0; padding-left: 18px; color: rgba(255,255,255,.72);">
+      <ul class="cli-list" style="margin: 0; color: rgba(255,255,255,.72);">
         <li>microservices zamiast monolitów</li>
         <li>wyraźne granice odpowiedzialności i kontrakty</li>
         <li>API-first i event-driven tam, gdzie to daje przewagę</li>
@@ -152,7 +156,7 @@ import HeroVisual from "../../components/HeroVisual.astro";
       <p style="margin-top:0; color: rgba(255,255,255,.72);">
         Projektowaliśmy i wdrażaliśmy systemy m.in. w obszarach:
       </p>
-      <ul style="margin: 0; padding-left: 18px; color: rgba(255,255,255,.72);">
+      <ul class="check-list" style="margin: 0; color: rgba(255,255,255,.72);">
         <li>platformy e-commerce zintegrowane z logistyką i automatyzacją</li>
         <li>systemy rozproszone łączące cloud z fizycznymi urządzeniami</li>
         <li>platformy operacyjne używane codziennie przez zespoły nietechniczne</li>
