@@ -514,28 +514,29 @@ h1{
 .rd-contact__fab {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 14px;
+  gap: 14px;
+  padding: 18px 20px;
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,.15);
   background: rgba(12,14,18,.85);
   color: #fff;
   cursor: pointer;
   backdrop-filter: blur(10px);
+  font-size: 1.05rem
 }
 
 .rd-contact__fab-dot {
-  width: 10px;
-  height: 10px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: var(--accent, #7aa2ff);
-  box-shadow: 0 0 0 4px rgba(122,162,255,.2);
+  box-shadow: 0 0 0 6px rgba(122,162,255,.22);
 }
 
 .rd-contact__pop {
   position: absolute;
   right: 0;
-  bottom: 58px;
+  bottom: 88px;
   width: min(360px, calc(100vw - 36px));
   border-radius: 16px;
   background: rgba(12,14,18,.95);
