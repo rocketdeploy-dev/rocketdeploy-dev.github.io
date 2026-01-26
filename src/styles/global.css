@@ -1,12 +1,12 @@
 :root{
-  --bg: #05070e;          /* soft dark (nie czarny) */
+  --bg: #05070e;
   --panel: rgba(255,255,255,.03);
   --border: rgba(255,255,255,.08);
   --text: rgba(255,255,255,.86);
   --muted: rgba(255,255,255,.62);
   --faint: rgba(255,255,255,.42);
-  --accent: #7aa2ff;      /* chłodny niebieski */
-  --accent2: #5eead4;     /* delikatny teal do “glow” (mega oszczędnie) */
+  --accent: #7aa2ff;
+  --accent2: #5eead4;
   --shadow: 0 12px 40px rgba(0,0,0,.45);
   --radius: 18px;
   --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -65,15 +65,47 @@ a:hover{ border-bottom-color: rgba(122,162,255,.85); }
 
 .brand{
   display:flex;
-  gap: 10px;
-  align-items: baseline;
+  gap: 12px;
+  align-items: center;
   border-bottom: none;
+  text-decoration: none;
+  color: inherit;
 }
+
 .brand b{ letter-spacing: .2px; }
+
+.brand-logo{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: none;
+  transform: translateY(0);
+  transition: transform 120ms ease;
+}
+
+.brand-logo img,
+.brand-logo svg{
+  width: 34px;
+  height: 34px;
+  display: block;
+}
+
+.brand-text{
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  line-height: 1.15;
+}
+
 .brand small{
   color: var(--muted);
   font-family: var(--mono);
   font-size: 12px;
+}
+
+/* Subtelny hover */
+.brand:hover .brand-logo{
+  transform: translateY(-1px);
 }
 
 .navlinks{
@@ -145,6 +177,17 @@ a:hover{ border-bottom-color: rgba(122,162,255,.85); }
 
   .navlinks[data-open="true"]{
     display:flex;
+  }
+
+  /* logo trochę mniejsze na mobile */
+  .brand-logo img,
+  .brand-logo svg{
+    width: 28px;
+    height: 28px;
+  }
+
+  .brand small{
+    font-size: 11px;
   }
 }
 
@@ -268,6 +311,8 @@ h1{
 @media (prefers-reduced-motion: reduce){
   .btn, .card{ transition: none; }
   .btn:hover, .card:hover{ transform: none; }
+  .brand-logo{ transition: none; }
+  .brand:hover .brand-logo{ transform: none; }
 }
 
 /* Hero kicker (index) — monospace + subtelny vibe */
