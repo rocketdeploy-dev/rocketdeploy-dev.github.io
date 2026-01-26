@@ -1,0 +1,168 @@
+---
+type Lang = "pl" | "en";
+
+const {
+  lang = "en",
+} = Astro.props as {
+  lang?: Lang;
+};
+
+const email = "hello@rocketdeploy.dev";
+const freelancerUrl = "https://www.freelancer.com/u/D4m1an0101";
+const linkedinUrl = "https://www.linkedin.com/in/profile_name/";
+
+const t = {
+  pl: {
+    fab: "Kontakt",
+    title: "Wybierz formę kontaktu",
+    copy: "Kopiuj",
+    copied: "Skopiowano ✓",
+    emailHint: "Najlepsze do rozmów technicznych.",
+    freelancerLabel: "Napisz na Freelancer",
+    freelancerHint: "Formalna współpraca przez platformę.",
+    linkedinLabel: "Napisz na LinkedIn",
+    linkedinHint: "Pierwszy kontakt i networking.",
+    foot: "Nie prowadzimy czatu na żywo — odpowiadamy asynchronicznie.",
+  },
+  en: {
+    fab: "Contact",
+    title: "Choose a contact option",
+    copy: "Copy",
+    copied: "Copied ✓",
+    emailHint: "Best for technical discussions.",
+    freelancerLabel: "Message on Freelancer",
+    freelancerHint: "If you want to work via the platform.",
+    linkedinLabel: "Message on LinkedIn",
+    linkedinHint: "Great for introductions and quick follow-ups.",
+    foot: "We don’t use live chat — we reply asynchronously.",
+  },
+} as const;
+
+const L = t[lang];
+---
+
+<div class="rd-contact" data-open="false">
+  <button
+    class="rd-contact__fab"
+    type="button"
+    aria-haspopup="dialog"
+    aria-expanded="false"
+  >
+    <span class="rd-contact__fab-dot" aria-hidden="true"></span>
+    <span class="rd-contact__fab-text">{L.fab}</span>
+  </button>
+
+  <div class="rd-contact__pop" role="dialog">
+    <div class="rd-contact__pop-head">
+      <div class="rd-contact__title">{L.title}</div>
+      <button class="rd-contact__close" type="button" aria-label="Close">✕</button>
+    </div>
+
+    <div class="rd-contact__items">
+      <!-- EMAIL -->
+      <div class="rd-contact__item">
+        <div class="rd-contact__kicker">email</div>
+        <div class="rd-contact__row">
+          <a class="rd-contact__link" href={`mailto:${email}`}>{email}</a>
+          <button
+            class="rd-contact__copy"
+            type="button"
+            data-copy={email}
+            data-copy-label={L.copy}
+            data-copied-label={L.copied}
+          >
+            {L.copy}
+          </button>
+        </div>
+        <div class="rd-contact__hint">{L.emailHint}</div>
+      </div>
+
+      <!-- FREELANCER -->
+      <a
+        class="rd-contact__item rd-contact__item--link"
+        href={freelancerUrl}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <div class="rd-contact__kicker">freelancer</div>
+        <div class="rd-contact__row">
+          <div class="rd-contact__label">{L.freelancerLabel}</div>
+          <div class="rd-contact__go">↗</div>
+        </div>
+        <div class="rd-contact__hint">{L.freelancerHint}</div>
+      </a>
+
+      <!-- LINKEDIN -->
+      <a
+        class="rd-contact__item rd-contact__item--link"
+        href={linkedinUrl}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <div class="rd-contact__kicker">linkedin</div>
+        <div class="rd-contact__row">
+          <div class="rd-contact__label">{L.linkedinLabel}</div>
+          <div class="rd-contact__go">↗</div>
+        </div>
+        <div class="rd-contact__hint">{L.linkedinHint}</div>
+      </a>
+    </div>
+
+    <div class="rd-contact__foot">{L.foot}</div>
+  </div>
+
+  <div class="rd-contact__backdrop"></div>
+</div>
+
+<script>
+  (() => {
+    const root = document.querySelector<HTMLElement>(".rd-contact");
+    if (!root) return;
+
+    const fab = root.querySelector<HTMLButtonElement>(".rd-contact__fab");
+    const closeBtn = root.querySelector<HTMLButtonElement>(".rd-contact__close");
+    const backdrop = root.querySelector<HTMLElement>(".rd-contact__backdrop");
+
+    if (!fab || !closeBtn || !backdrop) return;
+
+    const setOpen = (open: boolean): void => {
+      root.dataset.open = open ? "true" : "false";
+      fab.setAttribute("aria-expanded", open ? "true" : "false");
+    };
+
+    fab.addEventListener("click", () => setOpen(root.dataset.open !== "true"));
+    closeBtn.addEventListener("click", () => setOpen(false));
+    backdrop.addEventListener("click", () => setOpen(false));
+
+    document.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    });
+
+    root.querySelectorAll<HTMLButtonElement>("[data-copy]").forEach((btn) => {
+      btn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const text = btn.dataset.copy;
+        if (!text) return;
+
+        const copyLabel = btn.dataset.copyLabel || btn.textContent || "Copy";
+        const copiedLabel = btn.dataset.copiedLabel || "Copied ✓";
+
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+        }
+
+        btn.textContent = copiedLabel;
+        setTimeout(() => {
+          btn.textContent = copyLabel;
+        }, 1200);
+      });
+    });
+  })();
+</script>
