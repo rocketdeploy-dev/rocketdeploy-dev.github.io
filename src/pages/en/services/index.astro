@@ -1,0 +1,95 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout lang="en" title="Services">
+  <section class="section">
+    <h1>Services</h1>
+
+    <div class="card">
+      <p style="margin-top:0; color: rgba(255,255,255,.72);">
+        RocketDeploy operates in a delivery-first model: we design and deliver systems ready for production.
+        Below you’ll find our services broken down by stages — delivered end-to-end or as selected areas.
+      </p>
+
+      <p style="margin-top:10px; color: rgba(255,255,255,.6);">
+        We do not operate as a maintenance-driven software house and do not take over third-party systems on subscription.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>areas</h2>
+
+    <div class="grid">
+      <a class="card" href="/en/services/design/" style="border-bottom:none;">
+        <div class="kicker">01</div>
+        <h3>Design</h3>
+        <p>Architecture, technical decisions, scope, risks, delivery planning.</p>
+      </a>
+
+      <a class="card" href="/en/services/infrastructure/" style="border-bottom:none;">
+        <div class="kicker">02</div>
+        <h3>Infrastructure</h3>
+        <p>Cloud/Kubernetes, CI/CD, GitOps, security, observability.</p>
+      </a>
+
+      <a class="card" href="/en/services/development/" style="border-bottom:none;">
+        <div class="kicker">03</div>
+        <h3>Development</h3>
+        <p>Backend/API/EDA, integrations, frontend/panels/kiosk/mobile.</p>
+      </a>
+    </div>
+
+    <div class="grid" style="margin-top: 14px;">
+      <a class="card" href="/en/services/deployment/" style="border-bottom:none;">
+        <div class="kicker">04</div>
+        <h3>Deployment</h3>
+        <p>Release planning, migrations, rollout, hardening and stable launch.</p>
+      </a>
+
+      <a class="card" href="/en/services/post-launch/" style="border-bottom:none;">
+        <div class="kicker">05</div>
+        <h3>Post-launch support</h3>
+        <p>Limited stabilization phase for systems we delivered.</p>
+      </a>
+
+      <div class="card">
+        <div class="kicker">model</div>
+        <h3>End-to-end or modular</h3>
+        <p>We can deliver the full scope or step into selected areas (e.g. infrastructure + deployment).</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>typical collaboration flow</h2>
+
+    <div class="card">
+      <ul class="cli-list" style="margin: 0; color: rgba(255,255,255,.72);">
+        <li><span class="kicker" style="margin-right:10px;">01</span>we align on goals, context and priorities</li>
+        <li><span class="kicker" style="margin-right:10px;">02</span>we propose solution, scope and acceptance criteria</li>
+        <li><span class="kicker" style="margin-right:10px;">03</span>delivery in milestones</li>
+        <li><span class="kicker" style="margin-right:10px;">04</span>production deployment and stabilization</li>
+      </ul>
+
+      <div style="margin-top: 14px;">
+        <a class="btn" href="/en/contact/">Let’s talk →</a>
+        <a class="btn" href="/en/how-we-work/" style="margin-left:8px;">How we work →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>responsibility boundaries</h2>
+
+    <div class="card">
+      <ul class="check-list" style="margin: 0; color: rgba(255,255,255,.72);">
+        <li>we do not take over maintenance of third-party systems</li>
+        <li>post-launch support applies only to systems we delivered</li>
+        <li>no 24/7 on-call or classic support model</li>
+        <li>long-term partnerships are considered individually</li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>

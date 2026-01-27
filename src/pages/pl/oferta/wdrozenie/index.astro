@@ -1,0 +1,44 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout lang="pl" title="Oferta – Wdrożenie">
+  <section class="section">
+    <h1>Wdrożenie</h1>
+
+    <div class="card">
+      <p style="margin-top:0; color: rgba(255,255,255,.72);">
+        Wdrożenie to moment, w którym system staje się realny. Dbamy o to,
+        żeby start był kontrolowany: plan wydania, migracje, rollout i szybka diagnoza problemów.
+      </p>
+
+      <div style="margin-top: 14px;">
+        <a class="btn" href="/pl/oferta/">← Wróć do oferty</a>
+        <a class="btn" href="/pl/kontakt/" style="margin-left:8px;">Kontakt →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>co obejmuje</h2>
+    <div class="card">
+      <ul class="check-list" style="margin:0; color: rgba(255,255,255,.72);">
+        <li>plan wydania i kryteria „go-live”</li>
+        <li>migracje danych (jeśli dotyczy) i strategia rollback</li>
+        <li>rollout (np. etapami) i kontrola ryzyka</li>
+        <li>hardening: konfiguracja, bezpieczeństwo, limity, retry, timeouts</li>
+        <li>observability baseline: logi/metryki/alerty dla kluczowych ścieżek</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>efekt</h2>
+    <div class="card">
+      <ul class="cli-list" style="margin:0; color: rgba(255,255,255,.72);">
+        <li>wdrożenie jest przewidywalne, a nie „akcją ratunkową”</li>
+        <li>po starcie wiadomo co mierzyć i jak diagnozować</li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
