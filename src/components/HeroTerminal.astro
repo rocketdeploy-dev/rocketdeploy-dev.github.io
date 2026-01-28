@@ -21,32 +21,109 @@ const linesEN = [
 
 const lines = lang === "pl" ? linesPL : linesEN;
 ---
+
 <div class="card" style="padding: 14px 14px 12px;">
   <div style="display:flex; gap:8px; align-items:center; margin-bottom: 10px;">
     <span style="width:10px;height:10px;border-radius:999px;background:rgba(255,95,86,.9)"></span>
     <span style="width:10px;height:10px;border-radius:999px;background:rgba(255,189,46,.9)"></span>
     <span style="width:10px;height:10px;border-radius:999px;background:rgba(39,201,63,.9)"></span>
-    <span style="margin-left:8px; color: rgba(255,255,255,.5); font-family: var(--mono); font-size: 12px;">deploy.log</span>
+    <span style="margin-left:8px; color: rgba(255,255,255,.5); font-family: var(--mono); font-size: 12px;">
+      deploy.log
+    </span>
   </div>
 
-  <pre id="term" style="margin:0; font-family: var(--mono); font-size: 13px; color: rgba(255,255,255,.78); white-space: pre-wrap;"></pre>
+  <pre
+    id="term"
+    style="
+      margin:0;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: rgba(255,255,255,.78);
+      white-space: pre-wrap;
 
-  <script define:vars={{ lines }}>
+      line-height: var(--term-lh);
+
+      min-height: calc((var(--term-lines) * var(--term-lh) + 0.6) * 1em);
+      max-height: calc((var(--term-lines) * var(--term-lh) + 0.6) * 1em);
+
+      overflow: hidden;
+    "
+  ></pre>
+
+  <script define:vars={{ termLines: lines }}>
     const el = document.getElementById("term");
 
-    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
-      el.textContent = lines.join("\n");
-    } else {
+    // ustawiamy liczbę linii jako CSS variable do wyliczenia wysokości
+    el.style.setProperty("--term-lines", String(termLines.length));
+
+    const reduce =
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // zabezpieczenie przed odpaleniem kilka razy
+    let started = false;
+
+    const renderAll = () => {
+      el.textContent = termLines.join("\n");
+    };
+
+    const startTyping = () => {
+      if (started) return;
+      started = true;
+
+      if (reduce) {
+        renderAll();
+        return;
+      }
+
       let i = 0;
       let out = "";
+
       const tick = () => {
-        out += (i === 0 ? "" : "\n") + lines[i];
+        out += (i === 0 ? "" : "\n") + termLines[i];
         el.textContent = out;
         i++;
-        if (i < lines.length) setTimeout(tick, i === 1 ? 650 : 420);
+        if (i < termLines.length) setTimeout(tick, i === 1 ? 650 : 420);
       };
+
       setTimeout(tick, 220);
+    };
+
+    // jeśli już widać od razu (np. desktop), startuj natychmiast
+    const isInViewportNow = () => {
+      const r = el.getBoundingClientRect();
+      return r.top < window.innerHeight && r.bottom > 0;
+    };
+
+    if (isInViewportNow()) {
+      startTyping();
+    } else if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          if (entry && entry.isIntersecting) {
+            startTyping();
+            io.disconnect();
+          }
+        },
+        {
+          // odpali trochę wcześniej, zanim idealnie wejdzie w kadr
+          root: null,
+          threshold: 0.2,
+          rootMargin: "120px 0px",
+        }
+      );
+
+      io.observe(el);
+    } else {
+      // fallback dla bardzo starych przeglądarek: odpal po pierwszym scrollu
+      const onScroll = () => {
+        if (isInViewportNow()) {
+          startTyping();
+          window.removeEventListener("scroll", onScroll);
+        }
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
     }
   </script>
 </div>
