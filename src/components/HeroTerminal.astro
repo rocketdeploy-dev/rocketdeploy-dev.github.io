@@ -20,6 +20,12 @@ const linesEN = [
 ];
 
 const lines = lang === "pl" ? linesPL : linesEN;
+
+// wysokość linii w terminalu (em)
+const TERM_LINE_HEIGHT = 1.6;
+
+// bufor na rounding/font metrics (żeby nie ucinało ostatniej linii)
+const TERM_HEIGHT_BUFFER_EM = 0.25;
 ---
 
 <div class="card" style="padding: 14px 14px 12px;">
@@ -34,7 +40,11 @@ const lines = lang === "pl" ? linesPL : linesEN;
 
   <pre
     id="term"
-    style="
+    style={`
+      --term-lines: ${lines.length + 1};
+      --term-lh: ${TERM_LINE_HEIGHT};
+      --term-buf: ${TERM_HEIGHT_BUFFER_EM};
+
       margin:0;
       font-family: var(--mono);
       font-size: 13px;
@@ -43,24 +53,21 @@ const lines = lang === "pl" ? linesPL : linesEN;
 
       line-height: var(--term-lh);
 
-      min-height: calc((var(--term-lines) * var(--term-lh) + 0.6) * 1em);
-      max-height: calc((var(--term-lines) * var(--term-lh) + 0.6) * 1em);
+      /* STAŁA wysokość od razu (SSR), z buforem na rounding */
+      min-height: calc((var(--term-lines) * var(--term-lh) + var(--term-buf)) * 1em);
+      max-height: calc((var(--term-lines) * var(--term-lh) + var(--term-buf)) * 1em);
 
       overflow: hidden;
-    "
+    `}
   ></pre>
 
   <script define:vars={{ termLines: lines }}>
     const el = document.getElementById("term");
 
-    // ustawiamy liczbę linii jako CSS variable do wyliczenia wysokości
-    el.style.setProperty("--term-lines", String(termLines.length));
-
     const reduce =
       window.matchMedia &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // zabezpieczenie przed odpaleniem kilka razy
     let started = false;
 
     const renderAll = () => {
@@ -71,10 +78,7 @@ const lines = lang === "pl" ? linesPL : linesEN;
       if (started) return;
       started = true;
 
-      if (reduce) {
-        renderAll();
-        return;
-      }
+      if (reduce) return renderAll();
 
       let i = 0;
       let out = "";
@@ -89,7 +93,6 @@ const lines = lang === "pl" ? linesPL : linesEN;
       setTimeout(tick, 220);
     };
 
-    // jeśli już widać od razu (np. desktop), startuj natychmiast
     const isInViewportNow = () => {
       const r = el.getBoundingClientRect();
       return r.top < window.innerHeight && r.bottom > 0;
@@ -101,22 +104,16 @@ const lines = lang === "pl" ? linesPL : linesEN;
       const io = new IntersectionObserver(
         (entries) => {
           const entry = entries[0];
-          if (entry && entry.isIntersecting) {
+          if (entry?.isIntersecting) {
             startTyping();
             io.disconnect();
           }
         },
-        {
-          // odpali trochę wcześniej, zanim idealnie wejdzie w kadr
-          root: null,
-          threshold: 0.2,
-          rootMargin: "120px 0px",
-        }
+        { threshold: 0.2, rootMargin: "120px 0px" }
       );
 
       io.observe(el);
     } else {
-      // fallback dla bardzo starych przeglądarek: odpal po pierwszym scrollu
       const onScroll = () => {
         if (isInViewportNow()) {
           startTyping();
