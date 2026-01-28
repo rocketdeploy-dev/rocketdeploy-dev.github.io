@@ -6,12 +6,14 @@ import HeroVisual from "../../components/HeroVisual.astro";
 
 <BaseLayout lang="en" title="Home">
   <section class="hero">
-    <div>
+    <div class="hero-left">
       <div class="hero-kicker" aria-label="architecture build production">
         architecture · build · production
       </div>
 
-      <h1>We design &amp; ship systems.<span class="cursor" aria-hidden="true">│</span></h1>
+      <h1>
+        We design &amp; ship systems.<span class="cursor" aria-hidden="true">│</span>
+      </h1>
 
       <p class="lead">
         RocketDeploy is a senior engineering team focused on
@@ -21,36 +23,21 @@ import HeroVisual from "../../components/HeroVisual.astro";
 
       <p class="lead" style="margin-top: 10px;">
         We work where systems become real:
-        cloud, backend, frontend, mobile, and software connected to physical devices.
+        cloud, backend, frontend, mobile, and software connected
+        to physical devices.
       </p>
 
       <p class="lead" style="margin-top: 10px; color: rgba(255,255,255,.6);">
-        We work on both small, well-scoped starter projects and larger systems built for long-term growth.
+        We work on both small, well-scoped starter projects
+        and larger systems built for long-term growth.
       </p>
 
-      <p class="lead" style="margin-top: 10px; color: rgba(255,255,255,.6);">
-        We accelerate analysis and delivery using modern tools supported by AI —
-        while architecture, decisions and responsibility remain firmly in the hands of experienced engineers.
-      </p>
+      <div class="hero-divider minimal" aria-hidden="true"></div>
 
       <div class="cta">
         <a class="btn primary" href="/en/contact/">Let’s talk</a>
         <a class="btn" href="/en/services/">View services</a>
         <a class="btn" href="/en/case-studies/">View case studies</a>
-      </div>
-
-      <div class="section">
-        <h2>stack / focus</h2>
-        <div class="badges">
-          <span class="badge">microservices</span>
-          <span class="badge">event-driven (RabbitMQ)</span>
-          <span class="badge">Kubernetes</span>
-          <span class="badge">GitOps</span>
-          <span class="badge">PostgreSQL</span>
-          <span class="badge">Keycloak</span>
-          <span class="badge">Vault</span>
-          <span class="badge">observability</span>
-        </div>
       </div>
     </div>
 
@@ -72,6 +59,47 @@ import HeroVisual from "../../components/HeroVisual.astro";
         }
       }
     </style>
+  </section>
+
+  <!-- BELOW HERO: founders + approach -->
+  <section class="section section-hero-supp">
+    <div class="grid hero-supp">
+      <div class="card">
+        <div class="kicker">for founders</div>
+        <p style="margin-top:10px; color: rgba(255,255,255,.72);">
+          <strong>Have an idea for a product but not sure where to start?</strong><br />
+          See how we help founders go from idea to a working system —
+          without technical chaos.
+        </p>
+        <div style="margin-top: 14px;">
+          <a class="btn" href="/en/for-founders/">For founders →</a>
+        </div>
+      </div>
+
+      <div class="card approach">
+        <div class="kicker">modern approach</div>
+        <p style="margin-top:10px; color: rgba(255,255,255,.72);">
+          We accelerate analysis and delivery using modern tools supported by AI —
+          while architecture, decisions, and responsibility remain firmly
+          in the hands of experienced engineers.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- STACK as a separate section -->
+  <section class="section">
+    <h2>stack / focus</h2>
+    <div class="badges">
+      <span class="badge">microservices</span>
+      <span class="badge">event-driven (RabbitMQ)</span>
+      <span class="badge">Kubernetes</span>
+      <span class="badge">GitOps</span>
+      <span class="badge">PostgreSQL</span>
+      <span class="badge">Keycloak</span>
+      <span class="badge">Vault</span>
+      <span class="badge">observability</span>
+    </div>
   </section>
 
   <section class="section">
