@@ -1,9 +1,16 @@
 ---
-const { lang } = Astro.props;
+import { getRoutePaths } from "../i18n/routes";
+import type { RouteKey, RouteParams } from "../i18n/routes";
 
+type Props = {
+  lang: "pl" | "en";
+  routeKey: RouteKey;
+  routeParams?: RouteParams;
+};
+
+const { lang, routeKey, routeParams } = Astro.props as Props;
 const isPL = lang === "pl";
-const plHref = "/pl/";
-const enHref = "/en/";
+const { pl: plHref, en: enHref } = getRoutePaths(routeKey, routeParams);
 ---
 <div class="lang" aria-label="Language switch">
   <a href={plHref} aria-current={isPL ? "page" : undefined}>PL</a>
