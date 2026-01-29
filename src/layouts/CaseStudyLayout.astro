@@ -1,9 +1,25 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
-const { title, lang = "en", tags = [] } = Astro.props;
+import type { RouteKey, RouteParams } from "../i18n/routes";
+
+type Props = {
+  title: string;
+  lang?: "pl" | "en";
+  tags?: string[];
+  routeKey?: RouteKey;
+  routeParams?: RouteParams;
+};
+
+const {
+  title,
+  lang = "en",
+  tags = [],
+  routeKey,
+  routeParams,
+} = Astro.props as Props;
 ---
 
-<BaseLayout lang={lang} title={title}>
+<BaseLayout lang={lang} title={title} routeKey={routeKey} routeParams={routeParams}>
   <div style="max-width: 78ch;">
     <div style="font-family: var(--mono); color: rgba(122,162,255,.85); font-size: 12px;">case study</div>
     <h1 style="margin-top:10px;">{title}</h1>

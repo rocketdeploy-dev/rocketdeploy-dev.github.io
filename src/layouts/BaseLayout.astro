@@ -10,7 +10,7 @@ type Props = {
   title?: string;
   description?: string;
   lang?: "pl" | "en";
-  routeKey: RouteKey;
+  routeKey?: RouteKey;
   routeParams?: RouteParams;
 };
 
@@ -23,10 +23,10 @@ const {
 } = Astro.props as Props;
 
 const baseUrl = "https://rocketdeploy.dev";
-const { pl: plPath, en: enPath } = getRoutePaths(routeKey, routeParams);
-const plUrl = new URL(plPath, baseUrl).toString();
-const enUrl = new URL(enPath, baseUrl).toString();
-const canonicalUrl = lang === "pl" ? plUrl : enUrl;
+const routePaths = routeKey ? getRoutePaths(routeKey, routeParams) : null;
+const plUrl = routePaths ? new URL(routePaths.pl, baseUrl).toString() : null;
+const enUrl = routePaths ? new URL(routePaths.en, baseUrl).toString() : null;
+const canonicalUrl = routePaths ? (lang === "pl" ? plUrl : enUrl) : null;
 ---
 
 <!doctype html>
@@ -42,16 +42,16 @@ const canonicalUrl = lang === "pl" ? plUrl : enUrl;
     {description && <meta property="og:description" content={description} />}
     {description && <meta name="twitter:description" content={description} />}
 
-    <link rel="canonical" href={canonicalUrl} />
-    <link rel="alternate" hreflang="pl" href={plUrl} />
-    <link rel="alternate" hreflang="en" href={enUrl} />
-    <link rel="alternate" hreflang="x-default" href={enUrl} />
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+    {plUrl && <link rel="alternate" hreflang="pl" href={plUrl} />}
+    {enUrl && <link rel="alternate" hreflang="en" href={enUrl} />}
+    {enUrl && <link rel="alternate" hreflang="x-default" href={enUrl} />}
   </head>
 
   <body>
     <div class="header">
       <div class="container">
-        <Header lang={lang} routeKey={routeKey} routeParams={routeParams} />
+        <Header lang={lang} routeKey={routeKey ?? "home"} routeParams={routeParams} />
       </div>
     </div>
 
