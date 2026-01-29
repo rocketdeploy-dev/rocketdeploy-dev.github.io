@@ -5,7 +5,11 @@ import { getCollection } from "astro:content";
 const entries = await getCollection("pl-case-studies");
 ---
 
-<BaseLayout lang="pl" title="Case studies">
+<BaseLayout
+  lang="pl"
+  title="Case studies: dowiezione systemy"
+  description="Przykłady projektów RocketDeploy: jak projektujemy, budujemy i wdrażamy systemy. Zakres, decyzje architektoniczne i efekty delivery."
+>
   <section class="section">
     <h1>Case studies</h1>
     <p class="lead">Anonimizowane przykłady realnych wdrożeń i problemów, które dowozimy.</p>
