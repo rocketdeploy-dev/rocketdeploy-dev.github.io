@@ -14,7 +14,12 @@ const { entry } = Astro.props;
 const { Content } = await entry.render();
 ---
 
-<BaseLayout lang="en" title={entry.data.title}>
+<BaseLayout
+  lang="en"
+  routeKey="caseStudy"
+  routeParams={{ slug: entry.slug }}
+  title={entry.data.title}
+>
   <section class="section">
     <a class="btn" href="/en/case-studies/">← Back to list</a>
   </section>

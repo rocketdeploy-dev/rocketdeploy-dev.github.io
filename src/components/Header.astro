@@ -1,7 +1,14 @@
 ---
 import LanguageSwitch from "./LanguageSwitch.astro";
+import type { RouteKey, RouteParams } from "../i18n/routes";
 
-const { lang } = Astro.props;
+type Props = {
+  lang: "pl" | "en";
+  routeKey: RouteKey;
+  routeParams?: RouteParams;
+};
+
+const { lang, routeKey, routeParams } = Astro.props as Props;
 
 const homeHref = lang === "pl" ? "/pl/" : "/en/";
 
@@ -94,7 +101,7 @@ const nav = lang === "pl"
     {nav.map((i) => (
       <a href={i.href}>{i.label}</a>
     ))}
-    <LanguageSwitch lang={lang} />
+    <LanguageSwitch lang={lang} routeKey={routeKey} routeParams={routeParams} />
   </div>
 </nav>
 
