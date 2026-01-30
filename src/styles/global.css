@@ -212,19 +212,21 @@ main{ padding: 10px 0 70px; }
 }
 
 .hero-left .cta{
-  margin-top: auto;
+  margin-top: 0;
 }
 
 .hero-divider.minimal{
-  margin-top: 16px;
-  margin-bottom: 12px;
+  margin: 18px 0;
   height: 1px;
-  background: linear-gradient(
-    to right,
-    rgba(255,255,255,.25),
-    rgba(255,255,255,0)
-  );
+  background: linear-gradient(to right, rgba(255,255,255,.25), rgba(255,255,255,0));
   max-width: 720px;
+}
+
+.hero-subtitle {
+  margin-top: 8px;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  color: rgba(255,255,255,.65);
+  font-weight: 500;
 }
 
 h1{

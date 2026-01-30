@@ -7,34 +7,37 @@ import HeroVisual from "../../components/HeroVisual.astro";
 <BaseLayout
   lang="en"
   routeKey="home"
-  title="End-to-end systems — architecture & delivery"
-  description="We design and deliver production-ready software systems — from MVPs and prototypes to stable platforms. Microservices, APIs, event-driven architecture, Kubernetes, cloud and device integrations."
+  title="Web apps & end-to-end systems — architecture & delivery"
+  description="We design and deliver production-ready web apps, platforms and e-commerce — from MVPs and prototypes to stable deployments. APIs, event-driven architecture, Kubernetes, cloud, integrations, plus WordPress/WooCommerce."
 >
   <section class="hero">
     <div class="hero-left">
-      <div class="hero-kicker" aria-label="architecture build production">
-        architecture · build · production
-      </div>
 
       <h1>
-        We design &amp; ship systems.<span class="cursor" aria-hidden="true">│</span>
+        We design and deliver solutions.<span class="cursor" aria-hidden="true">│</span>
       </h1>
+
+      <h2 class="hero-subtitle">
+        apps · platforms · systems
+      </h2>
 
       <p class="lead">
         rocketdeploy is a senior engineering team focused on
-        <strong>end-to-end system delivery</strong> —
+        <strong>end-to-end product delivery</strong> —
         from MVPs and prototypes to stable, production-grade platforms.
+        <span style="color: rgba(255,255,255,.6);">Under the hood, there’s always a well-designed system.</span>
       </p>
 
       <p class="lead" style="margin-top: 10px;">
-        We work where systems become real:
+        We work where products become real:
         cloud, backend, frontend, mobile, and software connected
         to physical devices.
       </p>
 
       <p class="lead" style="margin-top: 10px; color: rgba(255,255,255,.6);">
         We work on both small, well-scoped starter projects
-        and larger systems built for long-term growth.
+        and larger platforms built for long-term growth —
+        including <strong>WordPress &amp; WooCommerce e-commerce</strong>, integrations and custom plugins.
       </p>
 
       <div class="hero-divider minimal" aria-hidden="true"></div>
@@ -72,8 +75,8 @@ import HeroVisual from "../../components/HeroVisual.astro";
       <div class="card">
         <div class="kicker">for founders</div>
         <p style="margin-top:10px; color: rgba(255,255,255,.72);">
-          <strong>Have an idea for a product but not sure where to start?</strong><br />
-          See how we help founders go from idea to a working system —
+          <strong>Have an idea for a web app, admin panel or store, but not sure where to start?</strong><br />
+          See how we help founders go from idea to a working product —
           without having to dive into technical details.
         </p>
         <div style="margin-top: 14px;">
@@ -104,6 +107,8 @@ import HeroVisual from "../../components/HeroVisual.astro";
       <span class="badge">Keycloak</span>
       <span class="badge">Vault</span>
       <span class="badge">observability</span>
+      <span class="badge">WordPress/WooCommerce</span>
+      <span class="badge">Astro</span>
     </div>
   </section>
 
@@ -135,8 +140,8 @@ import HeroVisual from "../../components/HeroVisual.astro";
     <div class="grid">
       <div class="card">
         <div class="kicker">&lt;/&gt;</div>
-        <h3>End-to-End System Delivery</h3>
-        <p>From architecture to production — we deliver systems that are ready for real-world use.</p>
+        <h3>End-to-end delivery</h3>
+        <p>From architecture to production — we deliver work that’s ready for real-world use.</p>
       </div>
 
       <div class="card">
@@ -147,7 +152,7 @@ import HeroVisual from "../../components/HeroVisual.astro";
 
       <div class="card">
         <div class="kicker">◎</div>
-        <h3>Backend, APIs & EDA</h3>
+        <h3>Backend, APIs &amp; EDA</h3>
         <p>API-first, BFF, integrations, event-driven design — built to evolve and scale.</p>
       </div>
     </div>
@@ -155,20 +160,40 @@ import HeroVisual from "../../components/HeroVisual.astro";
     <div class="grid" style="margin-top: 14px;">
       <div class="card">
         <div class="kicker">UI</div>
-        <h3>Frontend & Mobile</h3>
-        <p>Web apps, admin panels, kiosks, and operational tools for teams in the field.</p>
+        <h3>Frontend &amp; Mobile</h3>
+        <p>Web apps, admin panels, static sites, kiosks, and operational tools for teams in the field.</p>
       </div>
 
       <div class="card">
-        <div class="kicker">UX</div>
-        <h3>UI/UX Collaboration</h3>
-        <p>We work with client-provided UI/UX or coordinate design via trusted subcontractors.</p>
+        <div class="kicker">WP</div>
+        <h3>WordPress &amp; WooCommerce</h3>
+        <p>Stores, integrations and advanced plugins — when e-commerce should work like a product, not just “a site with a cart”.</p>
       </div>
 
       <div class="card">
         <div class="kicker">MVP</div>
-        <h3>MVPs & technical prototypes</h3>
+        <h3>MVPs &amp; technical prototypes</h3>
         <p>Fast validation — with clear trade-offs and a path to production-grade delivery.</p>
+      </div>
+    </div>
+
+    <div class="grid" style="margin-top: 14px;">
+      <div class="card">
+        <div class="kicker">UX</div>
+        <h3>UI/UX collaboration</h3>
+        <p>We work with client-provided UI/UX or coordinate design via trusted subcontractors.</p>
+      </div>
+
+      <div class="card">
+        <div class="kicker">ops</div>
+        <h3>Stable start after launch</h3>
+        <p>A short stabilization phase to close the gaps that usually show up only after release.</p>
+      </div>
+
+      <div class="card">
+        <div class="kicker">fit</div>
+        <h3>Right-sized approach</h3>
+        <p>We don’t overload small projects. We match architecture and tooling to budget, risks and the growth plan.</p>
       </div>
     </div>
   </section>
@@ -197,14 +222,15 @@ import HeroVisual from "../../components/HeroVisual.astro";
 
     <div class="card">
       <p style="margin-top:0; color: rgba(255,255,255,.72);">
-        We have designed and delivered systems across areas such as:
+        We have designed and delivered solutions across areas such as:
       </p>
       <ul class="check-list" style="margin: 0; color: rgba(255,255,255,.72);">
         <li>e-commerce platforms integrated with logistics and automation</li>
         <li>distributed systems connecting cloud services and physical devices</li>
         <li>operational platforms used daily by non-technical teams</li>
         <li>microservice systems running 24/7 in production</li>
-        <li>systems evolved from MVPs to full scale</li>
+        <li>products evolving from MVPs to full scale</li>
+        <li>advanced WordPress/WooCommerce implementations and integrations</li>
       </ul>
 
       <div style="margin-top: 14px;">

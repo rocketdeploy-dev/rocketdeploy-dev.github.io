@@ -7,34 +7,37 @@ import HeroVisual from "../../components/HeroVisual.astro";
 <BaseLayout
   lang="pl"
   routeKey="home"
-  title="Systemy end-to-end — architektura i wdrożenia"
-  description="Projektujemy i dowozimy systemy end-to-end — od MVP i prototypów po stabilne platformy produkcyjne. Microservices, API, event-driven, Kubernetes, cloud oraz integracje z urządzeniami."
+  title="Aplikacje webowe i systemy end-to-end — architektura i wdrożenia"
+  description="Projektujemy i dowozimy aplikacje webowe, platformy i e-commerce gotowe do produkcji — od MVP i prototypów po stabilne wdrożenia. API, event-driven, Kubernetes, cloud, integracje oraz WordPress/WooCommerce."
 >
   <section class="hero">
     <div class="hero-left">
-      <div class="hero-kicker" aria-label="architecture build production">
-        architecture · build · production
-      </div>
 
       <h1>
-        Projektujemy i dowozimy systemy.<span class="cursor" aria-hidden="true">│</span>
+        Projektujemy i dowozimy rozwiązania.<span class="cursor" aria-hidden="true">│</span>
       </h1>
+
+      <h2 class="hero-subtitle">
+        aplikacje · platformy · systemy
+      </h2>
 
       <p class="lead">
         rocketdeploy to zespół senior inżynierów skoncentrowany na
-        <strong>dostarczaniu działających systemów end-to-end</strong> —
+        <strong>dostarczaniu działających produktów end-to-end</strong> —
         od MVP i prototypów po stabilne, produkcyjne platformy.
+        <span style="color: rgba(255,255,255,.6);">Pod spodem zawsze stoi przemyślany system.</span>
       </p>
 
       <p class="lead" style="margin-top: 10px;">
-        Budujemy tam, gdzie systemy stają się realne:
+        Budujemy tam, gdzie produkty stają się realne:
         cloud, backend, frontend, mobile oraz oprogramowanie współpracujące
         z fizycznymi urządzeniami.
       </p>
 
       <p class="lead" style="margin-top: 10px; color: rgba(255,255,255,.6);">
-        Pracujemy zarówno przy małych, sensownych projektach startowych,
-        jak i przy rozbudowanych systemach rozwijanych w dłuższej perspektywie.
+        Robimy zarówno małe, sensowne projekty startowe,
+        jak i rozbudowane platformy rozwijane w dłuższej perspektywie —
+        w tym <strong>e-commerce oparte o WordPress i WooCommerce</strong>, integracje oraz wtyczki.
       </p>
 
       <div class="hero-divider minimal" aria-hidden="true"></div>
@@ -72,8 +75,8 @@ import HeroVisual from "../../components/HeroVisual.astro";
       <div class="card">
         <div class="kicker">dla founderów</div>
         <p style="margin-top:10px; color: rgba(255,255,255,.72);">
-          <strong>Masz pomysł na produkt, ale nie wiesz od czego zacząć?</strong><br />
-          Zobacz, jak pomagamy przejść od idei do działającego systemu —
+          <strong>Masz pomysł na aplikację, panel lub sklep, ale nie wiesz od czego zacząć?</strong><br />
+          Zobacz, jak pomagamy przejść od idei do działającego produktu —
           bez konieczności wchodzenia w techniczne detale.
         </p>
         <div style="margin-top: 14px;">
@@ -103,6 +106,8 @@ import HeroVisual from "../../components/HeroVisual.astro";
       <span class="badge">Keycloak</span>
       <span class="badge">Vault</span>
       <span class="badge">observability</span>
+      <span class="badge">WordPress/WooCommerce</span>
+      <span class="badge">Astro</span>
     </div>
   </section>
 
@@ -134,7 +139,7 @@ import HeroVisual from "../../components/HeroVisual.astro";
     <div class="grid">
       <div class="card">
         <div class="kicker">&lt;/&gt;</div>
-        <h3>End-to-End System Delivery</h3>
+        <h3>Delivery end-to-end</h3>
         <p>Od koncepcji i architektury po wdrożenie produkcyjne — doprowadzamy projekty do realnego użycia.</p>
       </div>
 
@@ -155,19 +160,39 @@ import HeroVisual from "../../components/HeroVisual.astro";
       <div class="card">
         <div class="kicker">UI</div>
         <h3>Frontend & Mobile</h3>
-        <p>Aplikacje webowe, panele administracyjne, kioski i narzędzia operacyjne dla zespołów w terenie.</p>
+        <p>Aplikacje webowe, panele administracyjne, strony statyczne, kioski oraz narzędzia operacyjne dla zespołów w terenie.</p>
       </div>
 
       <div class="card">
-        <div class="kicker">UX</div>
-        <h3>UI/UX Collaboration</h3>
-        <p>Pracujemy z UI/UX dostarczonym przez klienta lub organizujemy projekt i realizację z podwykonawcami.</p>
+        <div class="kicker">WP</div>
+        <h3>WordPress & WooCommerce</h3>
+        <p>Sklepy, integracje i rozbudowane wtyczki — gdy e-commerce ma działać jak produkt, a nie „strona z koszykiem”.</p>
       </div>
 
       <div class="card">
         <div class="kicker">MVP</div>
         <h3>MVP & prototypy techniczne</h3>
         <p>Szybka walidacja pomysłów — z jasnymi kompromisami i planem przejścia do produkcji.</p>
+      </div>
+    </div>
+
+    <div class="grid" style="margin-top: 14px;">
+      <div class="card">
+        <div class="kicker">UX</div>
+        <h3>Współpraca UI/UX</h3>
+        <p>Pracujemy z UI/UX dostarczonym przez klienta lub organizujemy projekt i realizację z podwykonawcami.</p>
+      </div>
+
+      <div class="card">
+        <div class="kicker">ops</div>
+        <h3>Stabilny start po wdrożeniu</h3>
+        <p>Ograniczona faza stabilizacji i domknięcie tematów, które zwykle wychodzą dopiero po starcie.</p>
+      </div>
+
+      <div class="card">
+        <div class="kicker">fit</div>
+        <h3>Dobór podejścia do skali</h3>
+        <p>Nie „przeciążamy” małych projektów. Dobieramy rozwiązania do budżetu, ryzyk i planu wzrostu.</p>
       </div>
     </div>
   </section>
@@ -198,14 +223,15 @@ import HeroVisual from "../../components/HeroVisual.astro";
 
     <div class="card">
       <p style="margin-top:0; color: rgba(255,255,255,.72);">
-        Projektowaliśmy i wdrażaliśmy systemy m.in. w obszarach:
+        Projektowaliśmy i wdrażaliśmy rozwiązania m.in. w obszarach:
       </p>
       <ul class="check-list" style="margin: 0; color: rgba(255,255,255,.72);">
         <li>platformy e-commerce zintegrowane z logistyką i automatyzacją</li>
         <li>systemy rozproszone łączące cloud z fizycznymi urządzeniami</li>
         <li>platformy operacyjne używane codziennie przez zespoły nietechniczne</li>
         <li>systemy mikroserwisowe działające 24/7 w produkcji</li>
-        <li>systemy rozwijane od MVP do pełnej skali</li>
+        <li>produkty rozwijane od MVP do pełnej skali</li>
+        <li>rozbudowane wdrożenia i integracje WordPress/WooCommerce</li>
       </ul>
 
       <div style="margin-top: 14px;">
