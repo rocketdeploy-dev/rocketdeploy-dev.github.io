@@ -9,6 +9,7 @@ const {
 
 const email = "hello@rocketdeploy.dev";
 const freelancerUrl = "https://www.freelancer.com/u/D4m1an0101";
+const upworkUrl = "https://www.upwork.com/freelancers/~01295f472444d6c9b2";
 const linkedinUrl = "https://www.linkedin.com/showcase/rocketdeploy-dev";
 
 const t = {
@@ -20,6 +21,8 @@ const t = {
     emailHint: "Najlepsze do rozmów technicznych.",
     freelancerLabel: "Napisz na Freelancer",
     freelancerHint: "Formalna współpraca przez platformę.",
+    upworkLabel: "Napisz na Upwork", // NEW
+    upworkHint: "Współpraca przez platformę i milestone’y.", // NEW
     linkedinLabel: "Napisz na LinkedIn",
     linkedinHint: "Pierwszy kontakt i networking.",
     foot: "Nie prowadzimy czatu na żywo — odpowiadamy asynchronicznie.",
@@ -32,6 +35,8 @@ const t = {
     emailHint: "Best for technical discussions.",
     freelancerLabel: "Message on Freelancer",
     freelancerHint: "If you want to work via the platform.",
+    upworkLabel: "Message on Upwork", // NEW
+    upworkHint: "Platform-based collaboration with milestones.", // NEW
     linkedinLabel: "Message on LinkedIn",
     linkedinHint: "Great for introductions and quick follow-ups.",
     foot: "We don’t use live chat — we reply asynchronously.",
@@ -90,6 +95,21 @@ const L = t[lang];
           <div class="rd-contact__go">↗</div>
         </div>
         <div class="rd-contact__hint">{L.freelancerHint}</div>
+      </a>
+
+      <!-- UPWORK -->
+      <a
+        class="rd-contact__item rd-contact__item--link"
+        href={upworkUrl}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <div class="rd-contact__kicker">upwork</div>
+        <div class="rd-contact__row">
+          <div class="rd-contact__label">{L.upworkLabel}</div>
+          <div class="rd-contact__go">↗</div>
+        </div>
+        <div class="rd-contact__hint">{L.upworkHint}</div>
       </a>
 
       <!-- LINKEDIN -->
