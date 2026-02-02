@@ -1,8 +1,46 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getCollection } from "astro:content";
+import { getCollection, type CollectionEntry } from "astro:content";
 
-const entries = await getCollection("pl-case-studies");
+type CaseEntry = CollectionEntry<"pl-case-studies">;
+
+const entries: CaseEntry[] = await getCollection("pl-case-studies");
+
+function byPriority(a: CaseEntry, b: CaseEntry): number {
+  const pa = a.data.priority ?? 0;
+  const pb = b.data.priority ?? 0;
+  return pb - pa;
+}
+
+const featured: CaseEntry[] = entries
+  .filter((e: CaseEntry) => Boolean(e.data.featured))
+  .sort(byPriority);
+
+const capability: CaseEntry[] = entries
+  .filter((e: CaseEntry) => !e.data.featured)
+  .sort(byPriority);
+
+// Group capability cases by category
+const grouped = capability.reduce<Record<string, CaseEntry[]>>(
+  (acc: Record<string, CaseEntry[]>, e: CaseEntry) => {
+    const key = e.data.category ?? "Pozostałe";
+    (acc[key] ??= []).push(e);
+    return acc;
+  },
+  {}
+);
+
+// Sort categories alphabetically, keep "Pozostałe" last
+const categories: string[] = Object.keys(grouped).sort((a: string, b: string) => {
+  if (a === "Pozostałe") return 1;
+  if (b === "Pozostałe") return -1;
+  return a.localeCompare(b, "pl");
+});
+
+function topTags(e: CaseEntry, limit = 6): string[] {
+  const t = e.data.tags;
+  return Array.isArray(t) ? t.slice(0, limit) : [];
+}
 ---
 
 <BaseLayout
@@ -13,18 +51,64 @@ const entries = await getCollection("pl-case-studies");
 >
   <section class="section">
     <h1>Case studies</h1>
-    <p class="lead">Anonimizowane przykłady realnych wdrożeń i problemów, które dowozimy.</p>
+    <p class="lead">
+      Anonimizowane przykłady realnych wdrożeń i problemów, które dowozimy.
+      Najpierw wybrane, najbardziej reprezentatywne case’y, potem krótsze przykłady pogrupowane kompetencyjnie.
+    </p>
   </section>
 
+  {featured.length > 0 && (
+    <section class="section">
+      <h2>Featured</h2>
+
+      <div class="grid">
+        {featured.map((e) => (
+          <a class="card" href={`/pl/case-studies/${e.slug}/`}>
+            <div class="kicker">{e.data.category ?? "case"}</div>
+            <h3>{e.data.title}</h3>
+            <p>{e.data.summary}</p>
+
+            {topTags(e).length > 0 && (
+              <div class="badges" style="margin-top: 12px;">
+                {topTags(e).map((t) => (
+                  <span class="badge">{t}</span>
+                ))}
+              </div>
+            )}
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+
   <section class="section">
-    <div class="grid">
-      {entries.map((e) => (
-        <a class="card" href={`/pl/case-studies/${e.slug}/`}>
-          <div class="kicker">case</div>
-          <h3>{e.data.title}</h3>
-          <p>{e.data.summary}</p>
-        </a>
-      ))}
-    </div>
+    <h2>More cases</h2>
+    <p style="margin-top:0; color: rgba(255,255,255,.72);">
+      Krótsze przykłady pogrupowane tematycznie — kliknij, jeśli temat jest zbliżony do Twojego problemu.
+    </p>
+
+    {categories.map((cat) => (
+      <div style="margin-top: 18px;">
+        <h3 style="margin-bottom: 10px;">{cat}</h3>
+
+        <div class="grid">
+          {grouped[cat].map((e) => (
+            <a class="card" href={`/pl/case-studies/${e.slug}/`}>
+              <div class="kicker">case</div>
+              <h3>{e.data.title}</h3>
+              <p>{e.data.summary}</p>
+
+              {topTags(e).length > 0 && (
+                <div class="badges" style="margin-top: 12px;">
+                  {topTags(e).map((t) => (
+                    <span class="badge">{t}</span>
+                  ))}
+                </div>
+              )}
+            </a>
+          ))}
+        </div>
+      </div>
+    ))}
   </section>
 </BaseLayout>

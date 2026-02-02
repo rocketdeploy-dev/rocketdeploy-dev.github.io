@@ -1,30 +1,114 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getCollection } from "astro:content";
+import { getCollection, type CollectionEntry } from "astro:content";
 
-const entries = await getCollection("en-case-studies");
+type CaseEntry = CollectionEntry<"en-case-studies">;
+
+const entries: CaseEntry[] = await getCollection("en-case-studies");
+
+function byPriority(a: CaseEntry, b: CaseEntry): number {
+  const pa = a.data.priority ?? 0;
+  const pb = b.data.priority ?? 0;
+  return pb - pa;
+}
+
+const featured: CaseEntry[] = entries
+  .filter((e: CaseEntry) => Boolean(e.data.featured))
+  .sort(byPriority);
+
+const capability: CaseEntry[] = entries
+  .filter((e: CaseEntry) => !e.data.featured)
+  .sort(byPriority);
+
+// Group capability cases by category
+const grouped = capability.reduce<Record<string, CaseEntry[]>>(
+  (acc: Record<string, CaseEntry[]>, e: CaseEntry) => {
+    const key = e.data.category ?? "Other";
+    (acc[key] ??= []).push(e);
+    return acc;
+  },
+  {}
+);
+
+// Sort categories alphabetically, keep "Other" last
+const categories: string[] = Object.keys(grouped).sort((a: string, b: string) => {
+  if (a === "Other") return 1;
+  if (b === "Other") return -1;
+  return a.localeCompare(b, "en");
+});
+
+function topTags(e: CaseEntry, limit = 6): string[] {
+  const t = e.data.tags;
+  return Array.isArray(t) ? t.slice(0, limit) : [];
+}
 ---
 
 <BaseLayout
   lang="en"
   routeKey="caseStudies"
   title="Case studies: delivered systems"
-  description="rocketdeploy case studies: how we design, build and deliver systems. Scope, architectural decisions and real production outcomes."
+  description="Selected rocketdeploy projects showing how we design, build, and ship production-ready systems. Scope, architectural decisions, and delivery outcomes."
 >
   <section class="section">
     <h1>Case studies</h1>
-    <p class="lead">Anonymized examples of real deliveries and systems we ship.</p>
+    <p class="lead">
+      Anonymized examples of real-world systems and problems we’ve delivered.
+      First, a few featured and most representative cases, followed by shorter examples grouped by capability.
+    </p>
   </section>
 
+  {featured.length > 0 && (
+    <section class="section">
+      <h2>Featured</h2>
+
+      <div class="grid">
+        {featured.map((e) => (
+          <a class="card" href={`/en/case-studies/${e.slug}/`}>
+            <div class="kicker">{e.data.category ?? "case"}</div>
+            <h3>{e.data.title}</h3>
+            <p>{e.data.summary}</p>
+
+            {topTags(e).length > 0 && (
+              <div class="badges" style="margin-top: 12px;">
+                {topTags(e).map((t) => (
+                  <span class="badge">{t}</span>
+                ))}
+              </div>
+            )}
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+
   <section class="section">
-    <div class="grid">
-      {entries.map((e) => (
-        <a class="card" href={`/en/case-studies/${e.slug}/`}>
-          <div class="kicker">case</div>
-          <h3>{e.data.title}</h3>
-          <p>{e.data.summary}</p>
-        </a>
-      ))}
-    </div>
+    <h2>More cases</h2>
+    <p style="margin-top:0; color: rgba(255,255,255,.72);">
+      Shorter, capability-focused examples — click if the topic is close to your problem.
+    </p>
+
+    {categories.map((cat) => (
+      <div style="margin-top: 18px;">
+        <h3 style="margin-bottom: 10px;">{cat}</h3>
+
+        <div class="grid">
+          {grouped[cat].map((e) => (
+            <a class="card" href={`/en/case-studies/${e.slug}/`}>
+              <div class="kicker">case</div>
+              <h3>{e.data.title}</h3>
+              <p>{e.data.summary}</p>
+
+              {topTags(e).length > 0 && (
+                <div class="badges" style="margin-top: 12px;">
+                  {topTags(e).map((t) => (
+                    <span class="badge">{t}</span>
+                  ))}
+                </div>
+              )}
+            </a>
+          ))}
+        </div>
+      </div>
+    ))}
   </section>
 </BaseLayout>

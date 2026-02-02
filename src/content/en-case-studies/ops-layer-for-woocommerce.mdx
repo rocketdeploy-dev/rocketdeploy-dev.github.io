@@ -1,0 +1,237 @@
+---
+title: Operational layer for WooCommerce with independent team panels
+summary: Design and implementation of an advanced plugin extending WooCommerce with operational workflows, roles, and panels available outside WordPress admin.
+
+category: CMS & integrations
+featured: true
+priority: 85
+tags: ["wordpress", "woocommerce", "rest api", "rbac", "operations", "workflow", "audit", "pdf", "mobile", "qr"]
+links:
+  - label: Architecture deep dive
+    href: "/en/case-studies/ops-plugin-architecture/"
+    kind: deep-dive
+  - label: Let’s talk
+    href: "/en/contact/"
+    kind: cta
+---
+
+## System context
+
+The project focused on extending an e-commerce platform with an **advanced operational layer**, used daily by teams responsible for order fulfillment, logistics, and internal processes.
+
+The starting point was a system based on **WooCommerce**, which:
+- handled sales well,
+- was not designed for complex operational workflows,
+- assumed that all users would work inside **WordPress admin**.
+
+In practice, this proved insufficient.  
+Operational teams:
+- were non-technical,
+- worked in different contexts (office, field, transport),
+- should not have access to the full CMS backend,
+- needed **dedicated tools** tailored to their daily work.
+
+The goal was to build an **independent operational layer**, deeply integrated with WooCommerce, yet **separated from the standard WordPress admin interface**.
+
+---
+
+## Core challenges
+
+### 1. WooCommerce as a data source, not a work interface
+
+The system needed to:
+- consume WooCommerce data and events,
+- react to order status changes,
+- remain fully compatible with the WP/WC ecosystem,
+
+while **not forcing operational teams to work in WordPress admin**.
+
+---
+
+### 2. Different roles, different work contexts
+
+The system supported multiple operational user types, including:
+- managers (desktop panel),
+- operational staff (mobile panel),
+- drivers / field teams (mobile panel).
+
+Each role:
+- had a different permission scope,
+- worked on different data views,
+- executed a different set of actions.
+
+The access model had to be:
+- precise,
+- easy to reason about,
+- maintainable in the long term.
+
+---
+
+### 3. Operability, auditability, and predictability
+
+The system could not be a “black box”.
+
+Every action:
+- was validated before execution,
+- recorded as an event,
+- traceable in an operation history.
+
+Auditability and action history were **critical** for daily operations and system maintenance.
+
+---
+
+### 4. Mobile work and fast data access
+
+Some users interacted with the system **exclusively on mobile devices**.
+
+This required:
+- mobile-optimized interfaces,
+- simple, unambiguous actions,
+- fast order lookup,
+- order identification via **QR code scanning using the phone camera**.
+
+---
+
+## Platform constraints
+
+The project was implemented **entirely within WordPress + WooCommerce**, which imposed specific constraints:
+
+- CMS lifecycle and hooks,
+- shared environment with other plugins,
+- strict backward compatibility requirements,
+- high security expectations.
+
+The solution had to be:
+- platform-compliant,
+- resilient to updates,
+- evolvable without full rewrites.
+
+---
+
+## Architectural approach
+
+A key decision was to treat **WordPress as an integration layer**, not as the center of operational logic.
+
+### Layered structure:
+- **CMS layer** – hooks, REST API, admin-post, WooCommerce integration.
+- **Application layer** – workflows, validations, state transitions, operational rules.
+- **Infrastructure layer** – persistence, event logging, document generation, external integrations.
+
+This separation made it possible to:
+- keep a large plugin maintainable,
+- clearly define responsibilities,
+- evolve the system iteratively.
+
+---
+
+## Operational panels (desktop and mobile)
+
+The system exposed **multiple independent panels**, adapted to different work contexts.
+
+### Manager panel (desktop)
+- operational dashboards,
+- order lists and filters,
+- execution of operational actions,
+- access to event history and audit data.
+
+### Staff and driver panels (mobile)
+- interfaces optimized for phones,
+- fast order lookup,
+- step-by-step process handling,
+- **QR code scanning via the phone camera**,
+- minimal interaction steps and clear feedback.
+
+Users **did not log into WordPress admin** to perform operational work.
+
+---
+
+## State and event management
+
+The system was built around a **state transition model**:
+- user actions triggered controlled state changes,
+- each change was recorded as an event,
+- the event log served as the foundation for auditing.
+
+Implemented mechanisms included:
+- idempotency safeguards,
+- pre-action validations,
+- protection against duplicate processing.
+
+---
+
+## Documents and artifacts
+
+Operational workflows included document generation (e.g. PDF):
+
+- based on the current system state,
+- using structured templates,
+- executed in a repeatable and controlled manner.
+
+Artifacts:
+- were linked to operational events,
+- could be stored locally or externally,
+- were not part of critical business logic.
+
+---
+
+## Plugin administration panel
+
+The plugin also provided a **dedicated administration panel** for technical administrators.
+
+It allowed:
+- managing plugin configuration,
+- handling updates and data migrations,
+- checking module and integration health,
+- basic system diagnostics.
+
+This made ongoing maintenance possible
+without manual database or code intervention.
+
+---
+
+## Installation, updates, and maintenance
+
+The plugin was designed for a **long operational lifecycle**:
+- safe upgrades,
+- automated data migrations,
+- synchronization of roles and permissions.
+
+This enabled:
+- rolling out new versions without downtime,
+- reducing operational risk,
+- evolving the system while it was in active use.
+
+---
+
+## Final outcome
+
+The result was a **robust operational plugin** that:
+- extended WooCommerce with a missing operational layer,
+- separated sales from fulfillment and operations,
+- supported both desktop and mobile workflows,
+- provided auditability and predictable behavior,
+- evolved iteratively in a production environment.
+
+The project demonstrated that even within **CMS platform constraints**, it is possible to build a mature, stable, and scalable operational system.
+
+---
+
+## Architecture showcase (GitHub)
+
+This case study focuses on the **context, challenges, and outcomes** of the project.
+
+If you want to go deeper — see how the system was structured,
+where architectural boundaries were drawn, and which engineering decisions
+and trade-offs shaped the solution — we prepared a dedicated
+**architecture showcase**.
+
+The repository covers:
+- architectural layers and responsibilities,
+- module layout and execution flows,
+- key engineering decisions and trade-offs,
+- approaches to operability, auditing, and long-term maintenance,
+
+while intentionally omitting business-specific logic and sensitive details.
+
+👉 **Architecture showcase (GitHub)**  
+https://github.com/rocketdeploy-dev/showcase-ops-layer-for-woocommerce

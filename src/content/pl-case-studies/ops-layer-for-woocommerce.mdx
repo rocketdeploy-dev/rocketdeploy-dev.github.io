@@ -1,0 +1,233 @@
+---
+title: Warstwa operacyjna dla WooCommerce z niezależnymi panelami dla zespołów
+summary: Projekt i wdrożenie zaawansowanej wtyczki rozszerzającej WooCommerce o operacyjne workflow, role oraz panele dostępne poza WordPress admin.
+
+category: CMS i integracje
+featured: true
+priority: 85
+tags: ["wordpress", "woocommerce", "rest api", "rbac", "operacje", "workflow", "audit", "pdf", "mobile", "qr"]
+links:
+  - label: Architecture deep dive
+    href: "/pl/case-studies/ops-plugin-architecture/"
+    kind: deep-dive
+  - label: Porozmawiajmy
+    href: "/pl/contact/"
+    kind: cta
+---
+
+## Kontekst systemowy
+
+Projekt dotyczył rozbudowy platformy e-commerce o **zaawansowaną warstwę operacyjną**, wykorzystywaną codziennie przez zespoły realizujące zamówienia, logistykę oraz obsługę procesów wewnętrznych.
+
+Punktem wyjścia był system oparty o **WooCommerce**, który:
+- dobrze obsługiwał sprzedaż,
+- nie był przystosowany do złożonych procesów operacyjnych,
+- zakładał korzystanie z **WordPress admin** przez wszystkich użytkowników.
+
+W praktyce okazało się to niewystarczające.  
+Zespoły operacyjne:
+- nie były techniczne,
+- pracowały w różnych kontekstach (biuro, teren, transport),
+- nie powinny mieć dostępu do całego zaplecza CMS,
+- potrzebowały **dedykowanych narzędzi**, dopasowanych do ich codziennej pracy.
+
+Celem projektu było stworzenie **niezależnej warstwy operacyjnej**, głęboko zintegrowanej z WooCommerce, ale **oddzielonej od standardowego panelu WordPress**.
+
+---
+
+## Główne problemy do rozwiązania
+
+### 1. WooCommerce jako źródło danych, nie jako interfejs pracy
+
+System musiał:
+- korzystać z danych i zdarzeń WooCommerce,
+- reagować na zmiany statusów zamówień,
+- zachować pełną kompatybilność z ekosystemem WP/WC,
+
+jednocześnie **nie opierać pracy zespołów operacyjnych na WordPress admin**.
+
+---
+
+### 2. Różne role, różne konteksty pracy
+
+W systemie funkcjonowało kilka typów użytkowników operacyjnych, m.in.:
+- managerowie (panel desktopowy),
+- pracownicy operacyjni (panel mobilny),
+- kierowcy / zespoły terenowe (panel mobilny).
+
+Każda rola:
+- miała inny zakres uprawnień,
+- pracowała na innych widokach danych,
+- wykonywała inny zestaw akcji.
+
+Model dostępu musiał być:
+- precyzyjny,
+- czytelny,
+- możliwy do utrzymania w długim okresie.
+
+---
+
+### 3. Operacyjność, audyt i przewidywalność
+
+System nie mógł być „czarną skrzynką”.
+
+Każda akcja:
+- była walidowana przed wykonaniem,
+- zapisywana jako zdarzenie,
+- możliwa do prześledzenia w historii operacji.
+
+Audyt i historia działań były **kluczowe** z punktu widzenia codziennej pracy zespołów oraz utrzymania systemu.
+
+---
+
+### 4. Praca mobilna i szybki dostęp do danych
+
+Część użytkowników korzystała z systemu **wyłącznie na urządzeniach mobilnych**.
+
+Wymagało to:
+- interfejsów dopasowanych do ekranów telefonów,
+- prostych, jednoznacznych akcji,
+- szybkiego wyszukiwania zamówień,
+- możliwości identyfikacji zamówień poprzez **skanowanie kodów QR aparatem telefonu**.
+
+---
+
+## Ograniczenia platformy
+
+Projekt był realizowany **w całości w ramach WordPress + WooCommerce**, co niosło ze sobą konkretne ograniczenia:
+
+- lifecycle i hooki CMS,
+- współdzielenie środowiska z innymi wtyczkami,
+- konieczność zachowania kompatybilności przy aktualizacjach,
+- wysokie wymagania bezpieczeństwa.
+
+Rozwiązanie musiało być:
+- zgodne z platformą,
+- odporne na zmiany,
+- możliwe do dalszego rozwoju bez „przepisywania od nowa”.
+
+---
+
+## Podejście architektoniczne
+
+Kluczową decyzją było **traktowanie WordPressa jako warstwy integracyjnej**, a nie centrum logiki operacyjnej.
+
+### Podział na warstwy:
+- **Warstwa CMS** – hooki, REST API, admin-post, integracja z WooCommerce.
+- **Warstwa aplikacyjna** – workflow, walidacje, przejścia stanów, reguły operacyjne.
+- **Warstwa infrastrukturalna** – persistencja, log zdarzeń, generowanie dokumentów, integracje zewnętrzne.
+
+Taki podział pozwolił:
+- utrzymać porządek w dużej wtyczce,
+- jasno oddzielić odpowiedzialności,
+- rozwijać system iteracyjnie.
+
+---
+
+## Panele operacyjne (desktop i mobile)
+
+System udostępniał **kilka niezależnych paneli**, dopasowanych do kontekstu pracy użytkowników.
+
+### Panel managera (desktop)
+- dashboardy operacyjne,
+- listy i filtry zamówień,
+- wykonywanie akcji operacyjnych,
+- dostęp do historii zdarzeń i audytu.
+
+### Panel pracownika i kierowcy (mobile)
+- interfejs zoptymalizowany pod telefony,
+- szybkie wyszukiwanie zamówień,
+- obsługa procesów krok po kroku,
+- **skanowanie kodów QR aparatem telefonu**,
+- minimalna liczba kliknięć i czytelne komunikaty.
+
+Użytkownicy **nie logowali się do WordPress admin**.
+
+---
+
+## Zarządzanie stanem i zdarzeniami
+
+System oparto o **model przejść stanów**:
+- akcje powodowały kontrolowane zmiany stanu,
+- każda zmiana była zapisywana jako zdarzenie,
+- log zdarzeń stanowił podstawę audytu.
+
+Zastosowano:
+- mechanizmy idempotencji,
+- walidacje przed wykonaniem akcji,
+- zabezpieczenia przed wielokrotnym przetwarzaniem.
+
+---
+
+## Dokumenty i artefakty
+
+Częścią procesów było generowanie dokumentów (np. PDF):
+- w oparciu o aktualny stan danych,
+- z wykorzystaniem szablonów,
+- w sposób powtarzalny i kontrolowany.
+
+Artefakty:
+- były powiązane ze zdarzeniami,
+- mogły być przechowywane lokalnie lub zewnętrznie,
+- nie stanowiły krytycznej logiki systemu.
+
+---
+
+## Panel administracyjny wtyczki
+
+Wtyczka posiadała **dedykowany panel administracyjny** dla administratorów technicznych.
+
+Umożliwiał on m.in.:
+- zarządzanie konfiguracją,
+- aktualizacje i migracje,
+- sprawdzanie stanu modułów i integracji,
+- podstawową diagnostykę systemu.
+
+---
+
+## Instalacja, aktualizacje i utrzymanie
+
+Wtyczka została zaprojektowana z myślą o **długim cyklu życia**:
+- bezpieczne aktualizacje,
+- automatyczne migracje danych,
+- synchronizację ról i uprawnień.
+
+Pozwalało to:
+- wdrażać kolejne wersje bez przestojów,
+- ograniczać ryzyko operacyjne,
+- rozwijać system równolegle z jego użytkowaniem.
+
+---
+
+## Efekt końcowy
+
+Powstała **zaawansowana wtyczka operacyjna**, która:
+- rozszerzyła WooCommerce o brakującą warstwę operacyjną,
+- oddzieliła sprzedaż od realizacji i obsługi,
+- wspierała pracę desktopową i mobilną,
+- zapewniła audytowalność i przewidywalność procesów,
+- była rozwijana iteracyjnie w środowisku produkcyjnym.
+
+Projekt pokazał, że nawet w ramach **ograniczeń platformy CMS**
+można zbudować dojrzały, stabilny i skalowalny system operacyjny.
+
+---
+
+## Architecture showcase (GitHub)
+
+Ten case study opisuje **kontekst, problemy i efekty projektu**.
+
+Jeśli chcesz zajrzeć głębiej — zobaczyć, jak system został podzielony na warstwy,
+jakie granice architektoniczne zostały przyjęte oraz jakie decyzje i trade-offy
+stały za tym rozwiązaniem — przygotowaliśmy osobny **architecture showcase**.
+
+Repozytorium zawiera:
+- opis architektury i odpowiedzialności warstw,
+- mapę modułów i przepływów,
+- kluczowe decyzje inżynierskie,
+- podejście do operacyjności, audytu i utrzymania,
+
+bez ujawniania logiki biznesowej ani wrażliwych danych.
+
+👉 **Architecture showcase (GitHub)**  
+https://github.com/rocketdeploy-dev/showcase-ops-layer-for-woocommerce
