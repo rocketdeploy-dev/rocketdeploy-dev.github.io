@@ -704,15 +704,21 @@ h1{
    Scope: the grid is limited to .gallery[data-gallery-id] so it won't affect
    other .gallery usages. The modal uses dialog.lightbox. */
 
-/* Grid */
-.gallery[data-gallery-id] {
+/* Root wrapper */
+.gallery[data-gallery-id]{
+  display: block;
+}
+
+/* Grid wrapper */
+.gallery[data-gallery-id] .gallery-grid{
   display: grid;
   grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
   gap: 14px;
 }
 
 /* Thumbnails: constant height to avoid "tallest item stretches the row" */
-.gallery[data-gallery-id] .thumb {
+.gallery[data-gallery-id] .thumb{
+  position: relative;
   padding: 0;
   border: 1px solid rgba(255,255,255,.12);
   border-radius: 14px;
@@ -722,15 +728,71 @@ h1{
   aspect-ratio: 16 / 10;
 }
 
-.gallery[data-gallery-id] .thumb img {
+/* Blurred background layer */
+.gallery[data-gallery-id] .thumb .thumb-bg{
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  display: block;
   object-fit: cover;
+  filter: blur(14px);
+  transform: scale(1.08);
+  opacity: .55;
+  pointer-events: none;
+}
+
+/* Foreground image (always fully visible) */
+.gallery[data-gallery-id] .thumb .thumb-img{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Fade effect when collapsed */
+.gallery[data-gallery-id].has-fade .gallery-grid{
+  position: relative;
+}
+
+.gallery[data-gallery-id].has-fade .gallery-grid::after{
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 72px;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,.85));
+}
+
+/* Actions */
+.gallery[data-gallery-id] .gallery-actions{
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.gallery[data-gallery-id] .gallery-toggle{
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.92);
+  border-radius: 999px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.gallery[data-gallery-id] .gallery-toggle:hover{
+  background: rgba(255,255,255,.10);
+}
+
+.gallery[data-gallery-id] .gallery-toggle:active{
+  background: rgba(255,255,255,.14);
 }
 
 /* Lightbox modal: centered in viewport (no page scroll needed) */
-dialog.lightbox {
+dialog.lightbox{
   position: fixed;
   top: 50%;
   left: 50%;
@@ -744,19 +806,19 @@ dialog.lightbox {
   max-height: 90vh;
 }
 
-dialog.lightbox::backdrop {
+dialog.lightbox::backdrop{
   background: rgba(0,0,0,.75);
 }
 
 /* Lightbox content */
-dialog.lightbox .lb-image {
+dialog.lightbox .lb-image{
   max-width: 90vw;
   max-height: 80vh;
   display: block;
   margin: 24px auto 12px;
 }
 
-dialog.lightbox .caption {
+dialog.lightbox .caption{
   color: rgba(255,255,255,.75);
   text-align: center;
   padding: 0 20px 20px;
@@ -764,7 +826,7 @@ dialog.lightbox .caption {
 }
 
 /* Close + navigation buttons: reset to avoid any global button styles */
-dialog.lightbox .close {
+dialog.lightbox .close{
   all: unset;
   position: absolute;
   top: 12px;
@@ -777,7 +839,7 @@ dialog.lightbox .close {
   padding: 8px 10px;
 }
 
-dialog.lightbox .nav {
+dialog.lightbox .nav{
   all: unset;
   position: absolute;
   top: 50%;
@@ -796,34 +858,34 @@ dialog.lightbox .nav {
   user-select: none;
 }
 
-dialog.lightbox .nav:hover { background: rgba(255,255,255,.16); }
-dialog.lightbox .nav:active { background: rgba(255,255,255,.22); }
+dialog.lightbox .nav:hover{ background: rgba(255,255,255,.16); }
+dialog.lightbox .nav:active{ background: rgba(255,255,255,.22); }
 
-dialog.lightbox .nav svg {
+dialog.lightbox .nav svg{
   width: 22px;
   height: 22px;
   display: block;
 }
 
-dialog.lightbox .nav.prev { left: 14px; }
-dialog.lightbox .nav.next { right: 14px; }
+dialog.lightbox .nav.prev{ left: 14px; }
+dialog.lightbox .nav.next{ right: 14px; }
 
 /* Responsive */
-@media (max-width: 900px) {
-  .gallery[data-gallery-id] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 900px){
+  .gallery[data-gallery-id] .gallery-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-@media (max-width: 560px) {
-  .gallery[data-gallery-id] { grid-template-columns: 1fr; }
+@media (max-width: 560px){
+  .gallery[data-gallery-id] .gallery-grid{ grid-template-columns: 1fr; }
 
-  dialog.lightbox .nav {
+  dialog.lightbox .nav{
     width: 40px;
     height: 40px;
   }
-  dialog.lightbox .nav svg {
+  dialog.lightbox .nav svg{
     width: 20px;
     height: 20px;
   }
-  dialog.lightbox .nav.prev { left: 10px; }
-  dialog.lightbox .nav.next { right: 10px; }
+  dialog.lightbox .nav.prev{ left: 10px; }
+  dialog.lightbox .nav.next{ right: 10px; }
 }
