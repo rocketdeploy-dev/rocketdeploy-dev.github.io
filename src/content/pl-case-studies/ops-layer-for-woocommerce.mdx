@@ -15,6 +15,8 @@ links:
     kind: cta
 ---
 
+import GalleryLightbox from "../../components/GalleryLightbox.astro";
+
 ## Kontekst systemowy
 
 Projekt dotyczył rozbudowy platformy e-commerce o **zaawansowaną warstwę operacyjną**, wykorzystywaną codziennie przez zespoły realizujące zamówienia, logistykę oraz obsługę procesów wewnętrznych.
@@ -142,6 +144,106 @@ System udostępniał **kilka niezależnych paneli**, dopasowanych do kontekstu p
 - minimalna liczba kliknięć i czytelne komunikaty.
 
 Użytkownicy **nie logowali się do WordPress admin**.
+
+### UI showcase
+
+<GalleryLightbox
+  cols={3}
+  images={[
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_1_1.png",
+      alt: "Lista zamówień",
+      caption: "Widok listy zamówień z statusami operacyjnymi i szybkimi akcjami."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_1_2.png",
+      alt: "Rozszerzona lista zamówień",
+      caption: "Rozszerzony widok listy zamówień z dodatkowym kontekstem operacyjnym."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_3.png",
+      alt: "Filtry zamówień",
+      caption: "Filtrowanie zamówień na urządzeniach mobilnych według statusu i punktu odbioru."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_4_1.png",
+      alt: "Priorytet zamówienia",
+      caption: "Zmiana priorytetu zamówienia wpływająca na kolejność przetwarzania."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_5_1.png",
+      alt: "Szczegóły zamówienia",
+      caption: "Szczegółowy widok zamówienia łączący dane klienta, produkty i informacje o realizacji."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_5_2.png",
+      alt: "Ślad audytowy",
+      caption: "Operacyjny ślad audytowy prezentujący systemowe zmiany stanów zamówienia."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_5_3.png",
+      alt: "Proces odbioru przez kierowcę",
+      caption: "Proces odbioru przesyłki przez kierowcę z potwierdzeniem opartym o kod QR."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_5_4.png",
+      alt: "Obsługa listu przewozowego",
+      caption: "Druk listu przewozowego oraz skanowanie kodu QR podczas procesu odbioru."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_5_5.png",
+      alt: "Potwierdzenie odbioru",
+      caption: "Bezpieczne potwierdzenie odbioru przesyłki z kontrolowaną akcją użytkownika."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_6_1.png",
+      alt: "Szczegóły odbioru",
+      caption: "Mobilny kontekst odbioru z informacją o statusie zamówienia i dostępnych akcjach."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_6_2.png",
+      alt: "Sortowanie zamówień",
+      caption: "Sortowanie zamówień na urządzeniach mobilnych według daty, priorytetu i terminu."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_7_1.png",
+      alt: "Historia operacji – desktop",
+      caption: "Historia operacji w wersji desktopowej z uwzględnieniem ról i zdarzeń audytowych."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_7_2.png",
+      alt: "Historia operacji – mobile",
+      caption: "Mobilny widok historii operacji dla ról terenowych i kierowców."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_8.png",
+      alt: "Wyszukiwanie zamówień",
+      caption: "Operacyjne wyszukiwanie zamówień umożliwiające szybki dostęp do konkretnych pozycji."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_9.png",
+      alt: "Lista odbiorów kierowcy",
+      caption: "Lista odbiorów kierowcy z aktywnym kontekstem operacyjnym."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_10.png",
+      alt: "Ekran potwierdzenia odbioru",
+      caption: "Ekran potwierdzenia odbioru wymagający jednoznacznej akcji użytkownika."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_11.png",
+      alt: "Zakończony odbiór",
+      caption: "Stan zakończonego odbioru po poprawnym zeskanowaniu listu przewozowego."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_12.png",
+      alt: "Finalizacja odbioru",
+      caption: "Końcowe potwierdzenie odbioru z jednoznaczną akceptacją użytkownika."
+    }
+  ]}
+/>
+
+_Zrzuty interfejsu przedstawione z anonimizowanymi danymi oraz usuniętym brandingiem._
 
 ---
 

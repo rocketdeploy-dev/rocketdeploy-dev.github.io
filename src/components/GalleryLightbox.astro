@@ -1,0 +1,147 @@
+---
+type GalleryImage = {
+  src: string;
+  alt?: string;
+  caption?: string;
+};
+
+const {
+  images = [],
+  cols = 3,
+}: {
+  images?: GalleryImage[];
+  cols?: number;
+} = Astro.props;
+
+// Unique per component instance (build-time)
+const galleryId = `glb-${Math.random().toString(36).slice(2, 10)}`;
+const dialogId = `dlg-${galleryId}`;
+---
+
+<div class="gallery" style={`--cols:${cols};`} data-gallery-id={galleryId}>
+  {images.map((img, i) => (
+    <button
+      class="thumb"
+      type="button"
+      data-index={i}
+      aria-label={`Open image ${i + 1} of ${images.length}`}
+    >
+      <img src={img.src} alt={img.alt ?? ""} loading="lazy" />
+    </button>
+  ))}
+
+  <dialog class="lightbox" id={dialogId} aria-label="Image viewer">
+    <button class="close" type="button" aria-label="Close">×</button>
+
+    <button class="nav prev" type="button" aria-label="Previous image">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path
+          d="M15 18l-6-6 6-6"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
+
+    <button class="nav next" type="button" aria-label="Next image">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path
+          d="M9 6l6 6-6 6"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
+
+    <img class="lb-image" src="" alt="" />
+    <p class="caption" hidden></p>
+  </dialog>
+
+  <script is:inline define:vars={{ galleryId, dialogId, images }}>
+    (function () {
+      const gallery = document.querySelector(`[data-gallery-id="${galleryId}"]`);
+      if (!gallery || !Array.isArray(images) || images.length === 0) return;
+
+      const dialog = document.getElementById(dialogId);
+      if (!dialog) return;
+
+      const imgEl = dialog.querySelector(".lb-image");
+      const captionEl = dialog.querySelector(".caption");
+      const btnClose = dialog.querySelector(".close");
+      const btnPrev = dialog.querySelector(".prev");
+      const btnNext = dialog.querySelector(".next");
+
+      let index = 0;
+
+      function render(i) {
+        index = (i + images.length) % images.length;
+        const it = images[index];
+
+        imgEl.src = it.src;
+        imgEl.alt = it.alt || "";
+
+        if (it.caption) {
+          captionEl.textContent = it.caption;
+          captionEl.hidden = false;
+        } else {
+          captionEl.textContent = "";
+          captionEl.hidden = true;
+        }
+      }
+
+      function openAt(i) {
+        render(i);
+
+        try {
+          dialog.showModal();
+        } catch (_) {}
+
+        // Focus without scrolling (prevents jump in many browsers)
+        btnClose?.focus({ preventScroll: true });
+      }
+
+      function prev() {
+        render(index - 1);
+      }
+      function next() {
+        render(index + 1);
+      }
+
+      // Thumb click → open
+      gallery.querySelectorAll(".thumb").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const i = Number(btn.dataset.index || 0);
+          openAt(i);
+        });
+      });
+
+      btnClose?.addEventListener("click", () => dialog.close());
+      btnPrev?.addEventListener("click", prev);
+      btnNext?.addEventListener("click", next);
+
+      // Keyboard navigation (only when THIS dialog is open)
+      document.addEventListener("keydown", (e) => {
+        if (!dialog.open) return;
+
+        if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          prev();
+        } else if (e.key === "ArrowRight") {
+          e.preventDefault();
+          next();
+        }
+      });
+
+      // Click on backdrop area (dialog element itself) closes
+      dialog.addEventListener("click", (e) => {
+        if (e.target === dialog) dialog.close();
+      });
+    })();
+  </script>
+</div>

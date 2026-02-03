@@ -15,6 +15,8 @@ links:
     kind: cta
 ---
 
+import GalleryLightbox from "../../components/GalleryLightbox.astro";
+
 ## System context
 
 The project focused on extending an e-commerce platform with an **advanced operational layer**, used daily by teams responsible for order fulfillment, logistics, and internal processes.
@@ -142,6 +144,106 @@ The system exposed **multiple independent panels**, adapted to different work co
 - minimal interaction steps and clear feedback.
 
 Users **did not log into WordPress admin** to perform operational work.
+
+### UI showcase
+
+<GalleryLightbox
+  cols={3}
+  images={[
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_1_1.png",
+      alt: "Orders list",
+      caption: "Order list view with operational statuses and quick actions."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_1_2.png",
+      alt: "Extended orders list",
+      caption: "Extended order list view with additional operational context."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_3.png",
+      alt: "Order filters",
+      caption: "Mobile order filtering by status and pickup point."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_4_1.png",
+      alt: "Order priority",
+      caption: "Order priority change affecting processing order."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_5_1.png",
+      alt: "Order details",
+      caption: "Detailed order view combining customer, products, and fulfillment data."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_5_2.png",
+      alt: "Audit trail",
+      caption: "Operational audit trail showing system-driven order state changes."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_5_3.png",
+      alt: "Driver pickup workflow",
+      caption: "Driver pickup workflow with QR-based confirmation."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_5_4.png",
+      alt: "Waybill handling",
+      caption: "Waybill printing and QR scanning during pickup process."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_5_5.png",
+      alt: "Pickup confirmation",
+      caption: "Secure parcel pickup confirmation with controlled user action."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_6_1.png",
+      alt: "Pickup details",
+      caption: "Mobile pickup context with order status and available actions."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_6_2.png",
+      alt: "Order sorting",
+      caption: "Mobile order sorting by date, priority, and due time."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_7_1.png",
+      alt: "Operation history desktop",
+      caption: "Desktop operation history with role-aware audit events."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_7_2.png",
+      alt: "Operation history mobile",
+      caption: "Mobile view of operation history for field and driver roles."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_8.png",
+      alt: "Order search",
+      caption: "Operational order search for fast access to specific orders."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_9.png",
+      alt: "Driver pickup list",
+      caption: "Driver pickup list with active operational context."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_10.png",
+      alt: "Pickup confirmation",
+      caption: "Pickup confirmation screen requiring explicit user action."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_11.png",
+      alt: "Pickup completed",
+      caption: "Pickup completion state after successful waybill scan."
+    },
+    {
+      src: "/case-studies/ops-layer/showcase-ops-layer-for-woocommerce_12.png",
+      alt: "Pickup finalization",
+      caption: "Final pickup confirmation with explicit user acknowledgment."
+    }
+  ]}
+/>
+
+_UI screenshots shown with anonymized data and removed branding._
 
 ---
 
