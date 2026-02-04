@@ -25,7 +25,7 @@ The application acts as a **single-page interface** for day-to-day operational t
 - managing staff members and their roles,
 - browsing and inspecting service points,
 - viewing operational status and assignments,
-- interacting with data exposed by backend systems through a BFF layer.
+- interacting with data exposed by backend systems through **a dedicated BFF layer designed and implemented as part of the project.**
 
 The system was designed from the start as:
 - an **internal tool**, not a public-facing application,
@@ -80,6 +80,9 @@ Key requirements included:
 - zero leakage of authentication data to third-party origins.
 
 The frontend had to remain **contract-agnostic** while still enforcing strong operational guarantees.
+
+The BFF was treated as a first-class component of the frontend architecture,
+designed and implemented alongside the SPA to provide stable contracts and isolate backend complexity.
 
 ---
 
@@ -207,6 +210,7 @@ _UI screenshots shown with anonymized data and removed branding._
 The frontend integrates with backend systems using:
 - REST over HTTP with JSON payloads,
 - same-origin API paths exposed by a BFF layer,
+- a dedicated BFF layer designed and implemented together with the SPA,
 - OAuth2 / OpenID Connect authentication (Authorization Code + PKCE).
 
 Key characteristics:
@@ -217,6 +221,8 @@ Key characteristics:
 - backend errors are surfaced as explicit UI states.
 
 UI components remain **decoupled from API details**, relying on a centralized integration layer.
+
+The BFF is responsible for shaping backend responses into frontend-oriented contracts and enforcing consistency across multiple backend systems.
 
 ---
 

@@ -25,7 +25,7 @@ Aplikacja pełni rolę **interfejsu typu single-page** do codziennych zadań ope
 - zarządzanie pracownikami i ich rolami,
 - przeglądanie i analiza punktów usługowych,
 - podgląd statusów operacyjnych i przypisań,
-- interakcja z danymi udostępnianymi przez systemy backendowe poprzez warstwę BFF.
+- interakcję z danymi udostępnianymi przez systemy backendowe za pośrednictwem ***dedykowanej warstwy BFF zaprojektowanej i zaimplementowanej jako część projektu.**
 
 System od początku projektowany był jako:
 - **narzędzie wewnętrzne**, a nie aplikacja publiczna,
@@ -80,6 +80,10 @@ Kluczowe wymagania obejmowały:
 - brak wycieku danych uwierzytelniających do zewnętrznych domen.
 
 Frontend musiał pozostać **agnostyczny względem kontraktów**, jednocześnie egzekwując silne gwarancje operacyjne.
+
+Warstwa BFF była traktowana jako pełnoprawny element architektury frontendowej,
+projektowana i implementowana równolegle z aplikacją SPA w celu zapewnienia stabilnych kontraktów
+oraz izolacji złożoności systemów backendowych.
 
 ---
 
@@ -207,6 +211,7 @@ _Zrzuty UI prezentowane są z anonimizowanymi danymi i usuniętym brandingiem._
 Frontend integruje się z systemami backendowymi poprzez:
 - REST over HTTP z payloadami JSON,
 - ścieżki API typu same-origin wystawione przez warstwę BFF,
+- dedykowaną warstwę BFF zaprojektowaną i zaimplementowaną równolegle z aplikacją SPA,
 - uwierzytelnianie OAuth2 / OpenID Connect (Authorization Code + PKCE).
 
 Kluczowe cechy:
@@ -217,6 +222,10 @@ Kluczowe cechy:
 - błędy backendu są prezentowane jako jawne stany UI.
 
 Komponenty UI pozostają **odsprzężone od szczegółów API**, korzystając ze scentralizowanej warstwy integracji.
+
+Warstwa BFF odpowiada za kształtowanie odpowiedzi systemów backendowych
+do kontraktów dopasowanych do potrzeb frontendu oraz za wymuszanie spójności
+pomiędzy wieloma systemami backendowymi.
 
 ---
 
