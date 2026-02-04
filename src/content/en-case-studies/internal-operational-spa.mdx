@@ -1,0 +1,279 @@
+---
+title: Role-based operational SPA for internal systems
+summary: Design and implementation of a production-grade single-page application used as an operational interface for internal teams, built with clear architectural boundaries and long-term evolution in mind.
+
+category: Frontend architecture
+featured: true
+priority: 80
+tags: ["spa", "angular", "typescript", "rbac", "frontend architecture", "bff", "operations", "internal tools"]
+links:
+  - label: Architecture showcase (GitHub)
+    href: "https://github.com/rocketdeploy-dev/showcase-spa-architecture"
+    kind: deep-dive
+  - label: Let’s talk
+    href: "/en/contact/"
+    kind: cta
+---
+
+import GalleryLightbox from "../../components/GalleryLightbox.astro";
+
+## System context
+
+The project focused on building a **dedicated operational frontend** for internal teams working with a larger, distributed system.
+
+The application acts as a **single-page interface** for day-to-day operational tasks such as:
+- managing staff members and their roles,
+- browsing and inspecting service points,
+- viewing operational status and assignments,
+- interacting with data exposed by backend systems through a BFF layer.
+
+The system was designed from the start as:
+- an **internal tool**, not a public-facing application,
+- a long-lived operational interface,
+- a frontend that must remain predictable, secure, and evolvable over time.
+
+---
+
+## Core challenges
+
+### 1. Frontend as an operational system, not just UI
+
+The application is not a “thin UI layer”.
+
+It is responsible for:
+- enforcing access boundaries before data is shown,
+- presenting role-aware views and actions,
+- handling authentication state and session lifecycle,
+- surfacing operational status clearly and consistently.
+
+This required treating the frontend as a **first-class system component**, not just a rendering layer.
+
+---
+
+### 2. Multiple roles, shared interface
+
+Different user groups operate within the same application, including:
+- operational staff,
+- managers and coordinators,
+- technical or administrative users.
+
+Each role:
+- sees different data,
+- has access to different actions,
+- works in a different operational context.
+
+The challenge was to design:
+- a clear role-based access model,
+- predictable navigation boundaries,
+- a UI that remains understandable even as responsibilities differ.
+
+---
+
+### 3. Secure and predictable backend integration
+
+The SPA communicates with backend systems via a **BFF (Backend-for-Frontend) API**.
+
+Key requirements included:
+- secure authentication via an external identity provider,
+- safe token handling on the client side,
+- consistent error handling and recovery,
+- zero leakage of authentication data to third-party origins.
+
+The frontend had to remain **contract-agnostic** while still enforcing strong operational guarantees.
+
+---
+
+### 4. Long-term evolution under active use
+
+The application is actively evolving.
+
+From the beginning, it had to support:
+- incremental feature delivery,
+- architectural changes without rewrites,
+- partial functionality without breaking existing flows.
+
+This required:
+- strong architectural boundaries,
+- minimal coupling between feature areas,
+- explicit handling of “work-in-progress” areas.
+
+---
+
+## Architectural approach
+
+A key decision was to design the SPA as a **layered frontend system**, not a monolithic UI.
+
+### High-level structure:
+- **Application shell** – global providers, routing, layout, and error handling.
+- **Routing and guards** – navigation structure and access enforcement.
+- **Feature areas** – isolated UI domains responsible for view composition.
+- **Cross-cutting services** – authentication, theming, localization.
+- **HTTP pipeline** – token attachment, retry logic, and error propagation.
+
+This approach:
+- keeps responsibilities explicit,
+- allows features to evolve independently,
+- makes the system understandable without code-level knowledge.
+
+---
+
+## Operational views and workflows
+
+The current version of the application already supports several operational workflows.
+
+### Staff management
+- role-aware staff listing,
+- detailed staff profiles,
+- visibility of roles, areas, and notification preferences,
+- clear operational status indicators.
+
+### Service point management
+- listing of service points with operational state,
+- detailed views combining address, services, and coordinates,
+- status visibility and assignment context.
+
+### UI showcase
+
+<GalleryLightbox
+  cols={2}
+  images={[
+    {
+      src: "/case-studies/internal-operational-spa/1_1.png",
+      alt: "Staff members list (dark mode)",
+      caption: "Staff members list in dark mode with role/status chips and quick actions."
+    },
+    {
+      src: "/case-studies/internal-operational-spa/1_2.png",
+      alt: "Staff member details (dark mode)",
+      caption: "Staff profile view in dark mode with contact info, roles/areas, and notification preferences."
+    },
+    {
+      src: "/case-studies/internal-operational-spa/1_3.png",
+      alt: "Staff members list (light mode)",
+      caption: "Staff members list in light mode with consistent layout, badges, and quick actions."
+    },
+    {
+      src: "/case-studies/internal-operational-spa/1_4.png",
+      alt: "Staff member details (light mode)",
+      caption: "Staff profile view in light mode showing role/area assignments and notification opt-ins."
+    },
+
+    {
+      src: "/case-studies/internal-operational-spa/2_1.png",
+      alt: "Service points list (dark mode)",
+      caption: "Service points list in dark mode with operational state and capability/service tags."
+    },
+    {
+      src: "/case-studies/internal-operational-spa/2_2.png",
+      alt: "Service point details (dark mode)",
+      caption: "Service point details in dark mode combining address, services, and coordinates."
+    },
+    {
+      src: "/case-studies/internal-operational-spa/2_3.png",
+      alt: "Service points list (light mode)",
+      caption: "Service points list in light mode with the same information hierarchy and tag layout."
+    },
+    {
+      src: "/case-studies/internal-operational-spa/2_4.png",
+      alt: "Service point details (light mode)",
+      caption: "Service point details in light mode with location metadata, services, and coordinates."
+    },
+
+    {
+      src: "/case-studies/internal-operational-spa/3_1.png",
+      alt: "Settings screen (dark mode)",
+      caption: "Settings screen in dark mode showing theme and language preferences."
+    },
+    {
+      src: "/case-studies/internal-operational-spa/3_2.png",
+      alt: "Settings screen (light mode)",
+      caption: "Settings screen in light mode with appearance and localization controls."
+    },
+
+    {
+      src: "/case-studies/internal-operational-spa/4_1.png",
+      alt: "Authentication screen (Keycloak)",
+      caption: "External authentication boundary handled by Keycloak, providing centralized login, language selection, and session management before entering the SPA."
+    }
+  ]}
+/>
+
+_UI screenshots shown with anonymized data and removed branding._
+
+---
+
+## Backend communication model
+
+The frontend integrates with backend systems using:
+- REST over HTTP with JSON payloads,
+- same-origin API paths exposed by a BFF layer,
+- OAuth2 / OpenID Connect authentication (Authorization Code + PKCE).
+
+Key characteristics:
+- authentication state is managed centrally,
+- tokens are stored in memory and attached via HTTP interceptors,
+- 401 responses trigger a controlled retry and fallback to login,
+- 403 responses route to access-denied views,
+- backend errors are surfaced as explicit UI states.
+
+UI components remain **decoupled from API details**, relying on a centralized integration layer.
+
+---
+
+## State management and reliability
+
+The application uses:
+- lightweight local state within components,
+- shared state via dedicated services,
+- Angular Signals for synchronous UI state,
+- RxJS for asynchronous flows.
+
+Reliability patterns include:
+- single-retry guards for authentication failures,
+- explicit prevention of retry loops,
+- predictable loading and error states.
+
+The frontend does **not** embed business rules or domain workflows beyond access control.
+
+---
+
+## Current state and evolution
+
+This application is **actively evolving**.
+
+Not all planned features are implemented yet, and some areas are intentionally minimal.
+This is a deliberate choice:
+- functionality is added incrementally,
+- architectural boundaries are established early,
+- unfinished areas do not compromise system stability.
+
+The case study reflects a **real production trajectory**, not a polished demo snapshot.
+
+---
+
+## Final outcome (so far)
+
+The result is a **solid operational SPA foundation** that:
+- supports role-based internal workflows,
+- enforces access and security at the UI level,
+- integrates cleanly with backend systems,
+- remains understandable and evolvable as features grow.
+
+The project demonstrates how a frontend application can be designed
+as a **long-term operational system**, even while still under active development.
+
+---
+
+## Architecture showcase (GitHub)
+
+This case study focuses on **context, challenges, and outcomes**.
+
+For a deeper look at:
+- frontend architecture,
+- execution flows,
+- integration patterns,
+- and engineering trade-offs,
+
+see the dedicated **architecture showcase** repository:
+
+👉 https://github.com/rocketdeploy-dev/showcase-internal-operational-spa

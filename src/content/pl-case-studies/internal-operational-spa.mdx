@@ -1,0 +1,279 @@
+---
+title: Operacyjna aplikacja SPA z kontrolą ról dla systemów wewnętrznych
+summary: Projekt i implementacja produkcyjnej aplikacji typu single-page, wykorzystywanej jako interfejs operacyjny dla zespołów wewnętrznych, zaprojektowanej z myślą o wyraźnych granicach architektonicznych i długoterminowej ewolucji.
+
+category: Architektura frontendu
+featured: true
+priority: 80
+tags: ["spa", "angular", "typescript", "rbac", "architektura frontendu", "bff", "operacje", "narzędzia wewnętrzne"]
+links:
+  - label: Showcase architektury (GitHub)
+    href: "https://github.com/rocketdeploy-dev/showcase-spa-architecture"
+    kind: deep-dive
+  - label: Porozmawiajmy
+    href: "/pl/contact/"
+    kind: cta
+---
+
+import GalleryLightbox from "../../components/GalleryLightbox.astro";
+
+## Kontekst systemowy
+
+Projekt koncentrował się na zbudowaniu **dedykowanego frontendu operacyjnego** dla zespołów wewnętrznych pracujących w ramach większego, rozproszonego systemu.
+
+Aplikacja pełni rolę **interfejsu typu single-page** do codziennych zadań operacyjnych, takich jak:
+- zarządzanie pracownikami i ich rolami,
+- przeglądanie i analiza punktów usługowych,
+- podgląd statusów operacyjnych i przypisań,
+- interakcja z danymi udostępnianymi przez systemy backendowe poprzez warstwę BFF.
+
+System od początku projektowany był jako:
+- **narzędzie wewnętrzne**, a nie aplikacja publiczna,
+- długowieczny interfejs operacyjny,
+- frontend, który musi pozostać przewidywalny, bezpieczny i możliwy do rozwoju w czasie.
+
+---
+
+## Kluczowe wyzwania
+
+### 1. Frontend jako system operacyjny, a nie tylko UI
+
+Aplikacja nie jest „cienką warstwą prezentacji”.
+
+Odpowiada ona za:
+- egzekwowanie granic dostępu zanim dane zostaną wyświetlone,
+- prezentację widoków i akcji zależnych od ról,
+- obsługę stanu uwierzytelnienia i cyklu życia sesji,
+- jasne i spójne prezentowanie statusu operacyjnego.
+
+Wymagało to traktowania frontendu jako **pełnoprawnego komponentu systemu**, a nie wyłącznie warstwy renderującej.
+
+---
+
+### 2. Wiele ról, jeden wspólny interfejs
+
+W ramach jednej aplikacji działają różne grupy użytkowników, w tym:
+- personel operacyjny,
+- menedżerowie i koordynatorzy,
+- użytkownicy techniczni lub administracyjni.
+
+Każda rola:
+- widzi inne dane,
+- ma dostęp do innych akcji,
+- funkcjonuje w innym kontekście operacyjnym.
+
+Wyzwanie polegało na zaprojektowaniu:
+- czytelnego modelu kontroli dostępu opartego o role,
+- przewidywalnych granic nawigacyjnych,
+- interfejsu, który pozostaje zrozumiały mimo różnic w odpowiedzialnościach.
+
+---
+
+### 3. Bezpieczna i przewidywalna integracja z backendem
+
+Aplikacja SPA komunikuje się z systemami backendowymi poprzez **API typu BFF (Backend-for-Frontend)**.
+
+Kluczowe wymagania obejmowały:
+- bezpieczne uwierzytelnianie przez zewnętrznego dostawcę tożsamości,
+- bezpieczne zarządzanie tokenami po stronie klienta,
+- spójną obsługę błędów i scenariuszy odzyskiwania,
+- brak wycieku danych uwierzytelniających do zewnętrznych domen.
+
+Frontend musiał pozostać **agnostyczny względem kontraktów**, jednocześnie egzekwując silne gwarancje operacyjne.
+
+---
+
+### 4. Długoterminowa ewolucja przy aktywnym użyciu
+
+Aplikacja jest aktywnie rozwijana.
+
+Od początku musiała wspierać:
+- przyrostowe dostarczanie funkcjonalności,
+- zmiany architektoniczne bez przepisywania całości,
+- częściową funkcjonalność bez naruszania istniejących przepływów.
+
+Wymagało to:
+- silnych granic architektonicznych,
+- minimalnego sprzężenia między obszarami funkcjonalnymi,
+- jawnej obsługi obszarów typu „work in progress”.
+
+---
+
+## Podejście architektoniczne
+
+Kluczową decyzją było zaprojektowanie SPA jako **warstwowego systemu frontendowego**, a nie monolitycznego UI.
+
+### Struktura wysokiego poziomu:
+- **Application shell** – globalni providerzy, routing, layout i obsługa błędów.
+- **Routing i guardy** – struktura nawigacji i egzekwowanie dostępu.
+- **Obszary funkcjonalne** – izolowane domeny UI odpowiedzialne za kompozycję widoków.
+- **Serwisy przekrojowe** – uwierzytelnianie, motywy, lokalizacja.
+- **Pipeline HTTP** – dołączanie tokenów, logika ponowień i propagacja błędów.
+
+Takie podejście:
+- utrzymuje odpowiedzialności w sposób jawny,
+- pozwala funkcjom ewoluować niezależnie,
+- czyni system zrozumiałym nawet bez znajomości kodu.
+
+---
+
+## Widoki i przepływy operacyjne
+
+Aktualna wersja aplikacji wspiera już kilka przepływów operacyjnych.
+
+### Zarządzanie personelem
+- listy pracowników zależne od ról,
+- szczegółowe profile pracowników,
+- widoczność ról, obszarów i preferencji powiadomień,
+- czytelne wskaźniki statusu operacyjnego.
+
+### Zarządzanie punktami usługowymi
+- listy punktów usługowych ze statusem operacyjnym,
+- szczegółowe widoki łączące adres, usługi i współrzędne,
+- widoczność statusów i kontekstu przypisań.
+
+### Showcase UI
+
+<GalleryLightbox
+  cols={2}
+  images={[
+    {
+      src: "/case-studies/internal-operational-spa/1_1.png",
+      alt: "Lista pracowników (tryb ciemny)",
+      caption: "Lista pracowników w trybie ciemnym z oznaczeniami ról/statusów i szybkimi akcjami."
+    },
+    {
+      src: "/case-studies/internal-operational-spa/1_2.png",
+      alt: "Szczegóły pracownika (tryb ciemny)",
+      caption: "Widok profilu pracownika w trybie ciemnym z danymi kontaktowymi, rolami/obszarami i preferencjami powiadomień."
+    },
+    {
+      src: "/case-studies/internal-operational-spa/1_3.png",
+      alt: "Lista pracowników (tryb jasny)",
+      caption: "Lista pracowników w trybie jasnym ze spójnym układem, oznaczeniami i szybkimi akcjami."
+    },
+    {
+      src: "/case-studies/internal-operational-spa/1_4.png",
+      alt: "Szczegóły pracownika (tryb jasny)",
+      caption: "Widok profilu pracownika w trybie jasnym z przypisaniami ról/obszarów i ustawieniami powiadomień."
+    },
+
+    {
+      src: "/case-studies/internal-operational-spa/2_1.png",
+      alt: "Lista punktów usługowych (tryb ciemny)",
+      caption: "Lista punktów usługowych w trybie ciemnym ze statusem operacyjnym i tagami możliwości/usług."
+    },
+    {
+      src: "/case-studies/internal-operational-spa/2_2.png",
+      alt: "Szczegóły punktu usługowego (tryb ciemny)",
+      caption: "Widok szczegółów punktu usługowego w trybie ciemnym łączący adres, usługi i współrzędne."
+    },
+    {
+      src: "/case-studies/internal-operational-spa/2_3.png",
+      alt: "Lista punktów usługowych (tryb jasny)",
+      caption: "Lista punktów usługowych w trybie jasnym z tą samą hierarchią informacji i układem tagów."
+    },
+    {
+      src: "/case-studies/internal-operational-spa/2_4.png",
+      alt: "Szczegóły punktu usługowego (tryb jasny)",
+      caption: "Widok szczegółów punktu usługowego w trybie jasnym z metadanymi lokalizacji, usługami i współrzędnymi."
+    },
+
+    {
+      src: "/case-studies/internal-operational-spa/3_1.png",
+      alt: "Ekran ustawień (tryb ciemny)",
+      caption: "Ekran ustawień w trybie ciemnym pokazujący preferencje motywu i języka."
+    },
+    {
+      src: "/case-studies/internal-operational-spa/3_2.png",
+      alt: "Ekran ustawień (tryb jasny)",
+      caption: "Ekran ustawień w trybie jasnym z kontrolą wyglądu i lokalizacji."
+    },
+
+    {
+      src: "/case-studies/internal-operational-spa/4_1.png",
+      alt: "Ekran logowania (Keycloak)",
+      caption: "Zewnętrzna granica uwierzytelniania obsługiwana przez Keycloak, zapewniająca centralne logowanie, wybór języka i zarządzanie sesją przed wejściem do SPA."
+    }
+  ]}
+/>
+
+_Zrzuty UI prezentowane są z anonimizowanymi danymi i usuniętym brandingiem._
+
+---
+
+## Model komunikacji z backendem
+
+Frontend integruje się z systemami backendowymi poprzez:
+- REST over HTTP z payloadami JSON,
+- ścieżki API typu same-origin wystawione przez warstwę BFF,
+- uwierzytelnianie OAuth2 / OpenID Connect (Authorization Code + PKCE).
+
+Kluczowe cechy:
+- stan uwierzytelnienia jest zarządzany centralnie,
+- tokeny są przechowywane w pamięci i dołączane przez interceptory HTTP,
+- odpowiedzi 401 wyzwalają kontrolowaną próbę ponowienia i fallback do logowania,
+- odpowiedzi 403 kierują do widoków odmowy dostępu,
+- błędy backendu są prezentowane jako jawne stany UI.
+
+Komponenty UI pozostają **odsprzężone od szczegółów API**, korzystając ze scentralizowanej warstwy integracji.
+
+---
+
+## Zarządzanie stanem i niezawodność
+
+Aplikacja wykorzystuje:
+- lekki stan lokalny w komponentach,
+- stan współdzielony przez dedykowane serwisy,
+- Angular Signals do synchronicznego stanu UI,
+- RxJS do obsługi przepływów asynchronicznych.
+
+Wzorce niezawodności obejmują:
+- pojedyncze próby ponowienia przy błędach uwierzytelnienia,
+- jawne zapobieganie pętlom ponowień,
+- przewidywalne stany ładowania i błędów.
+
+Frontend **nie zawiera** reguł biznesowych ani przepływów domenowych poza kontrolą dostępu.
+
+---
+
+## Aktualny stan i ewolucja
+
+Aplikacja jest **aktywnie rozwijana**.
+
+Nie wszystkie planowane funkcje są jeszcze zaimplementowane, a niektóre obszary są celowo minimalistyczne.
+Jest to świadomy wybór:
+- funkcjonalność dodawana jest przyrostowo,
+- granice architektoniczne są ustanawiane wcześnie,
+- niedokończone obszary nie naruszają stabilności systemu.
+
+Case study odzwierciedla **rzeczywistą trajektorię produkcyjną**, a nie dopieszczony demo‑snapshot.
+
+---
+
+## Rezultat końcowy (na ten moment)
+
+Efektem jest **solidna podstawa operacyjnej aplikacji SPA**, która:
+- wspiera wewnętrzne przepływy oparte o role,
+- egzekwuje dostęp i bezpieczeństwo na poziomie UI,
+- czytelnie integruje się z systemami backendowymi,
+- pozostaje zrozumiała i możliwa do rozwoju wraz ze wzrostem funkcjonalności.
+
+Projekt pokazuje, jak aplikacja frontendowa może być zaprojektowana
+jako **długoterminowy system operacyjny**, nawet będąc wciąż w fazie aktywnego rozwoju.
+
+---
+
+## Architecture showcase (GitHub)
+
+To case study koncentruje się na **kontekście, wyzwaniach i rezultatach**.
+
+Aby zobaczyć szczegółowo:
+- architekturę frontendu,
+- przepływy wykonania,
+- wzorce integracyjne,
+- oraz kompromisy inżynieryjne,
+
+zobacz dedykowane repozytorium **architecture showcase**:
+
+👉 https://github.com/rocketdeploy-dev/showcase-internal-operational-spa
