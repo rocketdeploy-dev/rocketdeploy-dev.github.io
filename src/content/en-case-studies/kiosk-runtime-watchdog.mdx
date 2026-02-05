@@ -1,0 +1,207 @@
+---
+title: Kiosk runtime watchdog for unattended public machines
+summary: Design of a minimal, failure-safe runtime guard responsible for supervising and recovering a web-based kiosk application running on public, unattended machines.
+
+category: System architecture
+featured: false
+priority: 70
+tags: ["kiosk", "watchdog", "public systems", "reliability", "unattended runtime", "failure recovery", "system architecture"]
+links:
+  - label: Architecture showcase (GitHub)
+    href: "https://github.com/rocketdeploy-dev/showcase-kiosk-runtime-watchdog"
+    kind: repo
+  - label: Related case study – Kiosk Web Application
+    href: "/en/case-studies/kiosk-web-application/"
+    kind: deep-dive
+  - label: Let’s talk
+    href: "/en/contact/"
+    kind: cta
+---
+
+## System context
+
+This case study focuses on a **runtime supervision layer** used in web-based kiosks operating on **public, unattended machines**, such as parcel lockers or self-service terminals.
+
+Unlike the main kiosk application — which handles user interaction and business flow — this component is responsible for **protecting the device runtime itself**.
+
+It operates as the **outermost execution layer**, loaded directly by the kiosk browser and responsible for:
+- presenting a neutral startup and fallback screen,
+- embedding the actual kiosk application,
+- supervising its readiness and liveness,
+- recovering automatically when the embedded application fails or stalls.
+
+This layer exists specifically because **public kiosks cannot rely on human intervention**.
+
+---
+
+## Deployment context
+
+The kiosk system is deployed across **two physically separate environments** within the same machine enclosure:
+
+- a **physical kiosk device**, running a locked-down operating system and a browser in kiosk mode,
+- a **local server unit**, responsible for hosting the main kiosk web application.
+
+The **runtime watchdog described in this case study runs directly on the physical kiosk device**.
+It is loaded locally by the kiosk browser and remains operational regardless of the state of the main application.
+
+The actual kiosk SPA is:
+- hosted on a **separate machine**,
+- deployed as a long-running web service,
+- accessible only within the machine’s internal LAN.
+
+This separation ensures that:
+- failures in the application runtime do not compromise the device runtime,
+- the kiosk screen can always recover independently,
+- device-level supervision remains simple, trusted, and stable.
+
+---
+
+## Core problem
+
+In unattended kiosk environments:
+- browser processes may freeze,
+- remote applications may fail independently of the device,
+- network connectivity may be intermittent,
+- restarting the device or browser is slow and operationally expensive.
+
+Relying solely on the kiosk application to manage its own health is insufficient.
+
+A separate, **simpler and more trusted execution layer** is required to:
+- supervise the application,
+- detect failure conditions,
+- and restore a usable state without manual action.
+
+---
+
+## Architectural decision
+
+A deliberate decision was made to introduce a **dedicated kiosk shell / watchdog**, separated from the main application.
+
+Key characteristics of this layer:
+- implemented as a **single static HTML file**,
+- served locally on the device,
+- no build step, framework, or runtime dependencies,
+- uses only standard browser APIs.
+
+The embedded kiosk application is loaded into an iframe and treated as an **untrusted execution surface**.
+
+Visibility is granted only after the application proves readiness and is continuously earned via heartbeat signals.
+
+---
+
+## Execution model
+
+### Initialization
+
+1. The kiosk shell renders a neutral startup screen immediately.
+2. The target kiosk application is loaded into an iframe.
+3. Until a readiness signal is received, the iframe remains hidden.
+4. If initialization exceeds a defined timeout, the iframe is reloaded.
+
+---
+
+### Normal operation
+
+- The embedded application must periodically emit heartbeat messages.
+- Each heartbeat refreshes a timestamp maintained by the shell.
+- As long as heartbeats arrive on time, the application remains visible.
+
+---
+
+### Failure and recovery
+
+If heartbeats stop or timeouts are exceeded:
+- the iframe is hidden,
+- a fallback or maintenance message is shown,
+- the embedded application is reloaded after a delay.
+
+Recovery is:
+- automatic,
+- deterministic,
+- independent of user interaction.
+
+---
+
+## Why a single-file watchdog
+
+Using a single-file HTML watchdog was a conscious architectural choice.
+
+### Benefits:
+- minimal attack surface,
+- extremely low operational complexity,
+- trivial deployment and updates,
+- predictable runtime behavior.
+
+### Trade-offs:
+- no modularity or extension mechanisms,
+- logic must remain intentionally simple,
+- visual customization is limited.
+
+In this context, **simplicity is a feature**, not a limitation.
+
+---
+
+## Relationship to the kiosk application
+
+This watchdog does not replace the kiosk application.
+
+Instead:
+- the **kiosk application** handles user flows, backend integration, and UI,
+- the **watchdog shell** handles runtime supervision and recovery.
+
+Together, they form a system where:
+- failures are isolated,
+- recovery is guaranteed,
+- and the device always converges back to a usable state.
+
+---
+
+## Security considerations (high-level)
+
+Operating in a public environment required:
+- treating the embedded application as untrusted,
+- avoiding any persistent credentials or secrets,
+- limiting local state to in-memory timestamps,
+- relying exclusively on explicit runtime signals.
+
+The watchdog enforces **execution safety**, not business security.
+
+---
+
+## Visual documentation note
+
+This component runs exclusively on **public machines**.
+
+For this reason:
+- UI screenshots are intentionally omitted,
+- branding and layout details are not shown,
+- behavior is described through execution flow instead of visuals.
+
+This avoids exposing recognizable interfaces while preserving architectural clarity.
+
+---
+
+## Final outcome
+
+The result is a **small but critical architectural layer** that:
+- significantly increases kiosk reliability,
+- isolates application-level failures from the device runtime,
+- enables continuous unattended operation,
+- and does so with minimal complexity.
+
+This case study highlights how **robust systems are often built from very small, well-scoped components** — especially at the edges of execution.
+
+---
+
+## Architecture showcase (GitHub)
+
+This case study focuses on **context, decisions, and outcomes**.
+
+For a deeper look at:
+- execution supervision,
+- heartbeat-based health signaling,
+- and deterministic recovery logic,
+
+see the dedicated **architecture showcase** repository:
+
+👉 https://github.com/rocketdeploy-dev/showcase-kiosk-runtime-watchdog

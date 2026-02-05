@@ -1,0 +1,207 @@
+---
+title: Kioskowy runtime watchdog dla publicznych, bezobsługowych urządzeń
+summary: Projekt minimalnej, odpornej na awarie warstwy nadzorującej runtime, odpowiedzialnej za kontrolę i odzyskiwanie webowej aplikacji kioskowej działającej na publicznych, bezobsługowych maszynach.
+
+category: System architecture
+featured: false
+priority: 70
+tags: ["kiosk", "watchdog", "systemy publiczne", "niezawodność", "bezobsługowy runtime", "odzyskiwanie po awarii", "architektura systemów"]
+links:
+  - label: Architecture showcase (GitHub)
+    href: "https://github.com/rocketdeploy-dev/showcase-kiosk-runtime-watchdog"
+    kind: repo
+  - label: Powiązane case study – aplikacja kioskowa
+    href: "/pl/case-studies/kiosk-web-application/"
+    kind: deep-dive
+  - label: Porozmawiajmy
+    href: "/pl/contact/"
+    kind: cta
+---
+
+## Kontekst systemowy
+
+To case study koncentruje się na **warstwie nadzoru wykonania (runtime supervision)** stosowanej w kioskowych aplikacjach webowych działających na **publicznych, bezobsługowych urządzeniach**, takich jak automaty paczkowe czy terminale samoobsługowe.
+
+W przeciwieństwie do głównej aplikacji kioskowej — która obsługuje interakcję z użytkownikiem i przepływ biznesowy — ten komponent odpowiada za **ochronę samego środowiska wykonawczego urządzenia**.
+
+Działa jako **najbardziej zewnętrzna warstwa wykonania**, ładowana bezpośrednio przez przeglądarkę kiosku i odpowiedzialna za:
+- prezentację neutralnego ekranu startowego i fallback,
+- osadzenie właściwej aplikacji kioskowej,
+- nadzór nad jej gotowością i żywotnością,
+- automatyczne odzyskiwanie w przypadku awarii lub zawieszenia aplikacji.
+
+Ta warstwa istnieje, ponieważ **publiczne kioski nie mogą polegać na interwencji człowieka**.
+
+---
+
+## Kontekst wdrożeniowy
+
+System kioskowy jest wdrażany w **dwóch fizycznie odseparowanych środowiskach** wewnątrz tej samej obudowy urządzenia:
+
+- **urządzenie kioskowe** – fizyczny ekran dotykowy z zamkniętym systemem operacyjnym i przeglądarką w trybie kioskowym,
+- **lokalna jednostka serwerowa** – osobna maszyna odpowiedzialna za hostowanie głównej aplikacji kioskowej.
+
+**Runtime watchdog opisywany w tym case study działa bezpośrednio na urządzeniu kioskowym**.  
+Jest ładowany lokalnie przez przeglądarkę kiosku i pozostaje aktywny niezależnie od stanu głównej aplikacji.
+
+Właściwa aplikacja kioskowa (SPA):
+- działa na **osobnej maszynie**,
+- jest wdrożona jako długotrwale działająca usługa webowa,
+- jest dostępna wyłącznie w ramach wewnętrznej sieci LAN urządzenia.
+
+Taki podział zapewnia, że:
+- awarie aplikacji nie kompromitują runtime’u urządzenia,
+- ekran kiosku może zawsze odzyskać działanie niezależnie,
+- nadzór na poziomie urządzenia pozostaje prosty, zaufany i stabilny.
+
+---
+
+## Główny problem
+
+W bezobsługowych środowiskach kioskowych:
+- procesy przeglądarki mogą się zawieszać,
+- zdalne aplikacje mogą ulegać awariom niezależnie od urządzenia,
+- łączność sieciowa może być niestabilna,
+- restart urządzenia lub przeglądarki jest kosztowny operacyjnie.
+
+Poleganie wyłącznie na aplikacji kioskowej do zarządzania własnym stanem zdrowia jest niewystarczające.
+
+Wymagana jest osobna, **prostsza i bardziej zaufana warstwa wykonawcza**, która:
+- nadzoruje aplikację,
+- wykrywa stany awaryjne,
+- przywraca używalny stan bez ręcznej interwencji.
+
+---
+
+## Decyzja architektoniczna
+
+Podjęto świadomą decyzję o wprowadzeniu **dedykowanej warstwy kiosk shell / watchdog**, oddzielonej od głównej aplikacji.
+
+Kluczowe cechy tej warstwy:
+- implementacja w postaci **pojedynczego statycznego pliku HTML**,
+- serwowana lokalnie na urządzeniu,
+- brak procesu build, frameworków i zależności runtime,
+- wykorzystanie wyłącznie standardowych API przeglądarki.
+
+Osadzona aplikacja kioskowa jest ładowana w iframe i traktowana jako **niezaufana powierzchnia wykonawcza**.
+
+Widoczność aplikacji jest przyznawana dopiero po potwierdzeniu gotowości i musi być stale podtrzymywana poprzez sygnały heartbeat.
+
+---
+
+## Model wykonania
+
+### Inicjalizacja
+
+1. Kiosk shell natychmiast renderuje neutralny ekran startowy.
+2. Docelowa aplikacja kioskowa jest ładowana w iframe.
+3. Do momentu otrzymania sygnału gotowości iframe pozostaje ukryty.
+4. Przekroczenie ustalonego timeoutu powoduje przeładowanie aplikacji.
+
+---
+
+### Normalna praca
+
+- Osadzona aplikacja musi cyklicznie wysyłać sygnały heartbeat.
+- Każdy heartbeat odświeża znacznik czasu utrzymywany przez watchdog.
+- Dopóki sygnały pojawiają się terminowo, aplikacja pozostaje widoczna.
+
+---
+
+### Awaria i odzyskiwanie
+
+W przypadku braku heartbeatów lub przekroczenia limitów czasowych:
+- iframe jest ukrywany,
+- wyświetlany jest ekran fallback lub serwisowy,
+- aplikacja jest ponownie ładowana po ustalonym czasie.
+
+Odzyskiwanie jest:
+- automatyczne,
+- deterministyczne,
+- niezależne od interakcji użytkownika.
+
+---
+
+## Dlaczego watchdog w jednym pliku
+
+Zastosowanie watchdoga w postaci pojedynczego pliku HTML było świadomą decyzją architektoniczną.
+
+### Zalety:
+- minimalna powierzchnia ataku,
+- bardzo niska złożoność operacyjna,
+- trywialne wdrażanie i aktualizacje,
+- przewidywalne zachowanie runtime.
+
+### Kompromisy:
+- brak modularności i mechanizmów rozszerzeń,
+- konieczność utrzymania bardzo prostej logiki,
+- ograniczone możliwości personalizacji wizualnej.
+
+W tym kontekście **prostota jest cechą, a nie ograniczeniem**.
+
+---
+
+## Relacja z aplikacją kioskową
+
+Ten watchdog nie zastępuje aplikacji kioskowej.
+
+Zamiast tego:
+- **aplikacja kioskowa** obsługuje przepływy użytkownika, integrację backendową i UI,
+- **warstwa watchdog** odpowiada za nadzór wykonania i odzyskiwanie.
+
+Razem tworzą system, w którym:
+- awarie są izolowane,
+- odzyskiwanie jest gwarantowane,
+- urządzenie zawsze wraca do używalnego stanu.
+
+---
+
+## Aspekty bezpieczeństwa (wysoki poziom)
+
+Praca w środowisku publicznym wymagała:
+- traktowania osadzonej aplikacji jako niezaufanej,
+- unikania trwałych sekretów i poświadczeń,
+- ograniczenia stanu lokalnego do znaczników czasu w pamięci,
+- polegania wyłącznie na jawnych sygnałach runtime.
+
+Watchdog egzekwuje **bezpieczeństwo wykonania**, a nie bezpieczeństwo biznesowe.
+
+---
+
+## Uwaga dotycząca dokumentacji wizualnej
+
+Ten komponent działa wyłącznie na **publicznych urządzeniach**.
+
+Z tego powodu:
+- zrzuty ekranu UI są celowo pominięte,
+- branding i układ interfejsu nie są prezentowane,
+- zachowanie systemu opisano poprzez przepływy wykonania zamiast wizualizacji.
+
+Pozwala to zachować klarowność architektoniczną bez ujawniania rozpoznawalnych interfejsów.
+
+---
+
+## Rezultat końcowy
+
+Efektem jest **niewielka, ale krytyczna warstwa architektoniczna**, która:
+- znacząco zwiększa niezawodność kiosku,
+- izoluje awarie aplikacji od runtime’u urządzenia,
+- umożliwia ciągłą, bezobsługową pracę,
+- i osiąga to przy minimalnej złożoności.
+
+To case study pokazuje, że **solidne systemy często opierają się na bardzo małych, precyzyjnie zdefiniowanych komponentach** — szczególnie na granicach wykonania.
+
+---
+
+## Architecture showcase (GitHub)
+
+To case study skupia się na **kontekście, decyzjach i rezultatach**.
+
+Aby zajrzeć głębiej w:
+- nadzór wykonania,
+- sygnalizację stanu poprzez heartbeat,
+- oraz deterministyczną logikę odzyskiwania,
+
+zobacz dedykowane repozytorium **architecture showcase**:
+
+👉 https://github.com/rocketdeploy-dev/showcase-kiosk-runtime-watchdog
