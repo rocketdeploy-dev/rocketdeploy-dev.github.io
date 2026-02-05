@@ -21,6 +21,8 @@ Projekt dotyczył stworzenia **dotykowej aplikacji webowej** działającej bezpo
 
 Aplikacja stanowi **główny interfejs użytkownika** dla osób korzystających z maszyny w przestrzeni publicznej.
 
+Aplikacja kioskowa jest wdrażana jako osobna usługa webowa działająca w wewnętrznej sieci urządzenia i jest nadzorowana przez lokalną warstwę runtime guard uruchomioną bezpośrednio na urządzeniu kioskowym.
+
 Kluczowe cechy środowiska:
 - urządzenie jest ogólnodostępne,
 - brak stałego nadzoru,
@@ -220,6 +222,24 @@ Rezultatem jest **produkcyjna aplikacja kioskowa**, która:
 
 Projekt pokazuje, w jaki sposób frontend może być zaprojektowany
 jako **odporny system publiczny**, a nie tylko warstwa UI — nawet przy silnych ograniczeniach środowiskowych.
+
+---
+
+## Powiązane komponenty systemu
+
+Aplikacja kioskowa działa jako część szerszego stosu wykonawczego.
+
+Jej działanie w czasie rzeczywistym nadzoruje **osobna warstwa runtime watchdog**, odpowiedzialna za:
+- nadzór wykonania,
+- wykrywanie awarii,
+- deterministyczne odzyskiwanie w bezobsługowym środowisku publicznym.
+
+Watchdog działa bezpośrednio na urządzeniu kioskowym i jest niezależny od runtime’u aplikacji.
+
+👉 Zobacz powiązane case study:  
+**Runtime watchdog dla publicznych, bezobsługowych urządzeń**
+
+https://rocketdeploy.dev/pl/case-studies/kiosk-runtime-watchdog/
 
 ---
 

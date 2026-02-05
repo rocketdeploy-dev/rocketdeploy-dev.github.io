@@ -21,6 +21,8 @@ The project focused on building a **touch-first web application** running direct
 
 The application operates as the **primary user interface** for end users interacting with the machine in a public space.
 
+The kiosk application is deployed as a separate web service within the machine’s internal network and is supervised by a local runtime guard running directly on the kiosk device.
+
 Key characteristics of the environment:
 - the device is publicly accessible,
 - there is no guaranteed supervision,
@@ -220,6 +222,24 @@ The result is a **production-grade kiosk web application** that:
 
 The project demonstrates how a frontend application can be designed
 as a **robust public-facing system**, not just a UI — even under strong environmental constraints.
+
+---
+
+## Related system components
+
+This kiosk application operates as part of a broader execution stack.
+
+It is supervised at runtime by a **separate device-level watchdog**, responsible for:
+- execution supervision,
+- failure detection,
+- and deterministic recovery on unattended public machines.
+
+The watchdog runs directly on the kiosk device and operates independently of the application runtime.
+
+👉 See related case study:  
+**Kiosk runtime watchdog for unattended public machines**
+
+https://rocketdeploy.dev/en/case-studies/kiosk-runtime-watchdog/
 
 ---
 
