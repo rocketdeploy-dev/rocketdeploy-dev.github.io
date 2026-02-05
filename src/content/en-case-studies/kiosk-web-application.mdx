@@ -1,0 +1,238 @@
+---
+title: Touch-first kiosk web application for public machines
+summary: Design and implementation of a production-grade web application running on public, unattended machines, built with strict execution boundaries, deterministic flows, and failure-safe behavior in mind.
+
+category: Frontend architecture
+featured: true
+priority: 85
+tags: ["kiosk", "spa", "frontend architecture", "public systems", "reliability", "unattended runtime", "operations"]
+links:
+  - label: Architecture showcase (GitHub)
+    href: "https://github.com/rocketdeploy-dev/showcase-kiosk-web-application"
+    kind: deep-dive
+  - label: Let’s talk
+    href: "/en/contact/"
+    kind: cta
+---
+
+## System context
+
+The project focused on building a **touch-first web application** running directly on **public, unattended machines**, similar in nature to parcel lockers or self-service terminals.
+
+The application operates as the **primary user interface** for end users interacting with the machine in a public space.
+
+Key characteristics of the environment:
+- the device is publicly accessible,
+- there is no guaranteed supervision,
+- sessions must be short-lived and self-cleaning,
+- the system must always recover to a known, safe state.
+
+From the beginning, the kiosk was treated as:
+- a **public-facing system**, not an internal tool,
+- a long-running runtime expected to operate continuously,
+- a constrained environment where failure handling and predictability are critical.
+
+---
+
+## Core challenges
+
+### 1. Public kiosk as a system, not just a screen
+
+Unlike typical web applications, a public kiosk cannot rely on:
+- trained users,
+- explicit logout actions,
+- stable interaction patterns.
+
+The application is responsible for:
+- guiding users through a strictly defined flow,
+- preventing abandoned or half-finished sessions,
+- recovering automatically from errors and inactivity,
+- avoiding any persistent user context between interactions.
+
+This required treating the frontend as a **self-contained execution system**, not just a UI layer.
+
+---
+
+### 2. Deterministic user flows under no supervision
+
+The kiosk supports interactions such as:
+- selecting an operation,
+- entering a short numeric code,
+- waiting for external processing,
+- receiving a clear success or failure outcome.
+
+There are no alternative navigation paths.
+
+The challenge was to design:
+- **linear, deterministic flows**,
+- predictable transitions between states,
+- explicit time-based resets,
+- zero reliance on user-initiated cleanup actions.
+
+Every interaction path had to converge back to a known start state.
+
+---
+
+### 3. Integration with external systems under failure conditions
+
+The kiosk application communicates with external backend systems responsible for:
+- validating user-provided codes,
+- resolving operational outcomes,
+- exposing health and availability signals.
+
+Key requirements included:
+- clear integration boundaries,
+- explicit handling of unavailable or degraded backend states,
+- controlled polling instead of open-ended waiting,
+- user-visible error states with automatic recovery.
+
+The frontend had to remain **stateless with respect to business logic**, acting purely as an orchestrator and presenter.
+
+---
+
+### 4. Long-running execution in a public environment
+
+Unlike typical browser applications, the kiosk:
+- runs continuously for long periods,
+- may be embedded in a locked-down host environment,
+- cannot rely on page reloads or manual restarts.
+
+This required:
+- careful handling of memory and transient state,
+- explicit inactivity detection,
+- avoidance of implicit global state,
+- predictable startup and runtime behavior.
+
+The system had to be resilient by design, not by operational procedures.
+
+---
+
+## Architectural approach
+
+The application was designed as a **constrained, single-purpose SPA** with explicit execution boundaries.
+
+### High-level structure:
+- **Application shell** – bootstrap logic, global providers, layout, inactivity handling, and host signaling.
+- **Routing layer** – strictly linear navigation defining allowed user paths.
+- **Interaction screens** – isolated views for code entry, waiting, and terminal outcomes.
+- **Integration layer** – centralized HTTP communication with backend systems.
+- **Cross-cutting services** – inactivity detection, localization, transient state handoff.
+
+This structure:
+- limits the surface area of the system,
+- keeps responsibilities clear,
+- makes failure paths explicit and testable.
+
+---
+
+## Public-machine interaction model
+
+The kiosk interaction model is intentionally minimal.
+
+Key design principles:
+- no free navigation,
+- no persistent user accounts,
+- no long-lived sessions,
+- no background tasks beyond health and polling.
+
+User interactions are time-boxed and state-driven.
+
+Once an outcome is reached, the system:
+- displays a clear result,
+- waits for a fixed duration,
+- resets automatically to the start screen.
+
+This ensures the kiosk remains usable even in the presence of:
+- abandoned interactions,
+- network failures,
+- unexpected user behavior.
+
+---
+
+## Backend communication model
+
+The frontend integrates with backend systems using:
+- REST over HTTP with JSON payloads,
+- explicit request types for user actions,
+- periodic polling for asynchronous resolution,
+- health endpoints for availability checks.
+
+Key characteristics:
+- all business decisions are made server-side,
+- the frontend never infers outcomes locally,
+- errors are surfaced as explicit UI states,
+- retry behavior is bounded and controlled.
+
+The kiosk remains **backend-agnostic**, enforcing only execution flow and presentation rules.
+
+---
+
+## State management and reliability
+
+The application uses:
+- component-local state for immediate UI interactions,
+- short-lived browser storage to bridge adjacent screens,
+- in-memory services for transient status handoff.
+
+Reliability patterns include:
+- inactivity-based session resets,
+- bounded polling attempts,
+- health-aware readiness and heartbeat signaling,
+- explicit cleanup of transient state after each interaction.
+
+No user data or long-term identifiers persist on the client.
+
+---
+
+## Security considerations (high-level)
+
+Operating in a public environment required:
+- treating the client as an untrusted surface,
+- delegating all validation to backend systems,
+- limiting local storage to non-sensitive, short-lived values,
+- avoiding embedded credentials or secrets.
+
+Authentication and authorization are handled entirely outside the kiosk runtime.
+
+---
+
+## Visual documentation note
+
+This kiosk application runs on **publicly accessible machines**.
+
+For this reason:
+- UI screenshots are intentionally omitted,
+- branding and visual layout are not shown,
+- interaction flows are described textually.
+
+This avoids exposing recognizable interfaces or operational details while keeping the architectural discussion intact.
+
+---
+
+## Final outcome
+
+The result is a **production-grade kiosk web application** that:
+- operates reliably in public, unattended environments,
+- enforces deterministic user flows,
+- recovers automatically from inactivity and failure,
+- integrates cleanly with external systems,
+- remains understandable and maintainable over time.
+
+The project demonstrates how a frontend application can be designed
+as a **robust public-facing system**, not just a UI — even under strong environmental constraints.
+
+---
+
+## Architecture showcase (GitHub)
+
+This case study focuses on **context, challenges, and outcomes**.
+
+For a deeper look at:
+- frontend structure,
+- execution boundaries,
+- state handling,
+- and engineering trade-offs,
+
+see the dedicated **architecture showcase** repository:
+
+👉 https://github.com/rocketdeploy-dev/showcase-kiosk-web-application

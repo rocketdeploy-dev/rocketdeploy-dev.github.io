@@ -1,0 +1,238 @@
+---
+title: Dotykowa aplikacja kioskowa dla publicznych maszyn
+summary: Projekt i implementacja produkcyjnej aplikacji webowej działającej na publicznych, niestrzeżonych maszynach, zaprojektowanej z myślą o ścisłych granicach wykonania, deterministycznych przepływach i bezpiecznym odzyskiwaniu po błędach.
+
+category: Architektura frontendu
+featured: true
+priority: 85
+tags: ["kiosk", "spa", "architektura frontendu", "systemy publiczne", "niezawodność", "środowisko niestrzeżone", "operacje"]
+links:
+  - label: Architecture showcase (GitHub)
+    href: "https://github.com/rocketdeploy-dev/showcase-kiosk-web-application"
+    kind: deep-dive
+  - label: Porozmawiajmy
+    href: "/pl/contact/"
+    kind: cta
+---
+
+## Kontekst systemu
+
+Projekt dotyczył stworzenia **dotykowej aplikacji webowej** działającej bezpośrednio na **publicznych, niestrzeżonych maszynach**, podobnych w charakterze do paczkomatów lub terminali samoobsługowych.
+
+Aplikacja stanowi **główny interfejs użytkownika** dla osób korzystających z maszyny w przestrzeni publicznej.
+
+Kluczowe cechy środowiska:
+- urządzenie jest ogólnodostępne,
+- brak stałego nadzoru,
+- sesje muszą być krótkotrwałe i samoczyszczące,
+- system musi zawsze wracać do znanego, bezpiecznego stanu początkowego.
+
+Od początku kiosk był traktowany jako:
+- **system publiczny**, a nie narzędzie wewnętrzne,
+- środowisko działające w trybie ciągłym,
+- ograniczony runtime, w którym przewidywalność i obsługa błędów są krytyczne.
+
+---
+
+## Kluczowe wyzwania
+
+### 1. Publiczny kiosk jako system, nie tylko ekran
+
+W przeciwieństwie do typowych aplikacji webowych, publiczny kiosk nie może polegać na:
+- przeszkolonych użytkownikach,
+- ręcznym wylogowywaniu,
+- przewidywalnych wzorcach interakcji.
+
+Aplikacja odpowiada za:
+- prowadzenie użytkownika przez ściśle zdefiniowany proces,
+- zapobieganie porzuconym lub niedokończonym sesjom,
+- automatyczne odzyskiwanie po błędach i bezczynności,
+- brak jakiegokolwiek utrwalonego kontekstu użytkownika.
+
+Wymagało to potraktowania frontendu jako **samodzielnego systemu wykonawczego**, a nie wyłącznie warstwy UI.
+
+---
+
+### 2. Deterministyczne przepływy bez nadzoru
+
+Kiosk obsługuje interakcje takie jak:
+- wybór operacji,
+- wprowadzenie krótkiego kodu numerycznego,
+- oczekiwanie na przetworzenie,
+- prezentacja jednoznacznego wyniku.
+
+Nie istnieją alternatywne ścieżki nawigacji.
+
+Wyzwanie polegało na zaprojektowaniu:
+- **liniowych, deterministycznych przepływów**,
+- przewidywalnych przejść pomiędzy stanami,
+- resetów opartych o czas,
+- braku zależności od działań porządkujących po stronie użytkownika.
+
+Każda ścieżka musiała prowadzić z powrotem do znanego stanu początkowego.
+
+---
+
+### 3. Integracja z systemami zewnętrznymi w warunkach awarii
+
+Aplikacja kioskowa komunikuje się z zewnętrznymi systemami backendowymi odpowiedzialnymi za:
+- walidację wprowadzonych kodów,
+- rozstrzyganie wyników operacyjnych,
+- udostępnianie sygnałów zdrowia i dostępności.
+
+Kluczowe wymagania obejmowały:
+- wyraźne granice integracji,
+- jawną obsługę niedostępnych lub zdegradowanych backendów,
+- kontrolowane odpytywanie zamiast nieograniczonego oczekiwania,
+- widoczne dla użytkownika stany błędów z automatycznym odzyskiem.
+
+Frontend musiał pozostać **bezstanowy względem logiki biznesowej**, pełniąc wyłącznie rolę orkiestratora i prezentera.
+
+---
+
+### 4. Długotrwałe działanie w środowisku publicznym
+
+W przeciwieństwie do typowych aplikacji przeglądarkowych, kiosk:
+- działa nieprzerwanie przez długi czas,
+- bywa osadzony w zamkniętym środowisku systemowym,
+- nie może polegać na przeładowaniach strony ani restartach ręcznych.
+
+Wymagało to:
+- ostrożnego zarządzania pamięcią i stanem przejściowym,
+- jawnej detekcji bezczynności,
+- unikania ukrytego stanu globalnego,
+- przewidywalnego startu i zachowania w trakcie działania.
+
+System musiał być odporny **z definicji**, a nie dzięki procedurom operacyjnym.
+
+---
+
+## Podejście architektoniczne
+
+Aplikacja została zaprojektowana jako **ograniczona, jednofunkcyjna SPA** z wyraźnymi granicami wykonania.
+
+### Struktura wysokiego poziomu:
+- **Powłoka aplikacji** – logika startowa, globalni dostawcy, layout, obsługa bezczynności i sygnalizacja do hosta.
+- **Warstwa routingu** – ściśle liniowa nawigacja definiująca dozwolone ścieżki użytkownika.
+- **Ekrany interakcji** – odizolowane widoki do wprowadzania kodu, oczekiwania i prezentacji wyniku.
+- **Warstwa integracji** – scentralizowana komunikacja HTTP z systemami backendowymi.
+- **Serwisy przekrojowe** – bezczynność, lokalizacja, przekazywanie stanu przejściowego.
+
+Taka struktura:
+- ogranicza powierzchnię systemu,
+- utrzymuje czytelny podział odpowiedzialności,
+- czyni ścieżki błędów jawnymi i testowalnymi.
+
+---
+
+## Model interakcji z maszyną publiczną
+
+Model interakcji kioskowej jest celowo minimalistyczny.
+
+Główne założenia:
+- brak swobodnej nawigacji,
+- brak kont użytkowników,
+- brak długotrwałych sesji,
+- brak zadań w tle poza zdrowiem i odpytywaniem.
+
+Interakcje są ograniczone czasowo i sterowane stanem.
+
+Po osiągnięciu wyniku system:
+- prezentuje jednoznaczną informację,
+- czeka określony czas,
+- automatycznie wraca do ekranu startowego.
+
+Zapewnia to użyteczność kiosku nawet w przypadku:
+- porzuconych interakcji,
+- problemów sieciowych,
+- nieprzewidywalnych zachowań użytkowników.
+
+---
+
+## Model komunikacji z backendem
+
+Frontend integruje się z backendami poprzez:
+- REST over HTTP z payloadami JSON,
+- jawne typy żądań dla akcji użytkownika,
+- okresowe odpytywanie w przypadku procesów asynchronicznych,
+- endpointy zdrowia do sprawdzania dostępności.
+
+Kluczowe cechy:
+- wszystkie decyzje biznesowe zapadają po stronie serwera,
+- frontend nigdy nie wyciąga wniosków lokalnie,
+- błędy są prezentowane jako jawne stany UI,
+- mechanizmy ponowień są ograniczone i kontrolowane.
+
+Kiosk pozostaje **agnostyczny względem backendu**, egzekwując wyłącznie przepływ i prezentację.
+
+---
+
+## Zarządzanie stanem i niezawodność
+
+Aplikacja wykorzystuje:
+- stan lokalny komponentów do bezpośrednich interakcji,
+- krótkotrwałe przechowywanie w przeglądarce do przejść między ekranami,
+- serwisy w pamięci do przekazywania statusu.
+
+Wzorce niezawodności obejmują:
+- reset sesji oparty o bezczynność,
+- ograniczoną liczbę prób odpytywania,
+- sygnalizację gotowości i heartbeat zależne od zdrowia,
+- jawne czyszczenie stanu po każdej interakcji.
+
+Na kliencie nie są przechowywane dane użytkowników ani długotrwałe identyfikatory.
+
+---
+
+## Aspekty bezpieczeństwa (wysoki poziom)
+
+Działanie w środowisku publicznym wymagało:
+- traktowania klienta jako powierzchni niezaufanej,
+- delegowania całej walidacji do backendów,
+- ograniczenia lokalnego storage do danych nietrwałych i niewrażliwych,
+- unikania osadzonych poświadczeń lub sekretów.
+
+Uwierzytelnianie i autoryzacja są realizowane całkowicie poza runtime’em kiosku.
+
+---
+
+## Informacja o warstwie wizualnej
+
+Aplikacja kioskowa działa na **publicznie dostępnych maszynach**.
+
+Z tego powodu:
+- zrzuty ekranów są celowo pominięte,
+- branding i layout wizualny nie są prezentowane,
+- przepływy interakcji opisano wyłącznie tekstowo.
+
+Pozwala to zachować bezpieczeństwo operacyjne przy jednoczesnym omówieniu architektury.
+
+---
+
+## Efekt końcowy
+
+Rezultatem jest **produkcyjna aplikacja kioskowa**, która:
+- działa niezawodnie w środowisku publicznym,
+- egzekwuje deterministyczne przepływy użytkownika,
+- automatycznie odzyskuje po bezczynności i błędach,
+- integruje się w sposób kontrolowany z systemami zewnętrznymi,
+- pozostaje czytelna i utrzymywalna w długim horyzoncie.
+
+Projekt pokazuje, w jaki sposób frontend może być zaprojektowany
+jako **odporny system publiczny**, a nie tylko warstwa UI — nawet przy silnych ograniczeniach środowiskowych.
+
+---
+
+## Architecture showcase (GitHub)
+
+To case study koncentruje się na **kontekście, wyzwaniach i efektach**.
+
+Szczegółowe omówienie:
+- struktury frontendu,
+- granic wykonania,
+- zarządzania stanem,
+- oraz decyzji inżynierskich
+
+znajdziesz w dedykowanym repozytorium **architecture showcase**:
+
+👉 https://github.com/rocketdeploy-dev/showcase-kiosk-web-application
