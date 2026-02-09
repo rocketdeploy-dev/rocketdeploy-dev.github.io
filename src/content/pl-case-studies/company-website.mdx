@@ -1,0 +1,238 @@
+---
+title: Statyczna, content-driven architektura strony firmowej
+summary: Projekt i implementacja produkcyjnej strony firmowej zbudowanej jako statyczny, content-driven frontend, zoptymalizowany pod kątem wydajności, czytelności i długoterminowej utrzymywalności.
+
+category: Frontend architecture
+featured: true
+priority: 70
+tags: ["frontend architecture", "static-site", "astro", "mdx", "content-driven", "company website", "performance"]
+links:
+  - label: Architecture showcase (GitHub)
+    href: "https://github.com/rocketdeploy-dev/showcase-company-website"
+    kind: deep-dive
+  - label: Porozmawiajmy
+    href: "/pl/contact/"
+    kind: cta
+---
+
+import GalleryLightbox from "../../components/GalleryLightbox.astro";
+
+## Kontekst systemu
+
+Projekt skupiał się na zaprojektowaniu i wdrożeniu **strony firmowej**, która pełni jednocześnie rolę publicznej wizytówki oraz długoterminowej bazy wiedzy w postaci technicznych case studies.
+
+Strona nie jest traktowana jako prosty landing marketingowy.
+
+Zamiast tego pełni funkcję:
+- **systemu content-driven** do publikowania uporządkowanych case studies,
+- punktu odniesienia dla podejścia architektonicznego i sposobu realizacji projektów,
+- szybkiego i przewidywalnego frontendu o minimalnej złożoności runtime.
+
+Od samego początku strona była projektowana jako:
+- static-first,
+- łatwa do rozwoju bez przepisywania całości,
+- w pełni transparentna i możliwa do analizy na poziomie kodu.
+
+---
+
+## Kluczowe wyzwania
+
+### 1. Traktowanie strony jako systemu, a nie pojedynczej strony
+
+Choć rezultatem jest „tylko strona internetowa”, wymagania wykraczały poza warstwę wizualną.
+
+System musiał:
+- obsługiwać długie, techniczne treści,
+- wspierać wiele wersji językowych i adresy kanoniczne,
+- wymuszać spójną strukturę stron,
+- zachowywać wysoką wydajność niezależnie od rozrostu treści.
+
+To wymagało potraktowania strony jako **pełnoprawnego, choć niewielkiego systemu frontendowego**, a nie zbioru statycznych podstron.
+
+---
+
+### 2. Autorowanie treści bez utraty struktury
+
+Jednym z głównych wyzwań było pogodzenie:
+- swobody edycji treści,
+- z gwarancjami strukturalnymi potrzebnymi w długim horyzoncie czasowym.
+
+Case studies musiały:
+- posiadać spójne metadane,
+- renderować się w przewidywalnym układzie,
+- ewoluować niezależnie od siebie.
+
+Celowo zrezygnowano z luźnych HTML-owych treści lub CMS-ów runtime’owych na rzecz **ustrukturyzowanej, walidowanej warstwy contentowej**.
+
+---
+
+### 3. Wydajność jako warunek nienegocjowalny
+
+Strona pełni rolę pierwszego punktu kontaktu.
+
+Kluczowe założenia obejmowały:
+- szybki initial load,
+- minimalne użycie JavaScriptu,
+- przewidywalne zachowanie renderowania.
+
+To wykluczyło rozwiązania oparte na ciężkim runtime i skierowało architekturę w stronę **renderowania w czasie builda i statycznej dystrybucji**.
+
+---
+
+### 4. Długoterminowy rozwój bez przepisywania
+
+Strona ma się rozrastać:
+- o nowe case studies,
+- o dodatkowe sekcje treści,
+- potencjalnie o kolejne warianty tej samej architektury.
+
+Wyzwanie polegało na zaprojektowaniu systemu, który:
+- pozwala na inkrementalny rozwój,
+- zachowuje wyraźne granice architektoniczne,
+- nie blokuje przyszłych zmian decyzjami podjętymi dziś.
+
+---
+
+## Podejście architektoniczne
+
+Strona została zaprojektowana jako **statyczny, content-driven system frontendowy** z wyraźnym podziałem odpowiedzialności.
+
+### Struktura wysokiego poziomu:
+- **Warstwa routingu wejściowego** – odpowiedzialna za wybór języka i routing kanoniczny.
+- **Route’y stron** – renderujące treści w obrębie wspólnego layoutu.
+- **Warstwa contentowa** – kolekcje MDX walidowane schematami.
+- **Shell layoutu** – wspólny layout zarządzający metadanymi, nawigacją i stylistyką.
+- **Minimalna warstwa runtime** – niewielkie, izolowane skrypty pomocnicze.
+
+Takie podejście zapewnia:
+- przewidywalność,
+- łatwość analizy,
+- odporność na rozrost treści.
+
+---
+
+## Model treści i prezentacji
+
+Treści są autorowane w **MDX** i walidowane na etapie builda.
+
+Charakterystyka:
+- każdy case study jest ustrukturyzowanym wpisem contentowym,
+- metadane są jawne i wymuszane,
+- logika prezentacji jest oddzielona od treści.
+
+Dzięki temu możliwe jest:
+- edytowanie treści bez ingerencji w layout,
+- zmiana layoutu bez przepisywania treści,
+- spójne renderowanie w całym serwisie.
+
+---
+
+## Spójność UI i warstwy wizualnej
+
+Warstwa wizualna kładzie nacisk na:
+- czytelność zamiast dekoracyjności,
+- spójną hierarchię informacji,
+- komfort czytania długich, technicznych treści.
+
+### UI showcase
+
+<GalleryLightbox
+  cols={2}
+  images={[
+    {
+      src: "/case-studies/company-website/1_1.webp",
+      alt: "Strona główna (desktop)",
+      caption: "Widok strony głównej z naciskiem na hierarchię informacji i szybki initial load."
+    },
+    {
+      src: "/case-studies/company-website/1_2.webp",
+      alt: "Strona główna (mobile)",
+      caption: "Mobilna wersja strony głównej z zachowaną strukturą i minimalnymi przesunięciami layoutu."
+    },
+    {
+      src: "/case-studies/company-website/2_1.webp",
+      alt: "Strona case study",
+      caption: "Strona case study zoptymalizowana pod długą, techniczną lekturę."
+    },
+    {
+      src: "/case-studies/company-website/3_1.webp",
+      alt: "Strona kontaktu",
+      caption: "Strona kontaktu z jasnymi punktami wejścia do rozmowy i wyraźnie oddzielonymi kanałami kontaktu."
+    }
+  ]}
+/>
+
+---
+
+## Model wykonania i zachowanie runtime
+
+Warstwa runtime strony jest celowo ograniczona.
+
+- strony renderowane są w całości na etapie builda,
+- brak globalnego store’a stanu po stronie klienta,
+- JavaScript ograniczony do małych, wyspecjalizowanych helperów.
+
+Logika runtime obejmuje:
+- detekcję języka i przekierowanie,
+- drobne usprawnienia UX (np. kopiowanie do schowka).
+
+Brak zależności backendowych i runtime serwerowego.
+
+---
+
+## Niezawodność i bezpieczeństwo
+
+Model static-first zapewnia:
+- przewidywalną dystrybucję statycznych assetów,
+- minimalną powierzchnię ataku,
+- brak sekretów i poświadczeń runtime.
+
+Walidacja na etapie builda:
+- wychwytuje błędne treści,
+- zapobiega publikacji niepoprawnych ścieżek.
+
+Linki zewnętrzne i granice nawigacji są obsługiwane jawnie.
+
+---
+
+## Aktualny stan i rozwój
+
+Obecna implementacja jest stabilna i aktywnie używana.
+
+System wspiera:
+- publikację nowych case studies bez zmian architektonicznych,
+- inkrementalne poprawki layoutu,
+- rozszerzanie kolekcji treści.
+
+Dalszy rozwój będzie:
+- zachowywał model static-first,
+- unikał wprowadzania sprzężeń runtime,
+- wykorzystywał tę samą architekturę w kolejnych serwisach.
+
+---
+
+## Efekt końcowy
+
+Rezultatem jest **produkcyjna architektura strony firmowej**, która:
+- traktuje treść jako element systemowy,
+- stawia na wydajność i przewidywalność,
+- pozostaje czytelna i łatwa w rozwoju.
+
+Ten case study pokazuje, że nawet „prosta” strona firmowa
+może skorzystać na **świadomym podejściu architektonicznym**.
+
+---
+
+## Architecture showcase (GitHub)
+
+Ten case study skupia się na **kontekście, wyzwaniach i rezultatach**.
+
+Jeśli chcesz zajrzeć głębiej w:
+- granice architektoniczne,
+- model wykonania,
+- pipeline contentowy,
+- decyzje inżynierskie,
+
+zobacz dedykowane repozytorium **architecture showcase**:
+
+👉 https://github.com/rocketdeploy-dev/showcase-company-website

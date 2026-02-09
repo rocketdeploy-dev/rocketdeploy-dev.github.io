@@ -1,0 +1,238 @@
+---
+title: Static, content-driven company website architecture
+summary: Design and implementation of a production-grade company website built as a static, content-driven frontend, optimized for performance, clarity, and long-term maintainability.
+
+category: Frontend architecture
+featured: true
+priority: 70
+tags: ["frontend architecture", "static-site", "astro", "mdx", "content-driven", "company website", "performance"]
+links:
+  - label: Architecture showcase (GitHub)
+    href: "https://github.com/rocketdeploy-dev/showcase-company-website"
+    kind: deep-dive
+  - label: Let’s talk
+    href: "/en/contact/"
+    kind: cta
+---
+
+import GalleryLightbox from "../../components/GalleryLightbox.astro";
+
+## System context
+
+The project focused on designing and implementing a **company website** that serves as both a public-facing presence and a long-term knowledge base for technical case studies.
+
+The site is not treated as a simple marketing landing page.
+
+Instead, it functions as:
+- a **content-driven system** for publishing structured case studies,
+- a reference point for architectural thinking and delivery approach,
+- a fast, predictable frontend with minimal runtime complexity.
+
+From the beginning, the website was designed to be:
+- static-first,
+- easy to evolve without rewrites,
+- fully inspectable and transparent at the code level.
+
+---
+
+## Core challenges
+
+### 1. Treating the website as a system, not a page
+
+Although the output is “just a website”, the requirements went beyond visual presentation.
+
+The system had to:
+- support long-form technical content,
+- handle multiple locales and canonical URLs,
+- enforce consistent structure across pages,
+- remain fast regardless of content growth.
+
+This required treating the website as a **small but real frontend system**, not a collection of static pages.
+
+---
+
+### 2. Content authoring without sacrificing structure
+
+A key challenge was balancing:
+- flexibility for writing and editing content,
+- structural guarantees required for long-term maintenance.
+
+Case studies needed:
+- consistent metadata,
+- predictable layout and navigation,
+- the ability to evolve independently over time.
+
+Free-form HTML or CMS-driven content was intentionally avoided in favor of a **structured, schema-driven content layer**.
+
+---
+
+### 3. Performance as a non-negotiable constraint
+
+The website acts as a first point of contact.
+
+Key constraints included:
+- fast initial load,
+- minimal JavaScript execution,
+- predictable rendering behavior.
+
+This ruled out runtime-heavy solutions and pushed the architecture toward **build-time rendering and static delivery**.
+
+---
+
+### 4. Long-term evolution without rewrites
+
+The site is expected to grow:
+- new case studies,
+- additional content sections,
+- potential future variants of the same architecture.
+
+The challenge was to design a system that:
+- allows incremental content growth,
+- keeps architectural boundaries intact,
+- avoids framework lock-in at the content level.
+
+---
+
+## Architectural approach
+
+The website was designed as a **static, content-driven frontend system** with a clear separation of concerns.
+
+### High-level structure:
+- **Entry routing layer** – responsible for locale selection and canonical routing.
+- **Page routes** – locale-specific routes rendering structured content.
+- **Content layer** – schema-validated MDX collections defining case studies and pages.
+- **Layout shell** – shared layout responsible for metadata, navigation, and styling.
+- **Minimal runtime layer** – small, isolated client-side helpers only where necessary.
+
+This structure keeps the system:
+- predictable,
+- easy to reason about,
+- resilient to content growth.
+
+---
+
+## Content and presentation model
+
+Content is authored using **MDX** and validated at build time.
+
+Key characteristics:
+- each case study is a structured content entry,
+- metadata is explicit and enforced,
+- presentation logic is kept separate from content authoring.
+
+This allows:
+- technical content to be edited without touching layout code,
+- layout changes without rewriting content,
+- consistent rendering across the site.
+
+---
+
+## UI and visual consistency
+
+The visual layer emphasizes:
+- clarity over decoration,
+- consistent information hierarchy,
+- readability for long-form technical content.
+
+### UI showcase
+
+<GalleryLightbox
+  cols={2}
+  images={[
+    {
+      src: "/case-studies/company-website/1_1.png",
+      alt: "Homepage (desktop)",
+      caption: "Homepage view emphasizing clarity, hierarchy, and fast initial load."
+    },
+    {
+      src: "/case-studies/company-website/1_2.png",
+      alt: "Homepage (mobile)",
+      caption: "Mobile homepage with the same information structure and minimal layout shifts."
+    },
+    {
+      src: "/case-studies/company-website/2_1.png",
+      alt: "Case study page",
+      caption: "Case study page optimized for long-form technical reading."
+    },
+    {
+      src: "/case-studies/company-website/2_2.png",
+      alt: "Contact page",
+      caption: "Contact page with clear entry points for conversation and well-defined communication channels."
+    }
+  ]}
+/>
+
+---
+
+## Runtime behavior and execution model
+
+The runtime surface of the site is intentionally minimal.
+
+- pages are rendered entirely at build time,
+- no client-side state store is used,
+- JavaScript is limited to small, purpose-built helpers.
+
+Runtime logic includes:
+- locale detection and redirect,
+- small UX enhancements (e.g. copy-to-clipboard).
+
+There is no server-side runtime or backend dependency.
+
+---
+
+## Reliability and security considerations
+
+The static-first model provides:
+- predictable delivery via static assets,
+- minimal attack surface,
+- no runtime secrets or credentials.
+
+Build-time validation ensures:
+- invalid content is caught early,
+- broken routes are detected before deployment.
+
+External links and navigation boundaries are handled explicitly to avoid unintended side effects.
+
+---
+
+## Current state and evolution
+
+The current implementation is stable and actively used.
+
+The system supports:
+- publishing new case studies without architectural changes,
+- incremental layout refinements,
+- extension of content collections.
+
+Future evolution is expected to:
+- preserve the static-first execution model,
+- avoid introducing runtime coupling,
+- reuse the same architectural approach across additional websites.
+
+---
+
+## Final outcome
+
+The result is a **production-grade company website architecture** that:
+- treats content as a first-class system concern,
+- prioritizes performance and predictability,
+- remains easy to evolve over time.
+
+This case study demonstrates how even a “simple” company website
+can benefit from **explicit architectural thinking** and disciplined execution.
+
+---
+
+## Architecture showcase (GitHub)
+
+This case study focuses on **context, challenges, and outcomes**.
+
+For a deeper look at:
+- architectural boundaries,
+- execution model,
+- content pipeline,
+- and engineering trade-offs,
+
+see the dedicated **architecture showcase** repository:
+
+👉 https://github.com/rocketdeploy-dev/showcase-company-website
