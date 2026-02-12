@@ -1,0 +1,275 @@
+---
+title: Strukturalne zarządzanie statusami zamówień w WooCommerce
+summary: Projekt i długoterminowe utrzymanie produkcyjnego rozszerzenia WooCommerce umożliwiającego deterministyczne zarządzanie niestandardowymi statusami zamówień, kontrolę kolejności, lokalizację oraz bezpieczną migrację konfiguracji między środowiskami.
+
+category: Architektura operacyjna
+featured: true
+priority: 75
+tags: ["woocommerce", "wordpress", "narzędzia operacyjne", "architektura panelu administracyjnego", "inżynieria wtyczek", "zarządzanie stanem"]
+links:
+  - label: Showcase architektury (GitHub)
+    href: "https://github.com/rocketdeploy-dev/showcase-woocommerce-admin-extension"
+    kind: deep-dive
+  - label: Repozytorium wtyczki (GitHub)
+    href: "https://github.com/rocketdeploy-dev/woocommerce-order-status-manager"
+    kind: repo
+  - label: Porozmawiajmy
+    href: "/contact/"
+    kind: cta
+---
+
+import GalleryLightbox from "../../components/GalleryLightbox.astro";
+
+## Kontekst systemowy
+
+W wielu systemach operacyjnych budowanych przez nas na bazie WordPress i WooCommerce regularnie pojawiał się ten sam wymóg:
+
+Statusy zamówień nie były etykietami wizualnymi — były **wskaźnikami stanu operacyjnego**.
+
+W praktyce:
+
+- zamówienia przechodziły przez niestandardowe stany wewnętrzne,  
+- zespoły operacyjne polegały na ścisłej i przewidywalnej kolejności statusów,  
+- wbudowane statusy WooCommerce wymagały nadpisania metadanych (kolor, kolejność, widoczność),  
+- konfiguracja musiała być bezpiecznie przenoszona między środowiskami (staging → produkcja).  
+
+Pomimo szerokiego ekosystemu dostępnych wtyczek, żadna nie zapewniała strukturalnej przejrzystości i deterministycznego działania wymaganego w systemach produkcyjnych.
+
+Dlatego stworzyliśmy własne rozwiązanie.
+
+Rezultatem jest **WooCommerce Order Status Manager** — ustrukturyzowane rozszerzenie używane w realnych systemach i udostępnione publicznie bezpłatnie.
+
+---
+
+## Główne wyzwania
+
+### 1. Traktowanie statusów jako stanu konfiguracyjnego
+
+Większość dostępnych wtyczek traktuje statusy jako proste rozszerzenie listy.
+
+Nasze systemy wymagały:
+
+- jednolitej kontroli nad statusami wbudowanymi i niestandardowymi,  
+- deterministycznej kolejności,  
+- spójnej projekcji konfiguracji do runtime WooCommerce,  
+- bezpiecznych i audytowalnych zmian konfiguracji.  
+
+Statusy musiały być traktowane jako **ustrukturyzowany stan systemu**, a nie element dekoracyjny interfejsu.
+
+---
+
+### 2. Bezpieczna migracja między środowiskami
+
+Systemy operacyjne wymagają kontrolowanego procesu wdrożeń:
+
+- staging → produkcja,  
+- wiele środowisk,  
+- konfiguracja możliwa do wersjonowania.  
+
+W wielu rozwiązaniach brakowało:
+
+- podglądu przed zastosowaniem zmian,  
+- detekcji konfliktów,  
+- jawnej decyzji o nadpisaniu istniejących wpisów.  
+
+Zaprojektowaliśmy więc dwufazowy model importu (podgląd → zastosowanie).
+
+---
+
+### 3. Zespoły wielojęzyczne
+
+Międzynarodowe zespoły wymagały:
+
+- etykiet zależnych od języka użytkownika,  
+- deterministycznego fallbacku,  
+- wyraźnego oddzielenia warstwy prezentacji od przechowywanej konfiguracji.  
+
+Nazwy statusów musiały być lokalizowane bez naruszania stabilności slugów.
+
+---
+
+### 4. Zgodność z platformą
+
+Rozwiązanie musiało:
+
+- nie modyfikować schematu WooCommerce,  
+- nie tworzyć własnych tabel w bazie,  
+- zachować kompatybilność z HPOS,  
+- integrować się wyłącznie poprzez hooki.  
+
+Architektura miała współpracować z WordPress — nie omijać jego mechanizmów.
+
+---
+
+## Podejście architektoniczne
+
+Rozszerzenie zostało zaprojektowane w oparciu o jasne zasady operacyjne.
+
+### Struktura wysokiego poziomu
+
+- **Warstwa UI administracyjnego** – ustrukturyzowane ekrany konfiguracji i kreator importu  
+- **Warstwa normalizacji** – walidacja slugów, kolorów i lokalizacji  
+- **Adapter persystencji** – options + transient dla sesji importu  
+- **Adapter integracyjny** – projekcja konfiguracji do API statusów WooCommerce  
+
+Taki podział zapewnia:
+
+- deterministyczny stan,  
+- przewidywalne zachowanie runtime,  
+- odporność na dryf konfiguracji.
+
+---
+
+## Interfejs i workflow operacyjny
+
+Interfejs został zaprojektowany jako panel kontroli operacyjnej, a nie zwykła strona ustawień.
+
+### UI showcase
+
+<GalleryLightbox
+  cols={3}
+  images={[
+    {
+      src: "/case-studies/woocommerce-order-status-manager/screenshot-1.png",
+      alt: "Lista statusów",
+      caption: "Główny ekran zarządzania pokazujący wbudowane statusy WooCommerce, kolory badge, jawnie zdefiniowaną kolejność oraz akcje."
+    },
+    {
+      src: "/case-studies/woocommerce-order-status-manager/screenshot-2.png",
+      alt: "Dodawanie statusu – kolor",
+      caption: "Tworzenie nowego statusu z użyciem color pickera oraz bezpośredniego wprowadzenia kodu HEX."
+    },
+    {
+      src: "/case-studies/woocommerce-order-status-manager/screenshot-3.png",
+      alt: "Wybór języków administracyjnych",
+      caption: "Modal wyboru zainstalowanych języków WordPress dostępnych do lokalizacji statusów."
+    },
+    {
+      src: "/case-studies/woocommerce-order-status-manager/screenshot-4.png",
+      alt: "Etykiety per język",
+      caption: "Konfiguracja etykiet per język (np. EN + DE) z deterministycznym fallbackiem do języka domyślnego."
+    },
+    {
+      src: "/case-studies/woocommerce-order-status-manager/screenshot-5.png",
+      alt: "Lista z dodanym statusem",
+      caption: "Lista statusów po dodaniu statusu niestandardowego — etykiety, kolor, kolejność i kontrola widoczności."
+    },
+    {
+      src: "/case-studies/woocommerce-order-status-manager/screenshot-6.png",
+      alt: "Zarządzanie tłumaczeniami",
+      caption: "Modal zarządzania tłumaczeniami umożliwiający edycję etykiet w wielu językach."
+    },
+    {
+      src: "/case-studies/woocommerce-order-status-manager/screenshot-7.png",
+      alt: "Zmiana kolejności",
+      caption: "Przeciąganie i zmiana kolejności statusów z automatycznym zapisem i walidacją po stronie serwera."
+    },
+    {
+      src: "/case-studies/woocommerce-order-status-manager/screenshot-8.png",
+      alt: "Import / Export – upload",
+      caption: "Ekran Import / Export z możliwością eksportu konfiguracji oraz walidowanym wgrywaniem pliku."
+    },
+    {
+      src: "/case-studies/woocommerce-order-status-manager/screenshot-9.png",
+      alt: "Podgląd importu",
+      caption: "Etap podglądu z detekcją konfliktów oraz jawnie wybieranymi opcjami nadpisania."
+    },
+    {
+      src: "/case-studies/woocommerce-order-status-manager/screenshot-10.png",
+      alt: "Podsumowanie importu",
+      caption: "Ekran podsumowania pokazujący elementy zaimportowane, nadpisane i pominięte."
+    }
+  ]}
+/>
+
+---
+
+## Model wykonania i runtime
+
+Powierzchnia runtime jest celowo minimalna.
+
+Rozszerzenie:
+
+- rejestruje statusy poprzez hooki WooCommerce,  
+- deterministycznie przebudowuje efektywną listę statusów,  
+- nakłada metadane (kolejność, kolor, widoczność),  
+- zabezpiecza wszystkie operacje przez capability i nonce.  
+
+Nie istnieją:
+
+- własne tabele w bazie danych,  
+- modyfikacje schematu WooCommerce,  
+- logika storefrontu.  
+
+Wtyczka działa jako **warstwa projekcji konfiguracji**, a nie silnik runtime.
+
+---
+
+## Model niezawodności i bezpieczeństwa
+
+Zastosowane zabezpieczenia obejmują:
+
+- Dwufazowy import (podgląd → zastosowanie)  
+- Jawną obsługę konfliktów  
+- Sesje importu oparte na transient  
+- Defensywną normalizację slugów, lokalizacji i kolorów  
+- Walidację kolejności po stronie serwera  
+
+Ścieżki błędów generują jawne komunikaty administracyjne oraz strukturalne odpowiedzi AJAX.
+
+Zapobiega to cichym błędom konfiguracji.
+
+---
+
+## Stan obecny i dalszy rozwój
+
+Rozszerzenie jest aktywnie utrzymywane i wykorzystywane w realnych systemach.
+
+Będziemy dalej:
+
+- utrzymywać kompatybilność z nowymi wersjami WooCommerce,  
+- rozwijać mechanizmy walidacyjne,  
+- zwiększać pokrycie testami integracyjnymi,  
+- dopracowywać modularność wewnętrzną.  
+
+To nie jest marketingowy dodatek.
+
+To element naszego długoterminowego narzędziownika operacyjnego.
+
+---
+
+## Efekt końcowy
+
+Powstało **produkcyjne rozszerzenie operacyjne**, które:
+
+- traktuje statusy jako strukturalny stan konfiguracji,  
+- zapewnia deterministyczną projekcję runtime,  
+- wspiera bezpieczną migrację między środowiskami,  
+- pozostaje zgodne z dyscypliną wykonawczą WordPress.  
+
+Ten case study pokazuje, że nawet pozornie drobny element administracyjny — status zamówienia — może stać się kluczowy w projektowaniu systemów operacyjnych.
+
+---
+
+## Showcase architektury (GitHub)
+
+Ten case study opisuje kontekst, wyzwania i rezultat.
+
+Szczegółowy przegląd architektury znajduje się tutaj:
+
+👉 https://github.com/rocketdeploy-dev/showcase-woocommerce-admin-extension
+
+---
+
+## Kod źródłowy i wydania
+
+Repozytorium wtyczki:
+
+👉 https://github.com/rocketdeploy-dev/woocommerce-order-status-manager
+
+Możesz tam:
+
+- przejrzeć pełny kod źródłowy,  
+- pobrać najnowsze wydanie,  
+- sprawdzić historię zmian,  
+- śledzić dalszy rozwój.  

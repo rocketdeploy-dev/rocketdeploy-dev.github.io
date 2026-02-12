@@ -1,0 +1,274 @@
+---
+title: Structured order status management for WooCommerce
+summary: Design and long-term maintenance of a production-grade WooCommerce extension enabling deterministic custom order status management, ordering control, localization, and safe environment migration.
+
+category: Operational architecture
+featured: true
+priority: 75
+tags: ["woocommerce", "wordpress", "operational tooling", "admin architecture", "plugin engineering", "state management"]
+links:
+  - label: Architecture showcase (GitHub)
+    href: "https://github.com/rocketdeploy-dev/showcase-woocommerce-admin-extension"
+    kind: deep-dive
+  - label: Plugin repository (GitHub)
+    href: "https://github.com/rocketdeploy-dev/woocommerce-order-status-manager"
+    kind: repo
+  - label: Let’s talk
+    href: "/en/contact/"
+    kind: cta
+---
+
+import GalleryLightbox from "../../components/GalleryLightbox.astro";
+
+## System context
+
+Across multiple operational systems built on top of WordPress and WooCommerce, one recurring requirement kept emerging:
+
+Order statuses were not cosmetic labels — they were **operational state indicators**.
+
+In many deployments:
+- orders moved through custom internal states,
+- teams depended on strict and predictable status ordering,
+- built-in WooCommerce statuses required metadata overrides (color, sequence, visibility),
+- configuration had to be migrated safely between staging and production.
+
+Despite the large ecosystem of available plugins, none provided the structural clarity and deterministic behavior required for production-grade systems.
+
+So we built our own.
+
+The result is **WooCommerce Order Status Manager** — a structured extension used in real systems and released publicly, free of charge.
+
+---
+
+## Core challenges
+
+### 1. Treating statuses as configuration state
+
+Most existing plugins treat statuses as simple additions.
+
+Our systems required:
+- unified control over built-in and custom statuses,
+- deterministic ordering,
+- consistent runtime projection into WooCommerce,
+- safe, inspectable configuration changes.
+
+This required viewing status definitions as **structured state**, not UI decoration.
+
+---
+
+### 2. Safe environment migration
+
+Operational systems require predictable promotion flows:
+- staging → production,
+- multi-environment deployments,
+- version-controlled configuration.
+
+Many solutions lacked:
+- preview before applying changes,
+- conflict detection,
+- explicit replace semantics.
+
+We needed a controlled two-phase import model.
+
+---
+
+### 3. Locale-aware teams
+
+International teams required:
+- per-locale labels,
+- deterministic fallback behavior,
+- clear separation between display layer and stored configuration.
+
+Status naming had to be localized without compromising slug stability.
+
+---
+
+### 4. Platform alignment
+
+The solution had to:
+- avoid WooCommerce schema mutation,
+- avoid custom database tables,
+- remain compatible with HPOS,
+- integrate strictly via hooks.
+
+The architecture needed to align with WordPress runtime discipline — not fight it.
+
+---
+
+## Architectural approach
+
+The extension was designed around clear operational principles.
+
+### High-level structure
+
+- **Admin UI layer** – structured settings screens and wizard-style import flow  
+- **Normalization layer** – canonical slug, color, and locale validation  
+- **Persistence adapter** – options + transient-backed import session  
+- **Integration adapter** – runtime projection into WooCommerce status APIs  
+
+This separation ensures:
+- deterministic state,
+- predictable runtime behavior,
+- resilience to configuration drift.
+
+---
+
+## UI and operational workflow
+
+The interface was designed as an operational control panel rather than a simple settings page.
+
+### UI showcase
+
+<GalleryLightbox
+  cols={3}
+  images={[
+    {
+      src: "/case-studies/woocommerce-order-status-manager/screenshot-1.png",
+      alt: "Main statuses list",
+      caption: "Main management screen showing built-in WooCommerce statuses, badge colors, explicit ordering, and action controls."
+    },
+    {
+      src: "/case-studies/woocommerce-order-status-manager/screenshot-2.png",
+      alt: "Add custom status color picker",
+      caption: "Creating a new custom status with color picker and direct HEX input for precise badge styling."
+    },
+    {
+      src: "/case-studies/woocommerce-order-status-manager/screenshot-3.png",
+      alt: "Select admin languages",
+      caption: "Locale selection modal displaying installed WordPress admin languages available for status localization."
+    },
+    {
+      src: "/case-studies/woocommerce-order-status-manager/screenshot-4.png",
+      alt: "Localized labels per language",
+      caption: "Per-locale label configuration (e.g., EN + DE) with deterministic fallback behavior."
+    },
+    {
+      src: "/case-studies/woocommerce-order-status-manager/screenshot-5.png",
+      alt: "Statuses list with custom status",
+      caption: "Statuses list after adding a custom status — localized labels, badge color, ordering, and visibility toggles."
+    },
+    {
+      src: "/case-studies/woocommerce-order-status-manager/screenshot-6.png",
+      alt: "Manage translations modal",
+      caption: "Translation management modal allowing structured per-locale label editing."
+    },
+    {
+      src: "/case-studies/woocommerce-order-status-manager/screenshot-7.png",
+      alt: "Drag and drop reordering",
+      caption: "Drag-and-drop reordering with automatic persistence and server-authoritative validation."
+    },
+    {
+      src: "/case-studies/woocommerce-order-status-manager/screenshot-8.png",
+      alt: "Import export upload",
+      caption: "Import / Export upload step with configuration export and structured file validation."
+    },
+    {
+      src: "/case-studies/woocommerce-order-status-manager/screenshot-9.png",
+      alt: "Import preview",
+      caption: "Preview step with conflict detection and explicit replace toggles."
+    },
+    {
+      src: "/case-studies/woocommerce-order-status-manager/screenshot-10.png",
+      alt: "Import summary",
+      caption: "Summary step showing imported, replaced, and skipped items."
+    }
+  ]}
+/>
+
+---
+
+## Runtime behavior and execution model
+
+The runtime surface remains intentionally minimal.
+
+The extension:
+- registers custom statuses through WooCommerce hooks,
+- rewrites effective status arrays deterministically,
+- injects metadata overlays (order, color, visibility),
+- protects all mutation paths with capability and nonce checks.
+
+There are:
+- no custom database tables,
+- no direct WooCommerce schema mutation,
+- no storefront rendering logic.
+
+The plugin acts as a **configuration projection layer**, not a runtime engine.
+
+---
+
+## Reliability and safety model
+
+Operational safeguards include:
+
+- Two-phase import (preview → apply)
+- Explicit conflict resolution
+- Transient-backed import sessions
+- Defensive normalization of slugs, locales, and colors
+- Server-authoritative reorder validation
+
+Failure paths return explicit admin notices and structured AJAX responses.
+
+This prevents silent misconfiguration.
+
+---
+
+## Current state and evolution
+
+The extension is actively maintained and used in real systems.
+
+We will continue to:
+
+- Maintain compatibility with new WooCommerce versions  
+- Expand validation safeguards  
+- Increase integration-level test coverage  
+- Refine internal modular boundaries  
+
+This is not a marketing add-on.
+
+It is part of our long-term operational toolkit.
+
+---
+
+## Final outcome
+
+The result is a **production-grade operational extension** that:
+
+- treats order statuses as structured configuration state,
+- enforces deterministic runtime projection,
+- supports safe environment migration,
+- aligns with WordPress execution discipline.
+
+This case study demonstrates how even a seemingly small administrative concern — order statuses — becomes critical in operational system design.
+
+---
+
+## Architecture showcase (GitHub)
+
+This case study focuses on context, challenges, and outcomes.
+
+For a deeper look at:
+- architectural boundaries,
+- execution flows,
+- security model,
+- engineering trade-offs,
+
+see the dedicated architecture showcase repository:
+
+👉 https://github.com/rocketdeploy-dev/showcase-woocommerce-admin-extension
+
+---
+
+## Source code & releases
+
+The production-ready plugin repository is available here:
+
+👉 https://github.com/rocketdeploy-dev/woocommerce-order-status-manager
+
+From that repository you can:
+
+- review the full source code,
+- download the latest tagged release,
+- inspect change history,
+- track ongoing development.
+
+The plugin is released free of charge and maintained as part of our long-term operational standards.
