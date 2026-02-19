@@ -1,0 +1,252 @@
+---
+title: Modernizacja wieloorganizacyjnej platformy e-commerce do architektury mikroserwisowej
+summary: Ewolucja autorskiej, produkcyjnej platformy do zarządzania sprzedażą, rozwijanej i utrzymywanej przez ponad dekadę — transformacja w kierunku wyraźnych granic architektonicznych, warstwy BFF oraz docelowej architektury mikroserwisowej.
+category: Stabilizacja i refaktoryzacja
+featured: true
+priority: 95
+tags: ["modernizacja legacy", "monolit", "mikroserwisy", "refaktoryzacja", "bff", "e-commerce", "platforma operacyjna", "architektura systemu"]
+links:
+  - label: Architecture showcase (GitHub)
+    href: "https://github.com/rocketdeploy-dev/showcase-commerce-platform-modernization"
+    kind: deep-dive
+  - label: Porozmawiajmy
+    href: "/contact/"
+    kind: cta
+---
+
+## Kontekst systemu
+
+Projekt dotyczy modernizacji **autorskiej platformy do zarządzania sprzedażą online**, zaprojektowanej i rozwijanej nieprzerwanie przez nasz zespół przez około 10 lat.
+
+System powstał jako wewnętrzna platforma operacyjna wspierająca sieć sklepów internetowych działających w wielu krajach Unii Europejskiej.
+
+Platforma pełni rolę centralnego systemu sprzedażowo-integracyjnego, umożliwiając:
+
+- integrację wielu sklepów internetowych,
+- integrację z marketplace’ami (np. Amazon, eBay),
+- zarządzanie pełnym cyklem życia zamówienia,
+- integracje z firmami kurierskimi i obsługę wysyłek,
+- zarządzanie stanami magazynowymi i gospodarką magazynową,
+- obsługę zwrotów,
+- obsługę procesów serwisowych i gwarancyjnych,
+- zarządzanie listingami produktowymi,
+- generowanie faktur,
+- raportowanie operacyjne i analitykę.
+
+System jest zaprojektowany jako wieloorganizacyjny. W ramach jednej instancji może działać wiele organizacji, z których każda posiada:
+
+- własne integracje sprzedażowe,
+- własną konfigurację operacyjną,
+- własną strukturę użytkowników i uprawnień.
+
+W obrębie każdej organizacji użytkownicy funkcjonują w różnych rolach operacyjnych i poziomach dostępu.
+
+Platforma automatycznie wysyła również e-maile transakcyjne i operacyjne do klientów oraz pracowników, pełniąc funkcję centralnego węzła komunikacyjnego.
+
+---
+
+## Dlaczego monolit był właściwą decyzją 10 lat temu
+
+W momencie projektowania systemu:
+
+- architektura mikroserwisowa nie była jeszcze operacyjnym standardem dla platform średniej skali,
+- infrastruktura orkiestracji kontenerów nie była powszechnie stosowana,
+- kluczowymi celami były szybkość dostarczenia oraz stabilność operacyjna,
+- zespół operacyjny potrzebował jednego, spójnego systemu do zarządzania procesami sprzedażowymi.
+
+Zbudowanie modularnego monolitu było świadomą decyzją architektoniczną:
+
+- jeden artefakt wdrożeniowy,
+- wspólne środowisko uruchomieniowe,
+- jedna relacyjna baza danych,
+- uproszczony proces deploymentu,
+- pełna kontrola nad przepływami operacyjnymi.
+
+Przez lata podejście to potwierdziło swoją skuteczność biznesową.
+
+System nie był eksperymentem — był realnym narzędziem operacyjnym obsługującym sprzedaż i logistykę na dużą skalę.
+
+---
+
+## Dlaczego modernizacja jest dziś konieczna
+
+Po dekadzie rozwoju system osiągnął naturalny punkt przegięcia architektonicznego.
+
+### 1. Rosnąca gęstość integracji
+
+Platforma integruje się z:
+
+- sklepami internetowymi,
+- marketplace’ami,
+- firmami kurierskimi,
+- systemami fakturowymi,
+- mechanizmami komunikacji.
+
+Z czasem logika integracyjna znacząco zagęściła się w kluczowych obszarach domenowych.
+
+Sformalizowanie granic stało się konieczne, aby:
+
+- ograniczyć zakres wpływu zmian,
+- poprawić separację odpowiedzialności,
+- umożliwić niezależną ewolucję obszarów o wysokiej intensywności I/O.
+
+---
+
+### 2. Wspólne środowisko uruchomieniowe dla wielu kontekstów wykonania
+
+System obsługuje:
+
+- interaktywne żądania HTTP,
+- operacje wsadowe,
+- skrypty cykliczne (cron),
+- przetwarzanie kolejek zadań.
+
+Wszystkie te ścieżki wykonania korzystają z tego samego runtime’u aplikacji.
+
+Model ten historycznie był operacyjnie efektywny, jednak obecnie ogranicza elastyczność i skalowalność.
+
+---
+
+### 3. Potrzeba wyraźnej granicy frontendowej
+
+Pierwotnie system funkcjonował jako interfejs operacyjny renderowany po stronie serwera.
+
+Obecne wymagania obejmują:
+
+- wprowadzenie warstwy SPA,
+- oddzielenie kontraktów frontendowych od modeli domenowych,
+- ustanowienie warstwy Backend-for-Frontend (BFF).
+
+BFF traktowany jest jako kluczowy element architektury, a nie jedynie adapter HTTP.
+
+---
+
+## Strategia transformacji
+
+Modernizacja prowadzona jest przez ten sam zespół, który zaprojektował i rozwijał platformę przez ostatnią dekadę.
+
+Podejście ma charakter ewolucyjny, a nie rewolucyjny.
+
+### Faza 1 – Formalizacja granic
+
+- oddzielenie orkiestracji od przejść stanów,
+- izolacja adapterów integracyjnych,
+- wprowadzenie jawnych kontraktów między warstwami.
+
+Priorytetem jest klarowność strukturalna przed fizycznym wydzieleniem usług.
+
+---
+
+### Faza 2 – Ekstrakcja domen o wysokiej intensywności I/O
+
+Wybrane obszary domenowe zostaną wydzielone jako niezależne usługi.
+
+Kolejność ekstrakcji opiera się na:
+
+- gęstości integracji,
+- złożoności orkiestracji,
+- ryzyku zmian i wpływie operacyjnym.
+
+To początek przejścia w kierunku architektury mikroserwisowej.
+
+---
+
+### Faza 3 – Wprowadzenie warstwy BFF
+
+Przed pełną migracją do SPA:
+
+- istniejące endpointy JSON są formalizowane jako granice kontraktowe,
+- warstwa BFF przejmuje odpowiedzialność za kształtowanie odpowiedzi,
+- rozwój frontendowy zostaje odseparowany od wewnętrznej domeny.
+
+---
+
+### Faza 4 – Transformacja do architektury mikroserwisowej
+
+Docelowa architektura obejmuje:
+
+- niezależne usługi zorientowane domenowo,
+- dedykowane konteksty wykonawcze,
+- rozdzielenie przetwarzania wsadowego od interaktywnych przepływów,
+- możliwość niezależnego skalowania.
+
+Transformacja prowadzona jest w warunkach produkcyjnych.
+
+---
+
+### Faza 5 – Operacyjne wsparcie AI
+
+W długim horyzoncie system zostanie rozszerzony o warstwę wsparcia decyzyjnego opartego o AI.
+
+AI będzie:
+
+- operować wyłącznie na jawnych kontraktach,
+- generować rekomendacje i podsumowania,
+- wspierać decyzje operacyjne,
+- pełnić rolę warstwy wspomagającej, a nie wykonawczej.
+
+---
+
+## Kluczowe decyzje architektoniczne
+
+- Modernizacja w trakcie aktywnej pracy systemu produkcyjnego.
+- Ciągłość operacyjna ważniejsza niż szybka, radykalna refaktoryzacja.
+- Najpierw definiowanie granic, dopiero później izolacja runtime’u.
+- Kolejność ekstrakcji oparta na gęstości integracji, a nie strukturze folderów.
+- Wczesne ustanowienie kontraktów przed separacją na poziomie usług.
+
+---
+
+## Stan obecny
+
+System pozostaje w pełni operacyjny.
+
+Modernizacja ma charakter przyrostowy:
+
+- granice są formalizowane,
+- kontrakty są wzmacniane,
+- przygotowywani są pierwsi kandydaci do wydzielenia.
+
+To case study odzwierciedla realną trajektorię produkcyjną, a nie idealizowany stan docelowy.
+
+---
+
+## Aktualny rezultat
+
+Projekt pokazuje:
+
+- odpowiedzialną modernizację systemu produkcyjnego,
+- ewolucję architektury bez zakłóceń operacyjnych,
+- długoterminowe myślenie systemowe oparte na ciągłości domenowej.
+
+To nie jest greenfield ani przepisanie systemu od zera.
+
+To produkcyjnie sprawdzona platforma operacyjna transformowana w sposób kontrolowany, kontraktowy, przez zespół, który ją zaprojektował i utrzymywał od samego początku.
+
+---
+
+## Architecture showcase (GitHub)
+
+To case study opisuje **kontekst, ewolucję i strategię transformacji** systemu.
+
+Jeśli chcesz zobaczyć:
+
+- jak dziś zorganizowany jest modularny monolit,
+- które granice zostały zidentyfikowane i sformalizowane,
+- jak sekwencjonowana jest ekstrakcja domen w kierunku mikroserwisów,
+- jakie decyzje architektoniczne i kompromisy prowadzą transformację,
+
+przygotowaliśmy dedykowane **architecture showcase**.
+
+Repozytorium zawiera:
+
+- opis architektury runtime i kontekstów wykonawczych,
+- mapowanie modułów i integracji,
+- model modernizacji krok po kroku,
+- analizę granic domenowych,
+- operacyjne i ewolucyjne założenia projektowe,
+
+bez ujawniania logiki biznesowej ani wrażliwych danych.
+
+👉 **Architecture showcase (GitHub)**  
+https://github.com/rocketdeploy-dev/showcase-commerce-platform-modernization

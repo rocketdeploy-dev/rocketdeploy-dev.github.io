@@ -1,0 +1,251 @@
+---
+title: Modernization of a Multi-Organization E-commerce Platform to a Microservices Architecture
+summary: Evolution of a proprietary, production-grade sales management platform developed and operated for over a decade, transitioning toward explicit architectural boundaries, a BFF layer, and long-term microservices transformation.
+category: Stabilization & Refactoring
+featured: true
+priority: 95
+tags: ["legacy modernization", "monolith", "microservices", "refactoring", "bff", "e-commerce", "operational platform", "system architecture"]
+links:
+  - label: Architecture showcase (GitHub)
+    href: "https://github.com/rocketdeploy-dev/showcase-commerce-platform-modernization"
+    kind: deep-dive
+  - label: Let’s talk
+    href: "/en/contact/"
+    kind: cta
+---
+
+## System Context
+
+This project concerns the modernization of a **proprietary online sales management platform**, designed and continuously developed by our team for approximately 10 years.
+
+The system was originally built as an internal operational platform supporting a network of online stores operating across multiple European Union countries.
+
+The platform serves as a centralized sales and integration system, enabling:
+
+- integration of multiple online stores,
+- integration with marketplaces (e.g., Amazon, eBay),
+- order lifecycle management,
+- shipping and carrier integrations,
+- inventory and warehouse management,
+- returns processing,
+- service and warranty workflows,
+- product listing management,
+- invoice generation,
+- operational reporting and analytics.
+
+The system is multi-organization by design. Within a single instance, multiple organizations can operate independently, each with:
+
+- their own sales platform integrations,
+- their own operational configuration,
+- their own user structure and permissions.
+
+Within each organization, users operate under different access levels and operational roles.
+
+The platform also automatically sends transactional and operational emails to customers and internal staff, functioning as a central operational communication hub.
+
+---
+
+## Why a Monolith Was the Right Decision 10 Years Ago
+
+At the time of initial design:
+
+- microservices architectures were not yet operational standards for mid-scale platforms,
+- container orchestration infrastructure was not widely adopted,
+- delivery speed and operational stability were primary objectives,
+- the operational team required a single cohesive system to manage sales workflows.
+
+Building a modular monolith was a deliberate architectural choice:
+
+- a single deployable artifact,
+- a shared runtime,
+- a shared relational database,
+- simplified deployments,
+- full control over operational flows.
+
+Over the years, this approach proved its business effectiveness.
+
+The system was not experimental — it was a real operational tool supporting sales and logistics at scale.
+
+---
+
+## Why Modernization Is Necessary Today
+
+After a decade of evolution, the system reached a natural architectural inflection point.
+
+### 1. Increasing Integration Density
+
+The platform integrates with:
+
+- online stores,
+- marketplaces,
+- carriers,
+- invoicing systems,
+- communication mechanisms.
+
+Over time, integration logic increased in density within key domain areas.
+
+Formalizing boundaries became necessary to:
+
+- reduce change blast radius,
+- improve separation of concerns,
+- enable independent evolution of high-I/O domains.
+
+---
+
+### 2. Shared Runtime Across Multiple Execution Contexts
+
+The system handles:
+
+- interactive HTTP requests,
+- batch operations,
+- scheduled scripts,
+- deferred queue processing.
+
+All of these execution paths share the same application runtime.
+
+While historically operationally efficient, this model now limits flexibility and scalability.
+
+---
+
+### 3. Need for a Clear Frontend Boundary
+
+Originally, the system functioned as a server-rendered operational interface.
+
+Current requirements include:
+
+- introducing a SPA layer,
+- separating frontend contracts from internal domain models,
+- establishing a Backend-for-Frontend (BFF) boundary.
+
+The BFF is treated as a core architectural component, not merely an HTTP adapter.
+
+---
+
+## Transformation Strategy
+
+Modernization is led by the same team that designed and evolved the platform over the past decade.
+
+The approach is evolutionary, not disruptive.
+
+### Phase 1 – Boundary Formalization
+
+- separating orchestration from state transitions,
+- isolating integration adapters,
+- introducing explicit contracts between layers.
+
+The priority is establishing clarity before introducing physical service separation.
+
+---
+
+### Phase 2 – Extraction of High I/O Domains
+
+Selected domain areas will be extracted into independent services.
+
+Extraction sequencing is based on:
+
+- integration density,
+- orchestration complexity,
+- change risk and operational impact.
+
+This marks the beginning of the transition toward a microservices architecture.
+
+---
+
+### Phase 3 – Introduction of a BFF Layer
+
+Before full SPA migration:
+
+- existing JSON endpoints are formalized as contract boundaries,
+- the BFF layer assumes responsibility for response shaping,
+- frontend evolution becomes decoupled from domain internals.
+
+---
+
+### Phase 4 – Microservices Architecture Transformation
+
+The target architecture includes:
+
+- domain-focused independent services,
+- dedicated execution contexts,
+- separation between batch processing and interactive flows,
+- independent scaling capabilities.
+
+The transformation is conducted under live production conditions.
+
+---
+
+### Phase 5 – AI-Assisted Operational Augmentation
+
+In the long term, the system will be extended with AI-assisted decision support.
+
+AI will:
+
+- operate exclusively on explicit contracts,
+- generate recommendations and summaries,
+- assist operational decisions,
+- remain an augmentation layer rather than an execution authority.
+
+---
+
+## Key Architectural Decisions
+
+- Modernization under active production usage.
+- Operational continuity prioritized over rapid refactoring.
+- Focus on boundary definition before runtime isolation.
+- Extraction sequencing based on integration density rather than folder structure.
+- Early establishment of contracts before service-level separation.
+
+---
+
+## Current State
+
+The system remains fully operational.
+
+Modernization is incremental:
+
+- boundaries are being formalized,
+- contracts are being strengthened,
+- initial extraction candidates are being prepared.
+
+This case study reflects a real production trajectory rather than an idealized end state.
+
+---
+
+## Current Outcome
+
+The project demonstrates:
+
+- responsible modernization of a production system,
+- architectural evolution without operational disruption,
+- long-term system thinking guided by domain continuity.
+
+This is not a greenfield rewrite.
+
+It is a production-proven operational platform being transformed in a controlled, contract-driven manner by the team that designed and operated it from inception.
+
+---
+
+## Architecture showcase (GitHub)
+
+This case study describes the **context, evolution, and transformation strategy** of the system.
+
+If you want to explore further — to see:
+- how the modular monolith is structured today,
+- which boundaries have been identified and formalized,
+- how domain extraction toward microservices is sequenced,
+- what architectural decisions and trade-offs guide the transformation,
+
+we have prepared a dedicated **architecture showcase**.
+
+The repository includes:
+
+- runtime architecture and execution context description,
+- module and integration mapping,
+- step-by-step modernization model,
+- domain boundary analysis,
+- operational and evolutionary design considerations,
+
+without exposing business logic or sensitive data.
+
+👉 **Architecture showcase (GitHub)**  
+https://github.com/rocketdeploy-dev/showcase-commerce-platform-modernization
