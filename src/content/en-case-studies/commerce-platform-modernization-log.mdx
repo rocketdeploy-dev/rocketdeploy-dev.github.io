@@ -1,0 +1,347 @@
+---
+title: Commerce Platform Modernization – Architecture Evolution Log
+summary: Detailed technical log of the modernization process of a legacy Yii2-based commerce platform, including modules, integrations, and architectural transformation.
+slug: commerce-platform-modernization-log
+category: architecture
+tags: ["legacy modernization", "yii2", "microservices", "architecture", "integration", "stateless"]
+---
+
+# Architecture Evolution & Modernization Log
+
+This document provides a **detailed, technical view** of the modernization process applied to a legacy commerce platform.
+
+It reflects **real production changes**, implemented incrementally on a live system.
+
+This is not a conceptual redesign —  
+this is an **active system transformation under real operational constraints**.
+
+---
+
+## Overview
+
+The original system was a **Yii2-based monolithic platform** responsible for:
+
+- order management
+- marketplace integrations (eBay, Amazon, WooCommerce, Baselinker)
+- listings
+- shipping
+- invoicing and reporting
+- background job processing
+
+The modernization strategy focuses on:
+
+- introducing **clear domain boundaries**
+- restructuring code into **modular architecture**
+- replacing implicit dependencies with **explicit contracts**
+- preparing the system for **gradual extraction into services**
+
+---
+
+## Phase: 2026-02
+
+### 1. Domain Modules Introduced
+
+New modules have been implemented and registered at application level:
+
+- `ebay`
+- `messages`
+- `listings`
+- `shipping`
+- `notifications`
+
+Each module introduces:
+- its own application layer
+- dedicated use cases
+- infrastructure repositories
+- integration adapters
+- isolated responsibility boundaries
+
+This marks a transition from a **flat monolith** to a **modular monolith with explicit structure**.
+
+---
+
+### 2. eBay Integration Redesign
+
+A new integration module has been implemented supporting:
+
+- eBay Trading API (legacy)
+- eBay REST API (modern)
+
+Key elements:
+
+- `EbayIntegrationPort` (application contract)
+- `LocalEbayIntegrationAdapter`
+- `HttpEbayIntegrationAdapter`
+- OAuth authorization flows
+- token exchange use cases
+- listing import use cases
+- messaging integration use cases
+
+Additionally:
+- support for account connection / disconnection
+- callback handling
+- account deletion webhook endpoint
+
+Effect:
+- integration logic is no longer embedded in domain models
+- clear separation between system and external provider
+- ready for extraction into standalone service
+
+---
+
+### 3. Messages Module (Conversation Layer)
+
+A new `messages` module has been introduced with:
+
+- thread-based message model
+- conversation handling
+- dedicated UI
+- REST API endpoints
+
+Capabilities include:
+
+- listing threads
+- fetching thread messages
+- sending replies
+- marking as read
+- archiving / restoring
+- resync and reprocess flows
+
+Architecture:
+
+- `MessagesChannelPort`
+- eBay adapter for messaging
+- raw payload repository
+- domain repository
+- use cases for sync, read, reply, reprocess
+
+Effect:
+- messaging becomes a **first-class domain**
+- replaces scattered legacy communication logic
+- enables future multi-channel support
+
+---
+
+### 4. Listings Module
+
+The `listings` module introduces:
+
+- dedicated API layer
+- import / upsert / reprocess endpoints
+- product linking
+- external data ingestion flow
+
+Key architectural elements:
+
+- source provider registry
+- external payload repository
+- ingestion services
+- separation of source data vs domain model
+
+Effect:
+- listings are no longer tightly coupled to integrations
+- clear path to extracting marketplace logic
+- better control over data ingestion lifecycle
+
+---
+
+### 5. Shipping Module (Carrier Integrations)
+
+A new `shipping` module has been implemented with:
+
+- `ShippingIntegrationPort`
+- local and HTTP adapters
+- dispatcher for label creation
+- provider-based architecture
+
+Supported providers:
+
+- DPD
+- DHL
+
+Effect:
+- unified integration layer for carriers
+- simplified extension for new providers
+- elimination of scattered shipping logic
+
+---
+
+### 6. Notifications Module
+
+A new `notifications` module provides:
+
+- notification listing
+- counters
+- read / read-all
+- archive / unarchive
+- delete operations
+
+Includes:
+- dedicated UI
+- REST API endpoints
+
+Effect:
+- system communication becomes structured
+- foundation for alerts and operational signaling
+- separation from business workflows
+
+---
+
+### 7. Ports & Adapters Architecture
+
+Across modules, the system introduces:
+
+- application ports (interfaces/contracts)
+- infrastructure adapters (local / HTTP)
+- use case-driven orchestration
+- repository abstraction
+
+Examples include:
+
+- `EbayIntegrationPort`
+- `MessagesChannelPort`
+- `ShippingIntegrationPort`
+
+Effect:
+- transition from implicit dependencies to explicit architecture
+- strong foundation for service extraction
+- improved testability and maintainability
+
+---
+
+### 8. Raw-First Ingestion Model
+
+New ingestion approach introduced:
+
+- external data stored as raw payloads
+- domain processing separated from fetching
+- reprocess capabilities implemented
+
+Present in:
+- listings
+- messages
+
+Effect:
+- improved resilience to integration issues
+- ability to replay and debug data flows
+- no reliance on single-pass processing
+
+---
+
+### 9. Stateless Artifact Handling (Object Storage)
+
+System has been partially migrated to stateless model:
+
+- courier labels stored in object storage (S3-compatible)
+- reports generated as downloadable artifacts (signed URLs)
+- local filesystem used only as temporary workspace
+
+Effect:
+- removal of persistent local storage dependency
+- readiness for containerized / distributed environments
+- alignment with cloud-native patterns
+
+---
+
+### 10. Job Runtime Stabilization
+
+Background processing redesigned using:
+
+- Docker-based job containers
+- shared runtime wrapper
+- MySQL advisory locks (distributed locking)
+- timeout control
+- structured logging
+- jitter (startup and iteration)
+
+Effect:
+- elimination of duplicate executions
+- reduced race conditions
+- improved observability
+- safer batch processing
+
+---
+
+### 11. Runtime & Configuration Cleanup
+
+System runtime updated and stabilized:
+
+- PHP upgraded to 8.1 (with preparation for newer versions)
+- environment-based configuration (.env)
+- removal of hardcoded credentials
+- improved dependency management
+
+Effect:
+- modernized execution environment
+- reduced technical debt
+- better deployment consistency
+
+---
+
+### 12. UI Improvements
+
+New UI introduced for:
+
+- messages module
+- notifications module
+
+Additionally:
+- legacy views simplified
+- frontend structure partially cleaned up
+
+Effect:
+- improved usability for operational users
+- more consistent interaction patterns
+- groundwork for future SPA/BFF architecture
+
+---
+
+### 13. CI/CD & Delivery Improvements
+
+Delivery process improved with:
+
+- CI pipelines
+- versioned releases
+- container image builds
+- structured runtime environments
+
+Effect:
+- repeatable deployments
+- better control over releases
+- preparation for scalable environments
+
+---
+
+### 14. Documentation & Ongoing Evolution
+
+The modernization is supported by:
+
+- evolving technical documentation
+- architecture notes
+- runtime specifications
+- migration planning
+
+This log will be extended with future phases.
+
+---
+
+## Future Phases
+
+Planned areas of further transformation:
+
+- extraction of selected modules into services
+- further isolation of integrations
+- replacement of legacy job model with event-driven architecture
+- deeper separation of frontend (SPA/BFF)
+
+---
+
+## Related Resources
+
+- Main case study: `/case-studies/commerce-platform-modernization`
+- Architecture showcase (GitHub):  
+  https://github.com/rocketdeploy-dev/showcase-commerce-platform-modernization
+
+---
+
+This document reflects **real system evolution**, not a theoretical redesign.

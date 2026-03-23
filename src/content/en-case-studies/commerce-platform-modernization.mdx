@@ -1,6 +1,6 @@
 ---
 title: Modernization of a Multi-Organization E-commerce Platform to a Microservices Architecture
-summary: Evolution of a proprietary, production-grade sales management platform developed and operated for over a decade, transitioning toward explicit architectural boundaries, a BFF layer, and long-term microservices transformation.
+summary: Evolution of a proprietary, production-grade sales management platform developed and operated for over a decade, transitioning toward explicit architectural boundaries, a BFF layer, and a long-term microservices target architecture.
 category: Stabilization & Refactoring
 featured: true
 priority: 95
@@ -12,7 +12,12 @@ links:
   - label: Let’s talk
     href: "/en/contact/"
     kind: cta
+  - label: Modernization log (deep dive)
+    href: "/en/case-studies/commerce-platform-modernization-log"
+    kind: deep-dive
 ---
+
+import GalleryLightbox from "../../components/GalleryLightbox.astro";
 
 ## System Context
 
@@ -23,11 +28,11 @@ The system was originally built as an internal operational platform supporting a
 The platform serves as a centralized sales and integration system, enabling:
 
 - integration of multiple online stores,
-- integration with marketplaces (e.g., Amazon, eBay),
-- order lifecycle management,
-- shipping and carrier integrations,
+- integration with marketplaces (e.g. Amazon, eBay),
+- full order lifecycle management,
+- carrier integrations and shipping operations,
 - inventory and warehouse management,
-- returns processing,
+- returns handling,
 - service and warranty workflows,
 - product listing management,
 - invoice generation,
@@ -35,44 +40,44 @@ The platform serves as a centralized sales and integration system, enabling:
 
 The system is multi-organization by design. Within a single instance, multiple organizations can operate independently, each with:
 
-- their own sales platform integrations,
-- their own operational configuration,
-- their own user structure and permissions.
+- its own sales integrations,
+- its own operational configuration,
+- its own user structure and permissions.
 
-Within each organization, users operate under different access levels and operational roles.
+Within each organization, users operate under different operational roles and access levels.
 
-The platform also automatically sends transactional and operational emails to customers and internal staff, functioning as a central operational communication hub.
+The platform also automatically sends transactional and operational emails to customers and staff, acting as a central communication hub.
 
 ---
 
 ## Why a Monolith Was the Right Decision 10 Years Ago
 
-At the time of initial design:
+At the time the system was designed:
 
-- microservices architectures were not yet operational standards for mid-scale platforms,
+- microservices architecture was not yet an operational standard for mid-scale platforms,
 - container orchestration infrastructure was not widely adopted,
-- delivery speed and operational stability were primary objectives,
-- the operational team required a single cohesive system to manage sales workflows.
+- delivery speed and operational stability were primary goals,
+- the operations team needed one cohesive system to manage sales workflows.
 
-Building a modular monolith was a deliberate architectural choice:
+Building a modular monolith was a deliberate architectural decision:
 
-- a single deployable artifact,
-- a shared runtime,
-- a shared relational database,
-- simplified deployments,
+- one deployable artifact,
+- one shared runtime environment,
+- one relational database,
+- a simplified deployment model,
 - full control over operational flows.
 
-Over the years, this approach proved its business effectiveness.
+Over the years, that approach proved its business value.
 
-The system was not experimental — it was a real operational tool supporting sales and logistics at scale.
+The system was not an experiment. It was a real operational tool supporting sales and logistics at scale.
 
 ---
 
 ## Why Modernization Is Necessary Today
 
-After a decade of evolution, the system reached a natural architectural inflection point.
+After a decade of growth, the system reached a natural architectural inflection point.
 
-### 1. Increasing Integration Density
+### 1. Growing integration density
 
 The platform integrates with:
 
@@ -82,118 +87,224 @@ The platform integrates with:
 - invoicing systems,
 - communication mechanisms.
 
-Over time, integration logic increased in density within key domain areas.
+Over time, integration logic became significantly denser in key domain areas.
 
-Formalizing boundaries became necessary to:
+Formalizing boundaries became necessary in order to:
 
-- reduce change blast radius,
-- improve separation of concerns,
-- enable independent evolution of high-I/O domains.
+- reduce blast radius,
+- improve separation of responsibilities,
+- enable independent evolution of high-I/O areas.
 
 ---
 
-### 2. Shared Runtime Across Multiple Execution Contexts
+### 2. Shared runtime across multiple execution contexts
 
 The system handles:
 
 - interactive HTTP requests,
 - batch operations,
-- scheduled scripts,
-- deferred queue processing.
+- scheduled scripts (cron),
+- queue processing.
 
-All of these execution paths share the same application runtime.
+All of those execution paths use the same application runtime.
 
-While historically operationally efficient, this model now limits flexibility and scalability.
+Historically, that model was operationally efficient, but it now limits flexibility and scalability.
 
 ---
 
-### 3. Need for a Clear Frontend Boundary
+### 3. Need for a clear frontend boundary
 
 Originally, the system functioned as a server-rendered operational interface.
 
 Current requirements include:
 
 - introducing a SPA layer,
-- separating frontend contracts from internal domain models,
-- establishing a Backend-for-Frontend (BFF) boundary.
+- separating frontend contracts from domain models,
+- establishing a Backend-for-Frontend (BFF) layer.
 
-The BFF is treated as a core architectural component, not merely an HTTP adapter.
+The BFF is treated as a core part of the architecture, not merely an HTTP adapter.
 
 ---
 
 ## Transformation Strategy
 
-Modernization is led by the same team that designed and evolved the platform over the past decade.
+The modernization effort is being led by the same team that designed and evolved the platform over the past decade.
 
-The approach is evolutionary, not disruptive.
+The approach is evolutionary, not revolutionary.
 
-### Phase 1 – Boundary Formalization
+### Phase 1: Boundary formalization
 
 - separating orchestration from state transitions,
 - isolating integration adapters,
 - introducing explicit contracts between layers.
 
-The priority is establishing clarity before introducing physical service separation.
+The priority is structural clarity before physical service extraction.
 
 ---
 
-### Phase 2 – Extraction of High I/O Domains
+### Phase 2: Extraction of high-I/O domains
 
 Selected domain areas will be extracted into independent services.
 
-Extraction sequencing is based on:
+Extraction order is based on:
 
 - integration density,
 - orchestration complexity,
 - change risk and operational impact.
 
-This marks the beginning of the transition toward a microservices architecture.
+This is the beginning of the move toward a microservices architecture.
 
 ---
 
-### Phase 3 – Introduction of a BFF Layer
+### Phase 3: Introduction of the BFF layer
 
 Before full SPA migration:
 
-- existing JSON endpoints are formalized as contract boundaries,
-- the BFF layer assumes responsibility for response shaping,
-- frontend evolution becomes decoupled from domain internals.
+- existing JSON endpoints are being formalized as contract boundaries,
+- the BFF layer takes responsibility for response shaping,
+- frontend development becomes decoupled from internal domain structures.
 
 ---
 
-### Phase 4 – Microservices Architecture Transformation
+### Phase 4: Transformation toward a microservices architecture
 
 The target architecture includes:
 
-- domain-focused independent services,
+- domain-oriented independent services,
 - dedicated execution contexts,
-- separation between batch processing and interactive flows,
-- independent scaling capabilities.
+- separation of batch processing from interactive flows,
+- the ability to scale independently.
 
-The transformation is conducted under live production conditions.
+The transformation is being carried out under live production conditions.
 
 ---
 
-### Phase 5 – AI-Assisted Operational Augmentation
+### Phase 5: Operational AI support
 
-In the long term, the system will be extended with AI-assisted decision support.
+Over the long term, the system will be extended with an AI-assisted decision-support layer.
 
 AI will:
 
 - operate exclusively on explicit contracts,
 - generate recommendations and summaries,
-- assist operational decisions,
+- support operational decisions,
 - remain an augmentation layer rather than an execution authority.
 
 ---
 
 ## Key Architectural Decisions
 
-- Modernization under active production usage.
-- Operational continuity prioritized over rapid refactoring.
-- Focus on boundary definition before runtime isolation.
-- Extraction sequencing based on integration density rather than folder structure.
-- Early establishment of contracts before service-level separation.
+- Modernization while the production system remains active.
+- Operational continuity is more important than fast, radical refactoring.
+- Boundaries are defined before runtime isolation.
+- Extraction order is based on integration density, not folder structure.
+- Contracts are established early, before service-level separation.
+
+---
+
+## Modernization Progress (Real Changes)
+
+Modernization is not limited to plans or architectural direction. Key parts of the transformation have already been implemented and are running in the live system.
+
+Work completed so far includes:
+
+- building new domain modules (`ebay`, `messages`, `listings`, `shipping`, `notifications`),
+- rebuilding the eBay integration (Trading API + REST API) using ports and adapters,
+- introducing a message-thread communication model with a dedicated interface,
+- extracting the listings module with its own API and ingestion pipeline,
+- restructuring carrier integrations (DPD, DHL) into a shared shipping layer,
+- introducing a notifications module with its own API and UI,
+- adding explicit contracts (ports) and adapters in key areas of the system,
+- applying a raw-first ingestion model with reprocessing support,
+- moving artifacts (e.g. labels) to object storage as part of a stateless model,
+- stabilizing job runtime behavior (DB locks, timeouts, concurrency control),
+- cleaning up runtime environment and configuration management (env-based),
+- introducing CI/CD pipelines and preparing for containerization,
+- refreshing selected parts of the user interface.
+
+### Selected platform views
+
+<GalleryLightbox
+  cols={2}
+  images={[
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_1_1.png",
+      alt: "Platform dashboard",
+      caption: "Operational dashboard with sales views, channel-level summaries, and alerts supporting day-to-day work."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_1_2.png",
+      alt: "Dashboard with sales metrics",
+      caption: "Main dashboard screen showing sales charts and an order split across seller accounts."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_1_3.png",
+      alt: "Seller account switching",
+      caption: "Dashboard view with the seller-account switcher expanded, highlighting the platform's multi-organization model."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_1_4.png",
+      alt: "User account menu",
+      caption: "User menu with account settings and session controls, embedded in a consistent application shell."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_2_1.png",
+      alt: "In-progress orders list",
+      caption: "Orders list with filters, operational statuses, product details, and actions performed directly from the table."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_2_2.png",
+      alt: "Shipped orders list",
+      caption: "Post-shipment orders view with additional logistics columns, tracking numbers, and operation history."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_3_1.png",
+      alt: "Returns and complaints handling",
+      caption: "Returns and complaints panel with dedicated process statuses and contextual record filtering."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_4_1.png",
+      alt: "Message center",
+      caption: "Message module built around threaded communication, combining a conversation list with details and reply flow."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_5_1.png",
+      alt: "Operational notifications",
+      caption: "System notifications view aggregating operational events, comments, and new orders in one place."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_6_1.png",
+      alt: "Operations history",
+      caption: "Audit trail of user actions and system processes with filters by time, action type, and linked entities."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_7_1.png",
+      alt: "Seller accounts list",
+      caption: "Administrative section with a seller account list and core organizational data."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_7_2.png",
+      alt: "Organization settings tiles",
+      caption: "Entry point to organization configuration covering stores, invoicing, carriers, email, and other back-office modules."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_7_3.png",
+      alt: "Invoice data settings",
+      caption: "Invoice data configuration form as an example of a classic administrative module within the platform."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_7_4.png",
+      alt: "Email template configuration",
+      caption: "Configuration of email templates and notification activation for different sales sources and recipient types."
+    }
+  ]}
+/>
+
+_UI screenshots are shown with anonymized data and removed branding._
+
+Full technical change log:
+
+👉 **[Architecture evolution and modernization log](/en/case-studies/commerce-platform-modernization-log)**
 
 ---
 
@@ -205,9 +316,10 @@ Modernization is incremental:
 
 - boundaries are being formalized,
 - contracts are being strengthened,
-- initial extraction candidates are being prepared.
+- new modules with explicit boundaries are being developed,
+- additional extraction candidates are being prepared.
 
-This case study reflects a real production trajectory rather than an idealized end state.
+Some of the key transformation elements have already been implemented and are described in the section above.
 
 ---
 
@@ -219,9 +331,9 @@ The project demonstrates:
 - architectural evolution without operational disruption,
 - long-term system thinking guided by domain continuity.
 
-This is not a greenfield rewrite.
+This is not a greenfield project or a full rewrite.
 
-It is a production-proven operational platform being transformed in a controlled, contract-driven manner by the team that designed and operated it from inception.
+It is a production-proven operational platform being transformed in a controlled, contract-driven way by the same team that designed and operated it from the beginning.
 
 ---
 
@@ -229,21 +341,22 @@ It is a production-proven operational platform being transformed in a controlled
 
 This case study describes the **context, evolution, and transformation strategy** of the system.
 
-If you want to explore further — to see:
-- how the modular monolith is structured today,
-- which boundaries have been identified and formalized,
-- how domain extraction toward microservices is sequenced,
-- what architectural decisions and trade-offs guide the transformation,
+If you want to see:
+
+- how the modular monolith is organized today,
+- which boundaries have already been identified and formalized,
+- how domain extraction toward microservices is being sequenced,
+- which architectural decisions and trade-offs are driving the transformation,
 
 we have prepared a dedicated **architecture showcase**.
 
 The repository includes:
 
-- runtime architecture and execution context description,
+- runtime architecture and execution-context descriptions,
 - module and integration mapping,
-- step-by-step modernization model,
+- a step-by-step modernization model,
 - domain boundary analysis,
-- operational and evolutionary design considerations,
+- operational and evolutionary design assumptions,
 
 without exposing business logic or sensitive data.
 
