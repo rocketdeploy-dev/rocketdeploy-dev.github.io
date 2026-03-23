@@ -71,23 +71,28 @@ do:
 
 Powstał nowy moduł integracyjny eBay obsługujący:
 
-- Trading API (legacy)
-- REST API (nowe)
+- eBay Trading API (legacy)
+- eBay REST API (nowe)
 
 Wdrożone elementy:
 
-- `EbayIntegrationPort`
-- adapter lokalny i HTTP
-- OAuth flow
-- exchange tokenów
+- `EbayIntegrationPort` (kontrakt aplikacyjny)
+- `LocalEbayIntegrationAdapter`
+- `HttpEbayIntegrationAdapter`
+- flow autoryzacji OAuth
+- use case’y wymiany tokenów
 - use case’y importu listingów
-- obsługa wiadomości
-- endpoint account deletion (compliance)
+- use case’y integracji wiadomości
+
+Dodatkowo:
+- obsługa podłączania i odłączania kont
+- obsługa callbacków
+- webhook / endpoint account deletion
 
 Efekt:
 
-- integracja została odseparowana od domeny
-- brak bezpośredniego „wstrzykiwania” logiki eBay w modele
+- logika integracyjna nie jest już osadzona bezpośrednio w modelach domenowych
+- wyraźna separacja pomiędzy systemem a zewnętrznym providerem
 - gotowość do wydzielenia jako osobny serwis
 
 ---
@@ -99,30 +104,30 @@ Nowy moduł `messages` wprowadza:
 - model wątków (threads)
 - obsługę konwersacji
 - dedykowany UI
-- REST API
+- endpointy REST API
 
 Funkcjonalności:
 
 - lista wątków
-- wiadomości w wątku
-- odpowiedzi
+- pobieranie wiadomości w wątku
+- wysyłanie odpowiedzi
 - oznaczanie jako przeczytane
-- archiwizacja
-- reprocess i resync
+- archiwizacja / przywracanie
+- resync i reprocess
 
 Architektura:
 
 - `MessagesChannelPort`
-- adapter eBay
+- adapter eBay dla wiadomości
 - repozytorium raw payloadów
 - repozytorium domenowe
-- use case’y
+- use case’y dla sync, read, reply i reprocess
 
 Efekt:
 
-- komunikacja staje się pełnoprawnym modułem
+- komunikacja staje się **pełnoprawnym obszarem domenowym**
 - koniec rozproszonej logiki wiadomości
-- przygotowanie pod multi-channel
+- przygotowanie pod obsługę multi-channel
 
 ---
 
@@ -130,23 +135,23 @@ Efekt:
 
 Nowy moduł `listings` obejmuje:
 
-- własne API
-- import danych
-- upsert
-- reprocess
+- dedykowaną warstwę API
+- endpointy importu / upsert / reprocess
 - linkowanie produktów
+- przepływ ingestii danych zewnętrznych
 
 Elementy architektury:
 
-- provider registry
-- repozytorium payloadów
-- ingestion service
-- separacja źródła danych od domeny
+- registry providerów źródeł
+- repozytorium payloadów zewnętrznych
+- serwisy ingestii
+- separację danych źródłowych od modelu domenowego
 
 Efekt:
 
-- listingi przestają być częścią legacy core
-- jasne granice między integracją a domeną
+- listingi nie są już ściśle sprzężone z integracjami
+- jasna ścieżka do wydzielenia logiki marketplace
+- lepsza kontrola nad cyklem życia ingestii danych
 
 ---
 
@@ -155,17 +160,20 @@ Efekt:
 Nowy moduł `shipping` zawiera:
 
 - `ShippingIntegrationPort`
-- adaptery (local / HTTP)
+- adaptery lokalne i HTTP
 - dispatcher tworzenia etykiet
-- providery:
-  - DPD
-  - DHL
+- architekturę opartą o providerów
+
+Obsługiwani providerzy:
+
+- DPD
+- DHL
 
 Efekt:
 
 - spójna warstwa integracji kurierskich
-- łatwe dodawanie nowych providerów
-- eliminacja chaosu legacy
+- uproszczone dodawanie nowych providerów
+- eliminacja rozproszonej logiki shippingowej
 
 ---
 
@@ -176,17 +184,18 @@ Moduł `notifications` zapewnia:
 - listę notyfikacji
 - liczniki
 - read / read-all
-- archiwizację
+- archive / unarchive
 - usuwanie
 
 Zawiera:
 - własny UI
-- własne API
+- endpointy REST API
 
 Efekt:
 
 - komunikacja systemowa została uporządkowana
-- fundament pod alerty i eventy systemowe
+- fundament pod alerty i sygnalizację operacyjną
+- separacja od workflow biznesowych
 
 ---
 
@@ -194,10 +203,10 @@ Efekt:
 
 W systemie wdrożono:
 
-- porty aplikacyjne
-- adaptery (local / HTTP)
-- use case’y
-- repozytoria
+- porty aplikacyjne (interfejsy / kontrakty)
+- adaptery infrastrukturalne (local / HTTP)
+- orkiestrację opartą o use case’y
+- abstrakcję repozytoriów
 
 Przykłady:
 
@@ -208,8 +217,8 @@ Przykłady:
 Efekt:
 
 - przejście z implicit architektury do jawnej
-- przygotowanie pod mikroserwisy
-- lepsza testowalność
+- mocny fundament pod ekstrakcję usług
+- lepsza testowalność i utrzymywalność
 
 ---
 
@@ -217,9 +226,9 @@ Efekt:
 
 Wprowadzono podejście:
 
-- zapis raw payloadów
-- oddzielenie fetch od przetwarzania
-- reprocess
+- zapisu danych zewnętrznych jako raw payloadów
+- oddzielenia fetch od przetwarzania domenowego
+- wdrożenia możliwości reprocessingu
 
 Dotyczy:
 
@@ -228,9 +237,9 @@ Dotyczy:
 
 Efekt:
 
-- odporność na błędy integracji
-- możliwość replay danych
-- lepszy debugging
+- większa odporność na błędy integracji
+- możliwość replay i debugowania przepływów danych
+- brak zależności od jednorazowego przetwarzania
 
 ---
 
@@ -238,15 +247,15 @@ Efekt:
 
 System przeszedł częściowo na model stateless:
 
-- etykiety → object storage (S3)
-- raporty → signed URL
-- lokalny filesystem → tylko temp
+- etykiety kurierskie → object storage (zgodne z S3)
+- raporty → artefakty pobierane przez signed URL
+- lokalny filesystem → wyłącznie tymczasowy workspace
 
 Efekt:
 
-- gotowość na Kubernetes / cloud
-- brak zależności od hosta
-- nowoczesny model storage
+- usunięcie zależności od trwałego storage lokalnego
+- gotowość na środowiska kontenerowe / rozproszone
+- zgodność z nowoczesnym, cloud-native modelem storage
 
 ---
 
@@ -254,93 +263,105 @@ Efekt:
 
 Nowy model jobów:
 
-- Docker job containers
-- wrapper runtime
-- MySQL advisory locks
+- kontenery jobowe oparte o Dockera
+- współdzielony wrapper runtime
+- MySQL advisory locks (distributed locking)
 - timeouty
 - structured logging
-- jitter
+- jitter (przy starcie i iteracji)
 
 Efekt:
 
-- brak duplikacji jobów
-- mniej race condition
-- większa stabilność
+- eliminacja duplikacji wykonań
+- mniej race conditions
+- większa obserwowalność
+- bezpieczniejsze przetwarzanie wsadowe
 
 ---
 
 ### 11. Cleanup technologiczny
 
-Zmiany:
+Środowisko runtime zostało zaktualizowane i ustabilizowane:
 
-- PHP 8.1
-- env-based config
-- usunięcie hardcoded danych
-- porządkowanie zależności
+- upgrade do PHP 8.1 (z przygotowaniem pod nowsze wersje)
+- konfiguracja oparta o `.env`
+- usunięcie hardcoded credentials / danych konfiguracyjnych
+- uporządkowanie zależności
 
 Efekt:
 
-- nowoczesne środowisko
+- nowocześniejsze środowisko wykonawcze
 - mniej długu technicznego
+- większa spójność procesu deploymentu
 
 ---
 
 ### 12. UI
 
-Zmiany:
+Nowe UI zostało wdrożone dla:
 
-- nowe UI dla messages i notifications
-- uproszczenie legacy widoków
+- modułu `messages`
+- modułu `notifications`
+
+Dodatkowo:
+- uproszczono wybrane legacy widoki
+- częściowo uporządkowano strukturę frontendową
 
 Efekt:
 
-- lepszy UX
-- przygotowanie pod SPA
+- lepsza użyteczność dla użytkowników operacyjnych
+- bardziej spójne wzorce interakcji
+- przygotowanie gruntu pod przyszłą architekturę SPA / BFF
 
 ---
 
 ### 13. CI/CD i delivery
 
-Wdrożono:
+Proces delivery został usprawniony przez:
 
-- pipeline CI
-- wersjonowanie
-- buildy kontenerów
+- pipeline’y CI
+- wersjonowane release’y
+- buildy obrazów kontenerowych
+- uporządkowane środowiska runtime
 
 Efekt:
 
-- powtarzalne deploye
-- kontrola wersji
+- powtarzalne deploymenty
+- lepszą kontrolę nad release’ami
+- przygotowanie pod skalowalne środowiska
 
 ---
 
 ### 14. Dokumentacja
 
-Na bieżąco rozwijane:
+Modernizacja jest wspierana przez:
 
 - dokumentacja techniczna
-- runtime spec
-- architektura
+- notatki architektoniczne
+- specyfikacje runtime
+- planowanie migracji
+
+Ten log będzie rozszerzany o kolejne fazy.
 
 ---
 
 ## Kolejne fazy
 
-Planowane:
+Planowane obszary dalszej transformacji:
 
-- ekstrakcja modułów do mikroserwisów
+- ekstrakcja wybranych modułów do usług
 - dalsza separacja integracji
-- event-driven architecture
-- SPA / BFF
+- zastąpienie części legacy modelu jobów architekturą event-driven
+- głębsza separacja frontendu (SPA / BFF)
 
 ---
 
 ## Powiązane
 
-- Case study: `/case-studies/commerce-platform-modernization`
-- GitHub showcase:  
+- Główne case study: `/case-studies/commerce-platform-modernization`
+- Architecture showcase (GitHub):  
   https://github.com/rocketdeploy-dev/showcase-commerce-platform-modernization
 
 ---
 
-To dokumentuje **realną ewolucję systemu**, nie koncepcję.
+To dokumentuje **realną ewolucję systemu**, a nie teoretyczny redesign.
