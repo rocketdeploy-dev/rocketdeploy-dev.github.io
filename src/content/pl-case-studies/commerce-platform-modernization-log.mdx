@@ -1,0 +1,346 @@
+---
+title: Modernizacja platformy commerce – log ewolucji architektury
+summary: Szczegółowy log techniczny modernizacji monolitycznej platformy Yii2, obejmujący moduły, integracje oraz transformację architektury.
+slug: commerce-platform-modernization-log
+category: architecture
+tags: ["modernizacja legacy", "yii2", "mikroserwisy", "architektura", "integracje", "stateless"]
+---
+
+# Ewolucja architektury i log modernizacji
+
+Ten dokument przedstawia **szczegółowy, techniczny przebieg modernizacji** platformy commerce opartej o Yii2.
+
+Opis obejmuje **rzeczywiste zmiany wdrożone na systemie produkcyjnym**.
+
+To nie jest koncepcja ani redesign —  
+to **realna transformacja działającego systemu, prowadzona iteracyjnie**.
+
+---
+
+## Overview
+
+Pierwotny system był **monolitem opartym o Yii2**, odpowiedzialnym za:
+
+- zarządzanie zamówieniami
+- integracje marketplace (eBay, Amazon, WooCommerce, Baselinker)
+- listingi
+- shipping
+- faktury i raporty
+- przetwarzanie w tle (joby)
+
+Strategia modernizacji zakłada:
+
+- wprowadzanie **jawnych granic domenowych**
+- przebudowę do **modularnej architektury**
+- zastępowanie implicit zależności **kontraktami (porty)**
+- przygotowanie pod **stopniową ekstrakcję do mikroserwisów**
+
+---
+
+## Faza: 2026-02
+
+### 1. Wydzielenie nowych modułów domenowych
+
+W systemie zostały zaimplementowane i zarejestrowane nowe moduły:
+
+- `ebay`
+- `messages`
+- `listings`
+- `shipping`
+- `notifications`
+
+Każdy moduł posiada:
+
+- warstwę aplikacyjną (use case’y)
+- warstwę integracyjną
+- repozytoria infrastrukturalne
+- adaptery
+- jasno określony zakres odpowiedzialności
+
+To oznacza przejście z:
+
+> „płaskiego monolitu”
+
+do:
+
+> „modularnego monolitu z wyraźnymi boundary”
+
+---
+
+### 2. Przebudowa integracji eBay
+
+Powstał nowy moduł integracyjny eBay obsługujący:
+
+- Trading API (legacy)
+- REST API (nowe)
+
+Wdrożone elementy:
+
+- `EbayIntegrationPort`
+- adapter lokalny i HTTP
+- OAuth flow
+- exchange tokenów
+- use case’y importu listingów
+- obsługa wiadomości
+- endpoint account deletion (compliance)
+
+Efekt:
+
+- integracja została odseparowana od domeny
+- brak bezpośredniego „wstrzykiwania” logiki eBay w modele
+- gotowość do wydzielenia jako osobny serwis
+
+---
+
+### 3. Moduł wiadomości (warstwa konwersacyjna)
+
+Nowy moduł `messages` wprowadza:
+
+- model wątków (threads)
+- obsługę konwersacji
+- dedykowany UI
+- REST API
+
+Funkcjonalności:
+
+- lista wątków
+- wiadomości w wątku
+- odpowiedzi
+- oznaczanie jako przeczytane
+- archiwizacja
+- reprocess i resync
+
+Architektura:
+
+- `MessagesChannelPort`
+- adapter eBay
+- repozytorium raw payloadów
+- repozytorium domenowe
+- use case’y
+
+Efekt:
+
+- komunikacja staje się pełnoprawnym modułem
+- koniec rozproszonej logiki wiadomości
+- przygotowanie pod multi-channel
+
+---
+
+### 4. Moduł listingów
+
+Nowy moduł `listings` obejmuje:
+
+- własne API
+- import danych
+- upsert
+- reprocess
+- linkowanie produktów
+
+Elementy architektury:
+
+- provider registry
+- repozytorium payloadów
+- ingestion service
+- separacja źródła danych od domeny
+
+Efekt:
+
+- listingi przestają być częścią legacy core
+- jasne granice między integracją a domeną
+
+---
+
+### 5. Moduł shipping (DPD, DHL)
+
+Nowy moduł `shipping` zawiera:
+
+- `ShippingIntegrationPort`
+- adaptery (local / HTTP)
+- dispatcher tworzenia etykiet
+- providery:
+  - DPD
+  - DHL
+
+Efekt:
+
+- spójna warstwa integracji kurierskich
+- łatwe dodawanie nowych providerów
+- eliminacja chaosu legacy
+
+---
+
+### 6. Moduł notyfikacji
+
+Moduł `notifications` zapewnia:
+
+- listę notyfikacji
+- liczniki
+- read / read-all
+- archiwizację
+- usuwanie
+
+Zawiera:
+- własny UI
+- własne API
+
+Efekt:
+
+- komunikacja systemowa została uporządkowana
+- fundament pod alerty i eventy systemowe
+
+---
+
+### 7. Porty i adaptery (kluczowa zmiana)
+
+W systemie wdrożono:
+
+- porty aplikacyjne
+- adaptery (local / HTTP)
+- use case’y
+- repozytoria
+
+Przykłady:
+
+- `EbayIntegrationPort`
+- `MessagesChannelPort`
+- `ShippingIntegrationPort`
+
+Efekt:
+
+- przejście z implicit architektury do jawnej
+- przygotowanie pod mikroserwisy
+- lepsza testowalność
+
+---
+
+### 8. Model raw-first ingestion
+
+Wprowadzono podejście:
+
+- zapis raw payloadów
+- oddzielenie fetch od przetwarzania
+- reprocess
+
+Dotyczy:
+
+- listings
+- messages
+
+Efekt:
+
+- odporność na błędy integracji
+- możliwość replay danych
+- lepszy debugging
+
+---
+
+### 9. Stateless + object storage
+
+System przeszedł częściowo na model stateless:
+
+- etykiety → object storage (S3)
+- raporty → signed URL
+- lokalny filesystem → tylko temp
+
+Efekt:
+
+- gotowość na Kubernetes / cloud
+- brak zależności od hosta
+- nowoczesny model storage
+
+---
+
+### 10. Stabilizacja jobów i runtime
+
+Nowy model jobów:
+
+- Docker job containers
+- wrapper runtime
+- MySQL advisory locks
+- timeouty
+- structured logging
+- jitter
+
+Efekt:
+
+- brak duplikacji jobów
+- mniej race condition
+- większa stabilność
+
+---
+
+### 11. Cleanup technologiczny
+
+Zmiany:
+
+- PHP 8.1
+- env-based config
+- usunięcie hardcoded danych
+- porządkowanie zależności
+
+Efekt:
+
+- nowoczesne środowisko
+- mniej długu technicznego
+
+---
+
+### 12. UI
+
+Zmiany:
+
+- nowe UI dla messages i notifications
+- uproszczenie legacy widoków
+
+Efekt:
+
+- lepszy UX
+- przygotowanie pod SPA
+
+---
+
+### 13. CI/CD i delivery
+
+Wdrożono:
+
+- pipeline CI
+- wersjonowanie
+- buildy kontenerów
+
+Efekt:
+
+- powtarzalne deploye
+- kontrola wersji
+
+---
+
+### 14. Dokumentacja
+
+Na bieżąco rozwijane:
+
+- dokumentacja techniczna
+- runtime spec
+- architektura
+
+---
+
+## Kolejne fazy
+
+Planowane:
+
+- ekstrakcja modułów do mikroserwisów
+- dalsza separacja integracji
+- event-driven architecture
+- SPA / BFF
+
+---
+
+## Powiązane
+
+- Case study: `/case-studies/commerce-platform-modernization`
+- GitHub showcase:  
+  https://github.com/rocketdeploy-dev/showcase-commerce-platform-modernization
+
+---
+
+To dokumentuje **realną ewolucję systemu**, nie koncepcję.

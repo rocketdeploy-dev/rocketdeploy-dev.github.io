@@ -12,7 +12,12 @@ links:
   - label: Porozmawiajmy
     href: "/contact/"
     kind: cta
+  - label: Log modernizacji (deep dive)
+    href: "/pl-case-studies/commerce-platform-modernization-log"
+    kind: deep-dive 
 ---
+
+import GalleryLightbox from "../../components/GalleryLightbox.astro";
 
 ## Kontekst systemu
 
@@ -197,6 +202,113 @@ AI będzie:
 
 ---
 
+## Postęp modernizacji (realne zmiany)
+
+Modernizacja nie ogranicza się do planów i kierunku architektonicznego —  
+kluczowe elementy transformacji zostały już wdrożone i działają w aktywnym runtime systemu.
+
+W ramach dotychczasowych prac:
+
+- zbudowano nowe moduły domenowe (`ebay`, `messages`, `listings`, `shipping`, `notifications`),
+- przebudowano integrację eBay (Trading API + REST API) z użyciem portów i adapterów,
+- wprowadzono model komunikacji oparty o wątki wiadomości i dedykowany interfejs,
+- wydzielono moduł listingów z własnym API oraz pipeline’em ingestii danych,
+- uporządkowano integracje kurierskie (DPD, DHL) w ramach wspólnej warstwy shipping,
+- wdrożono moduł notyfikacji z własnym API i UI,
+- wprowadzono jawne kontrakty (porty) i adaptery w kluczowych obszarach systemu,
+- zastosowano model raw-first ingestion z możliwością reprocessingu danych,
+- przeniesiono artefakty (np. etykiety) do object storage (model stateless),
+- ustabilizowano runtime jobów (locki DB, timeouty, kontrola współbieżności),
+- uporządkowano środowisko uruchomieniowe i konfigurację (env-based),
+- wprowadzono pipeline’y CI/CD oraz przygotowanie pod konteneryzację,
+- odświeżono wybrane obszary interfejsu użytkownika.
+
+### Wybrane widoki platformy
+
+<GalleryLightbox
+  cols={2}
+  images={[
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_1_1.png",
+      alt: "Dashboard platformy",
+      caption: "Dashboard operacyjny z widokiem sprzedaży, podsumowaniami per kanał oraz alertami wspierającymi codzienną pracę zespołu."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_1_2.png",
+      alt: "Dashboard z metrykami sprzedaży",
+      caption: "Główny ekran dashboardu pokazujący wykresy sprzedaży i podział zamówień między konta sprzedażowe."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_1_3.png",
+      alt: "Przełączanie konta sprzedażowego",
+      caption: "Widok dashboardu z rozwiniętym przełącznikiem konta sprzedażowego, podkreślający wieloorganizacyjny charakter platformy."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_1_4.png",
+      alt: "Menu konta użytkownika",
+      caption: "Menu użytkownika z ustawieniami konta i kontrolą sesji, osadzone w spójnym shellu aplikacji."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_2_1.png",
+      alt: "Lista zamówień w toku",
+      caption: "Widok listy zamówień z filtrami, statusami operacyjnymi, szczegółami produktów i akcjami wykonywanymi bezpośrednio z tabeli."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_2_2.png",
+      alt: "Lista zamówień wysłanych",
+      caption: "Widok zamówień po wysyłce z dodatkowymi kolumnami logistycznymi, numerami trackingowymi i historią operacji."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_3_1.png",
+      alt: "Obsługa zwrotów i reklamacji",
+      caption: "Panel zwrotów i reklamacji z odrębnymi statusami procesu oraz filtrowaniem rekordów według kontekstu operacyjnego."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_4_1.png",
+      alt: "Centrum wiadomości",
+      caption: "Moduł wiadomości oparty o wątki komunikacji, łączący listę konwersacji z widokiem szczegółów i odpowiedzi."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_5_1.png",
+      alt: "Powiadomienia operacyjne",
+      caption: "Widok notyfikacji systemowych agregujący zdarzenia operacyjne, komentarze i nowe zamówienia w jednym miejscu."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_6_1.png",
+      alt: "Historia operacji",
+      caption: "Audit trail działań użytkowników i procesów systemowych z możliwością filtrowania po czasie, akcji i powiązanych encjach."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_7_1.png",
+      alt: "Lista kont sprzedażowych",
+      caption: "Sekcja administracyjna z listą kont sprzedażowych i podstawowymi danymi organizacyjnymi."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_7_2.png",
+      alt: "Kafelki ustawień organizacji",
+      caption: "Punkt wejścia do konfiguracji organizacji obejmującej sklepy, faktury, przewoźników, e-mail i inne moduły zaplecza."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_7_3.png",
+      alt: "Ustawienia danych fakturowych",
+      caption: "Formularz konfiguracji danych fakturowych jako przykład klasycznego modułu administracyjnego w obrębie platformy."
+    },
+    {
+      src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_7_4.png",
+      alt: "Konfiguracja szablonów e-mail",
+      caption: "Konfiguracja szablonów i aktywacji powiadomień e-mail dla różnych źródeł sprzedaży oraz typów odbiorców."
+    }
+  ]}
+/>
+
+_Zrzuty UI prezentowane są z anonimizowanymi danymi i usuniętym brandingiem._
+
+Pełny, techniczny opis zmian:
+
+👉 **[Log ewolucji architektury i modernizacji](/pl/case-studies/commerce-platform-modernization-log)**
+
+---
+
 ## Stan obecny
 
 System pozostaje w pełni operacyjny.
@@ -205,9 +317,10 @@ Modernizacja ma charakter przyrostowy:
 
 - granice są formalizowane,
 - kontrakty są wzmacniane,
-- przygotowywani są pierwsi kandydaci do wydzielenia.
+- rozwijane są nowe moduły o wyraźnych boundary,
+- przygotowywani są kolejni kandydaci do wydzielenia.
 
-To case study odzwierciedla realną trajektorię produkcyjną, a nie idealizowany stan docelowy.
+Część kluczowych elementów transformacji została już wdrożona i opisana w sekcji powyżej.
 
 ---
 
