@@ -15,10 +15,14 @@
 
 *{ box-sizing: border-box; }
 html, body{ height: 100%; }
+html{
+  background-color: var(--bg);
+}
 body{
   margin:0;
   font-family: var(--sans);
   color: var(--text);
+  background-color: var(--bg);
   background: radial-gradient(1200px 800px at 20% 10%, rgba(122,162,255,.08), transparent 55%),
               radial-gradient(1000px 600px at 80% 20%, rgba(94,234,212,.06), transparent 55%),
               var(--bg);
