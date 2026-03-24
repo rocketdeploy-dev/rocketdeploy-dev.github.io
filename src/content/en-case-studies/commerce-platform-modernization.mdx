@@ -1,6 +1,6 @@
 ---
-title: Modernization of a Multi-Organization E-commerce Platform to a Microservices Architecture
-summary: Evolution of a proprietary, production-grade sales management platform developed and operated for over a decade, transitioning toward explicit architectural boundaries, a BFF layer, and a long-term microservices target architecture.
+title: Modernization of Comers, a Multi-Organization E-commerce Platform, to a Microservices Architecture
+summary: Evolution of Comers, a proprietary, production-grade sales management platform developed and operated for over a decade, transitioning toward explicit architectural boundaries, a BFF layer, and a long-term microservices target architecture.
 category: Stabilization & Refactoring
 featured: true
 priority: 95
@@ -21,11 +21,11 @@ import GalleryLightbox from "../../components/GalleryLightbox.astro";
 
 ## System Context
 
-This project concerns the modernization of a **proprietary online sales management platform**, designed and continuously developed by our team for approximately 10 years.
+This project concerns the modernization of **Comers**, a proprietary online sales management platform available at `comers.app`, designed and continuously developed by our team for approximately 10 years.
 
 The system was originally built as an internal operational platform supporting a network of online stores operating across multiple European Union countries.
 
-The platform serves as a centralized sales and integration system, enabling:
+Comers serves as a centralized sales and integration system, enabling:
 
 - integration of multiple online stores,
 - integration with marketplaces (e.g. Amazon, eBay),
@@ -38,7 +38,7 @@ The platform serves as a centralized sales and integration system, enabling:
 - invoice generation,
 - operational reporting and analytics.
 
-The system is multi-organization by design. Within a single instance, multiple organizations can operate independently, each with:
+Comers is multi-organization by design. Within a single instance, multiple organizations can operate independently, each with:
 
 - its own sales integrations,
 - its own operational configuration,
@@ -222,85 +222,85 @@ Work completed so far includes:
 - introducing CI/CD pipelines and preparing for containerization,
 - refreshing selected parts of the user interface.
 
-### Selected platform views
+### Selected Comers platform views
 
 <GalleryLightbox
   cols={2}
   images={[
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_1_1.png",
-      alt: "Platform dashboard",
-      caption: "Operational dashboard with sales views, channel-level summaries, and alerts supporting day-to-day work."
+      alt: "Comers dashboard",
+      caption: "Comers operational dashboard with sales views, channel-level summaries, and alerts supporting day-to-day work."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_1_2.png",
-      alt: "Dashboard with sales metrics",
-      caption: "Main dashboard screen showing sales charts and an order split across seller accounts."
+      alt: "Comers dashboard with sales metrics",
+      caption: "Main Comers dashboard screen showing sales charts and an order split across seller accounts."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_1_3.png",
-      alt: "Seller account switching",
-      caption: "Dashboard view with the seller-account switcher expanded, highlighting the platform's multi-organization model."
+      alt: "Comers seller account switching",
+      caption: "Comers dashboard view with the seller-account switcher expanded, highlighting the platform's multi-organization model."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_1_4.png",
-      alt: "User account menu",
-      caption: "User menu with account settings and session controls, embedded in a consistent application shell."
+      alt: "Comers user account menu",
+      caption: "Comers user menu with account settings and session controls, embedded in a consistent application shell."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_2_1.png",
-      alt: "In-progress orders list",
-      caption: "Orders list with filters, operational statuses, product details, and actions performed directly from the table."
+      alt: "Comers in-progress orders list",
+      caption: "Comers orders list with filters, operational statuses, product details, and actions performed directly from the table."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_2_2.png",
-      alt: "Shipped orders list",
-      caption: "Post-shipment orders view with additional logistics columns, tracking numbers, and operation history."
+      alt: "Comers shipped orders list",
+      caption: "Comers post-shipment orders view with additional logistics columns, tracking numbers, and operation history."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_3_1.png",
-      alt: "Returns and complaints handling",
-      caption: "Returns and complaints panel with dedicated process statuses and contextual record filtering."
+      alt: "Comers returns and complaints handling",
+      caption: "Comers returns and complaints panel with dedicated process statuses and contextual record filtering."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_4_1.png",
-      alt: "Message center",
-      caption: "Message module built around threaded communication, combining a conversation list with details and reply flow."
+      alt: "Comers message center",
+      caption: "Comers message module built around threaded communication, combining a conversation list with details and reply flow."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_5_1.png",
-      alt: "Operational notifications",
-      caption: "System notifications view aggregating operational events, comments, and new orders in one place."
+      alt: "Comers operational notifications",
+      caption: "Comers system notifications view aggregating operational events, comments, and new orders in one place."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_6_1.png",
-      alt: "Operations history",
-      caption: "Audit trail of user actions and system processes with filters by time, action type, and linked entities."
+      alt: "Comers operations history",
+      caption: "Comers audit trail of user actions and system processes with filters by time, action type, and linked entities."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_7_1.png",
-      alt: "Seller accounts list",
-      caption: "Administrative section with a seller account list and core organizational data."
+      alt: "Comers seller accounts list",
+      caption: "Comers administrative section with a seller account list and core organizational data."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_7_2.png",
-      alt: "Organization settings tiles",
-      caption: "Entry point to organization configuration covering stores, invoicing, carriers, email, and other back-office modules."
+      alt: "Comers organization settings tiles",
+      caption: "Comers entry point to organization configuration covering stores, invoicing, carriers, email, and other back-office modules."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_7_3.png",
-      alt: "Invoice data settings",
-      caption: "Invoice data configuration form as an example of a classic administrative module within the platform."
+      alt: "Comers invoice data settings",
+      caption: "Comers invoice data configuration form as an example of a classic administrative module within the platform."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_7_4.png",
-      alt: "Email template configuration",
-      caption: "Configuration of email templates and notification activation for different sales sources and recipient types."
+      alt: "Comers email template configuration",
+      caption: "Comers configuration of email templates and notification activation for different sales sources and recipient types."
     }
   ]}
 />
 
-_UI screenshots are shown with anonymized data and removed branding._
+_UI screenshots from Comers (`comers.app`) are shown with anonymized data; any visible branding is limited to the Comers product identity._
 
 Full technical change log:
 
@@ -333,7 +333,7 @@ The project demonstrates:
 
 This is not a greenfield project or a full rewrite.
 
-It is a production-proven operational platform being transformed in a controlled, contract-driven way by the same team that designed and operated it from the beginning.
+It is a production-proven operational platform, Comers (`comers.app`), being transformed in a controlled, contract-driven way by the same team that designed and operated it from the beginning.
 
 ---
 

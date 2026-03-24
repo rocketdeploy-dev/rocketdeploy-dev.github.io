@@ -1,6 +1,6 @@
 ---
-title: Modernizacja wieloorganizacyjnej platformy e-commerce do architektury mikroserwisowej
-summary: Ewolucja autorskiej, produkcyjnej platformy do zarządzania sprzedażą, rozwijanej i utrzymywanej przez ponad dekadę — transformacja w kierunku wyraźnych granic architektonicznych, warstwy BFF oraz docelowej architektury mikroserwisowej.
+title: Modernizacja Comers, wieloorganizacyjnej platformy e-commerce, do architektury mikroserwisowej
+summary: Ewolucja Comers, autorskiej, produkcyjnej platformy do zarządzania sprzedażą, rozwijanej i utrzymywanej przez ponad dekadę — transformacja w kierunku wyraźnych granic architektonicznych, warstwy BFF oraz docelowej architektury mikroserwisowej.
 category: Stabilizacja i refaktoryzacja
 featured: true
 priority: 95
@@ -21,11 +21,11 @@ import GalleryLightbox from "../../components/GalleryLightbox.astro";
 
 ## Kontekst systemu
 
-Projekt dotyczy modernizacji **autorskiej platformy do zarządzania sprzedażą online**, zaprojektowanej i rozwijanej nieprzerwanie przez nasz zespół przez około 10 lat.
+Projekt dotyczy modernizacji **Comers**, autorskiej platformy do zarządzania sprzedażą online dostępnej pod adresem `comers.app`, zaprojektowanej i rozwijanej nieprzerwanie przez nasz zespół przez około 10 lat.
 
 System powstał jako wewnętrzna platforma operacyjna wspierająca sieć sklepów internetowych działających w wielu krajach Unii Europejskiej.
 
-Platforma pełni rolę centralnego systemu sprzedażowo-integracyjnego, umożliwiając:
+Comers pełni rolę centralnego systemu sprzedażowo-integracyjnego, umożliwiając:
 
 - integrację wielu sklepów internetowych,
 - integrację z marketplace’ami (np. Amazon, eBay),
@@ -38,7 +38,7 @@ Platforma pełni rolę centralnego systemu sprzedażowo-integracyjnego, umożliw
 - generowanie faktur,
 - raportowanie operacyjne i analitykę.
 
-System jest zaprojektowany jako wieloorganizacyjny. W ramach jednej instancji może działać wiele organizacji, z których każda posiada:
+Comers jest zaprojektowany jako system wieloorganizacyjny. W ramach jednej instancji może działać wiele organizacji, z których każda posiada:
 
 - własne integracje sprzedażowe,
 - własną konfigurację operacyjną,
@@ -223,85 +223,85 @@ W ramach dotychczasowych prac:
 - wprowadzono pipeline’y CI/CD oraz przygotowanie pod konteneryzację,
 - odświeżono wybrane obszary interfejsu użytkownika.
 
-### Wybrane widoki platformy
+### Wybrane widoki platformy Comers
 
 <GalleryLightbox
   cols={2}
   images={[
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_1_1.png",
-      alt: "Dashboard platformy",
-      caption: "Dashboard operacyjny z widokiem sprzedaży, podsumowaniami per kanał oraz alertami wspierającymi codzienną pracę zespołu."
+      alt: "Dashboard Comers",
+      caption: "Dashboard operacyjny Comers z widokiem sprzedaży, podsumowaniami per kanał oraz alertami wspierającymi codzienną pracę zespołu."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_1_2.png",
-      alt: "Dashboard z metrykami sprzedaży",
-      caption: "Główny ekran dashboardu pokazujący wykresy sprzedaży i podział zamówień między konta sprzedażowe."
+      alt: "Dashboard Comers z metrykami sprzedaży",
+      caption: "Główny ekran dashboardu Comers pokazujący wykresy sprzedaży i podział zamówień między konta sprzedażowe."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_1_3.png",
-      alt: "Przełączanie konta sprzedażowego",
-      caption: "Widok dashboardu z rozwiniętym przełącznikiem konta sprzedażowego, podkreślający wieloorganizacyjny charakter platformy."
+      alt: "Przełączanie konta sprzedażowego w Comers",
+      caption: "Widok dashboardu Comers z rozwiniętym przełącznikiem konta sprzedażowego, podkreślający wieloorganizacyjny charakter platformy."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_1_4.png",
-      alt: "Menu konta użytkownika",
-      caption: "Menu użytkownika z ustawieniami konta i kontrolą sesji, osadzone w spójnym shellu aplikacji."
+      alt: "Menu konta użytkownika w Comers",
+      caption: "Menu użytkownika Comers z ustawieniami konta i kontrolą sesji, osadzone w spójnym shellu aplikacji."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_2_1.png",
-      alt: "Lista zamówień w toku",
-      caption: "Widok listy zamówień z filtrami, statusami operacyjnymi, szczegółami produktów i akcjami wykonywanymi bezpośrednio z tabeli."
+      alt: "Lista zamówień w toku w Comers",
+      caption: "Widok listy zamówień w Comers z filtrami, statusami operacyjnymi, szczegółami produktów i akcjami wykonywanymi bezpośrednio z tabeli."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_2_2.png",
-      alt: "Lista zamówień wysłanych",
-      caption: "Widok zamówień po wysyłce z dodatkowymi kolumnami logistycznymi, numerami trackingowymi i historią operacji."
+      alt: "Lista zamówień wysłanych w Comers",
+      caption: "Widok zamówień po wysyłce w Comers z dodatkowymi kolumnami logistycznymi, numerami trackingowymi i historią operacji."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_3_1.png",
-      alt: "Obsługa zwrotów i reklamacji",
-      caption: "Panel zwrotów i reklamacji z odrębnymi statusami procesu oraz filtrowaniem rekordów według kontekstu operacyjnego."
+      alt: "Obsługa zwrotów i reklamacji w Comers",
+      caption: "Panel zwrotów i reklamacji w Comers z odrębnymi statusami procesu oraz filtrowaniem rekordów według kontekstu operacyjnego."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_4_1.png",
-      alt: "Centrum wiadomości",
-      caption: "Moduł wiadomości oparty o wątki komunikacji, łączący listę konwersacji z widokiem szczegółów i odpowiedzi."
+      alt: "Centrum wiadomości Comers",
+      caption: "Moduł wiadomości Comers oparty o wątki komunikacji, łączący listę konwersacji z widokiem szczegółów i odpowiedzi."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_5_1.png",
-      alt: "Powiadomienia operacyjne",
-      caption: "Widok notyfikacji systemowych agregujący zdarzenia operacyjne, komentarze i nowe zamówienia w jednym miejscu."
+      alt: "Powiadomienia operacyjne Comers",
+      caption: "Widok notyfikacji systemowych Comers agregujący zdarzenia operacyjne, komentarze i nowe zamówienia w jednym miejscu."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_6_1.png",
-      alt: "Historia operacji",
-      caption: "Audit trail działań użytkowników i procesów systemowych z możliwością filtrowania po czasie, akcji i powiązanych encjach."
+      alt: "Historia operacji w Comers",
+      caption: "Audit trail działań użytkowników i procesów systemowych w Comers z możliwością filtrowania po czasie, akcji i powiązanych encjach."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_7_1.png",
-      alt: "Lista kont sprzedażowych",
-      caption: "Sekcja administracyjna z listą kont sprzedażowych i podstawowymi danymi organizacyjnymi."
+      alt: "Lista kont sprzedażowych w Comers",
+      caption: "Sekcja administracyjna Comers z listą kont sprzedażowych i podstawowymi danymi organizacyjnymi."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_7_2.png",
-      alt: "Kafelki ustawień organizacji",
-      caption: "Punkt wejścia do konfiguracji organizacji obejmującej sklepy, faktury, przewoźników, e-mail i inne moduły zaplecza."
+      alt: "Kafelki ustawień organizacji w Comers",
+      caption: "Punkt wejścia w Comers do konfiguracji organizacji obejmującej sklepy, faktury, przewoźników, e-mail i inne moduły zaplecza."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_7_3.png",
-      alt: "Ustawienia danych fakturowych",
-      caption: "Formularz konfiguracji danych fakturowych jako przykład klasycznego modułu administracyjnego w obrębie platformy."
+      alt: "Ustawienia danych fakturowych w Comers",
+      caption: "Formularz konfiguracji danych fakturowych w Comers jako przykład klasycznego modułu administracyjnego w obrębie platformy."
     },
     {
       src: "/case-studies/commerce-platform-modernization/commerce-platform-modernization-screenshot_7_4.png",
-      alt: "Konfiguracja szablonów e-mail",
-      caption: "Konfiguracja szablonów i aktywacji powiadomień e-mail dla różnych źródeł sprzedaży oraz typów odbiorców."
+      alt: "Konfiguracja szablonów e-mail w Comers",
+      caption: "Konfiguracja szablonów i aktywacji powiadomień e-mail w Comers dla różnych źródeł sprzedaży oraz typów odbiorców."
     }
   ]}
 />
 
-_Zrzuty UI prezentowane są z anonimizowanymi danymi i usuniętym brandingiem._
+_Zrzuty UI z Comers (`comers.app`) prezentowane są z anonimizowanymi danymi; ewentualny widoczny branding ograniczono do tożsamości produktu Comers._
 
 Pełny, techniczny opis zmian:
 
@@ -334,7 +334,7 @@ Projekt pokazuje:
 
 To nie jest greenfield ani przepisanie systemu od zera.
 
-To produkcyjnie sprawdzona platforma operacyjna transformowana w sposób kontrolowany, kontraktowy, przez zespół, który ją zaprojektował i utrzymywał od samego początku.
+To produkcyjnie sprawdzona platforma operacyjna, Comers (`comers.app`), transformowana w sposób kontrolowany, kontraktowy, przez zespół, który ją zaprojektował i utrzymywał od samego początku.
 
 ---
 
