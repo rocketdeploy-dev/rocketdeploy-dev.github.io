@@ -17,6 +17,38 @@ to **realna transformacja działającego systemu, prowadzona iteracyjnie**.
 
 ---
 
+## Spis treści
+
+- [Overview](#overview)
+- [Faza: 2026-02](#faza-2026-02)
+  - [1. Wydzielenie nowych modułów domenowych](#1-wydzielenie-nowych-modułów-domenowych)
+  - [2. Przebudowa integracji eBay](#2-przebudowa-integracji-ebay)
+  - [3. Moduł wiadomości](#3-moduł-wiadomości-warstwa-konwersacyjna)
+  - [4. Moduł listingów](#4-moduł-listingów)
+  - [5. Moduł shipping](#5-moduł-shipping-dpd-dhl)
+  - [6. Moduł notyfikacji](#6-moduł-notyfikacji)
+  - [7. Porty i adaptery](#7-porty-i-adaptery-kluczowa-zmiana)
+  - [8. Model raw-first ingestion](#8-model-raw-first-ingestion)
+  - [9. Stateless + object storage](#9-stateless--object-storage)
+  - [10. Stabilizacja jobów i runtime](#10-stabilizacja-jobów-i-runtime)
+  - [11. Cleanup technologiczny](#11-cleanup-technologiczny)
+  - [12. UI](#12-ui)
+  - [13. CI/CD i delivery](#13-cicd-i-delivery)
+  - [14. Dokumentacja](#14-dokumentacja)
+- [Faza: 2026-03 / 2026-05](#faza-2026-03--2026-05)
+  - [1. Przejście od modułów do granic kontraktowych](#1-przejście-od-modułów-do-granic-kontraktowych)
+  - [2. Moduł activities i append-only audit log](#2-moduł-activities-i-append-only-audit-log)
+  - [3. Moduł orders i synchronizacja zamówień zewnętrznych](#3-moduł-orders-i-synchronizacja-zamówień-zewnętrznych)
+  - [4. Rozwój modułu messages](#4-rozwój-modułu-messages-tłumaczenia-i-odpowiedzi-wspierane-ai)
+  - [5. Rozszerzenie notifications do Core API i MCP](#5-rozszerzenie-notifications-do-core-api-i-mcp)
+  - [6. Warstwa AI: ChatKit, MCP, Core API i Gateway](#6-warstwa-ai-chatkit-mcp-core-api-i-gateway)
+  - [7. AI Gateway i capability contracts](#7-ai-gateway-i-capability-contracts)
+  - [8. Separacja runtime i repozytoriów infrastrukturalnych](#8-separacja-runtime-i-repozytoriów-infrastrukturalnych)
+- [Kolejne fazy](#kolejne-fazy)
+- [Powiązane](#powiązane)
+
+---
+
 ## Overview
 
 Pierwotny system stojący za Comers był **monolitem opartym o Yii2**, odpowiedzialnym za:
