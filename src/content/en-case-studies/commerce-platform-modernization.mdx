@@ -255,7 +255,7 @@ The most important new areas of work include:
 
 In practice, this means Comers is no longer only a modernized monolith with several new modules. It is an actively evolving operational platform where new features and new types of consumers are connected through explicit contracts instead of direct access to older application logic.
 
-This stage also marks a technology shift for the platform as a whole, not only for the AI layer. The legacy application remains based on PHP/Yii2, while new backend services and future extracted domain microservices are being designed primarily around Node.js / TypeScript / NestJS / Fastify. This includes `comers-core-api`, the BFF, MCP, the gateway, and planned domain extractions such as `orders` or `messages`.
+This stage also marks a technology shift for the platform as a whole, not only for the AI layer. The legacy application remains based on PHP/Yii2, while new backend services and future extracted domain microservices are being designed primarily around Node.js / TypeScript / NestJS / Fastify. This includes `comers-core-api`, the BFF, MCP, the gateway, and planned domain extractions, including `orders` and `messages`.
 
 The frontend direction is split intentionally: the main SPA direction remains Angular-based, while selected micro-frontend surfaces, such as the current AI chat UI, can be built with React/Vite. Specialized runtime components, such as ChatKit, may use separate technologies like Python when that better fits their role.
 
