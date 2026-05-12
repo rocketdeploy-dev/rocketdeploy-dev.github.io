@@ -256,6 +256,10 @@ Najważniejsze nowe obszary prac obejmują:
 
 W praktyce oznacza to, że Comers nie jest już tylko modernizowanym monolitem z kilkoma nowymi modułami. To aktywnie rozwijana platforma operacyjna, w której nowe funkcje i nowe typy konsumentów są podłączane przez jawne kontrakty, a nie przez bezpośredni dostęp do starszej logiki aplikacji.
 
+Ten etap oznacza również zmianę technologiczną całej platformy. Legacy pozostaje oparte o PHP/Yii2, natomiast nowe usługi backendowe i przyszłe mikroserwisy domenowe są projektowane głównie w stacku Node.js / TypeScript / NestJS / Fastify. Dotyczy to zarówno elementów core systemu, takich jak `comers-core-api`, jak i warstw wspierających nowe typy konsumentów, takich jak BFF, MCP czy gateway. Ten sam kierunek technologiczny jest przewidziany dla planowanych ekstrakcji domen, między innymi `orders` i `messages`.
+
+Warstwa frontendowa jest rozwijana dwutorowo. Główne SPA pozostaje kierunkiem opartym o Angular, natomiast wybrane micro-frontendy mogą być budowane w React/Vite. Obecnym przykładem takiego micro-frontendu jest interfejs czatu AI. Równolegle wyspecjalizowane elementy runtime mogą korzystać z osobnych technologii, jeżeli lepiej pasuje to do ich roli — przykładem jest Python użyty dla backendowego runtime ChatKit.
+
 ### Realne możliwości warstwy AI w obecnym etapie
 
 W ostatnim etapie warstwa AI przestała być wyłącznie kierunkiem rozwoju. W systemie działa już asystent operacyjny, który korzysta z jawnych kontraktów i kontrolowanych narzędzi domenowych.
