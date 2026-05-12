@@ -243,6 +243,22 @@ Najważniejsze nowe obszary prac obejmują:
 
 W praktyce oznacza to, że Comers nie jest już tylko modernizowanym monolitem z kilkoma nowymi modułami. To aktywnie rozwijana platforma operacyjna, w której nowe funkcje i nowe typy konsumentów są podłączane przez jawne kontrakty, a nie przez bezpośredni dostęp do starszej logiki aplikacji.
 
+### Realne możliwości warstwy AI w obecnym etapie
+
+W ostatnim etapie warstwa AI przestała być wyłącznie kierunkiem rozwoju. W systemie działa już asystent operacyjny, który korzysta z jawnych kontraktów i kontrolowanych narzędzi domenowych.
+
+Asystent potrafi odpowiadać na pytania dotyczące realnych danych z systemu oraz wykonywać wybrane akcje. Może czytać listy i szczegóły wiadomości klientów, notyfikacje, informacje o zamówieniach oraz activity log. Może również oznaczać wiadomości i notyfikacje jako przeczytane oraz przenosić je do archiwum.
+
+Szczególnie ważny jest rozwój modułu wiadomości. Comers wspiera tłumaczenie wątków, tytułów i list konwersacji na wybrany język, zapamiętuje preferencję językową użytkownika oraz uruchamia tłumaczenia w tle. AI potrafi zaproponować odpowiedź dla klienta na podstawie kontekstu rozmowy, a także poprawić, uporządkować i przetłumaczyć draft przygotowany przez operatora na docelowy język klienta.
+
+Te funkcje nie zostały dodane jako luźna integracja z modelem AI. Są osadzone w architekturze przez `comers-ai-webapp`, `comers-ai-bff`, `comers-ai-chatkit`, `comers-ai-mcp`, `comers-core-api` i `comers-ai-gateway`. Dzięki temu AI działa przez API, narzędzia i capability contracts, a nie przez bezpośredni dostęp do modeli legacy.
+
+### Gotowość wybranych modułów do wydzielenia
+
+Coraz więcej obszarów systemu ma już własne granice, kontrakty, API, read modele, porty, adaptery i osobne procesy runtime. Dotyczy to szczególnie `messages`, `activities`, `orders`, `notifications`, `shipping` oraz integracji marketplace.
+
+To oznacza, że modernizacja nie polega już tylko na porządkowaniu kodu wewnątrz monolitu. Wybrane moduły są coraz bliżej technicznej gotowości do wydzielenia do osobnych usług, ponieważ nowi konsumenci systemu mogą korzystać z jawnych kontraktów zamiast z wewnętrznych modeli legacy.
+
 ### Wybrane widoki platformy Comers
 
 <GalleryLightbox
@@ -326,24 +342,6 @@ _Zrzuty UI z Comers (`comers.app`) prezentowane są z anonimizowanymi danymi; ew
 Pełny, techniczny opis zmian:
 
 👉 **[Log ewolucji architektury i modernizacji](/pl/case-studies/commerce-platform-modernization-log)**
-
----
-
-### Realne możliwości warstwy AI w obecnym etapie
-
-W ostatnim etapie warstwa AI przestała być wyłącznie kierunkiem rozwoju. W systemie działa już asystent operacyjny, który korzysta z jawnych kontraktów i kontrolowanych narzędzi domenowych.
-
-Asystent potrafi odpowiadać na pytania dotyczące realnych danych z systemu oraz wykonywać wybrane akcje. Może czytać listy i szczegóły wiadomości klientów, notyfikacje, informacje o zamówieniach oraz activity log. Może również oznaczać wiadomości i notyfikacje jako przeczytane oraz przenosić je do archiwum.
-
-Szczególnie ważny jest rozwój modułu wiadomości. Comers wspiera tłumaczenie wątków, tytułów i list konwersacji na wybrany język, zapamiętuje preferencję językową użytkownika oraz uruchamia tłumaczenia w tle. AI potrafi zaproponować odpowiedź dla klienta na podstawie kontekstu rozmowy, a także poprawić, uporządkować i przetłumaczyć draft przygotowany przez operatora na docelowy język klienta.
-
-Te funkcje nie zostały dodane jako luźna integracja z modelem AI. Są osadzone w architekturze przez `comers-ai-webapp`, `comers-ai-bff`, `comers-ai-chatkit`, `comers-ai-mcp`, `comers-core-api` i `comers-ai-gateway`. Dzięki temu AI działa przez API, narzędzia i capability contracts, a nie przez bezpośredni dostęp do modeli legacy.
-
-### Gotowość wybranych modułów do wydzielenia
-
-Coraz więcej obszarów systemu ma już własne granice, kontrakty, API, read modele, porty, adaptery i osobne procesy runtime. Dotyczy to szczególnie `messages`, `activities`, `orders`, `notifications`, `shipping` oraz integracji marketplace.
-
-To oznacza, że modernizacja nie polega już tylko na porządkowaniu kodu wewnątrz monolitu. Wybrane moduły są coraz bliżej technicznej gotowości do wydzielenia do osobnych usług, ponieważ nowi konsumenci systemu mogą korzystać z jawnych kontraktów zamiast z wewnętrznych modeli legacy.
 
 ---
 
