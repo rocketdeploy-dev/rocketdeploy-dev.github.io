@@ -17,6 +17,38 @@ this is an **active system transformation under real operational constraints**.
 
 ---
 
+## Contents
+
+- [Overview](#overview)
+- [Phase: 2026-02](#phase-2026-02)
+  - [1. Domain Modules Introduced](#1-domain-modules-introduced)
+  - [2. eBay Integration Redesign](#2-ebay-integration-redesign)
+  - [3. Messages Module](#3-messages-module-conversation-layer)
+  - [4. Listings Module](#4-listings-module)
+  - [5. Shipping Module](#5-shipping-module-carrier-integrations)
+  - [6. Notifications Module](#6-notifications-module)
+  - [7. Ports & Adapters Architecture](#7-ports--adapters-architecture)
+  - [8. Raw-First Ingestion Model](#8-raw-first-ingestion-model)
+  - [9. Stateless Artifact Handling](#9-stateless-artifact-handling-object-storage)
+  - [10. Job Runtime Stabilization](#10-job-runtime-stabilization)
+  - [11. Runtime & Configuration Cleanup](#11-runtime--configuration-cleanup)
+  - [12. UI Improvements](#12-ui-improvements)
+  - [13. CI/CD & Delivery Improvements](#13-cicd--delivery-improvements)
+  - [14. Documentation & Ongoing Evolution](#14-documentation--ongoing-evolution)
+- [Phase: 2026-03 / 2026-05](#phase-2026-03--2026-05)
+  - [1. From modules to contract boundaries](#1-from-modules-to-contract-boundaries)
+  - [2. Activities and append-only audit log](#2-activities-and-append-only-audit-log)
+  - [3. Orders and external order synchronization](#3-orders-and-external-order-synchronization)
+  - [4. Messages: translations and AI-assisted replies](#4-messages-translations-and-ai-assisted-replies)
+  - [5. Notifications extended to Core API and MCP](#5-notifications-extended-to-core-api-and-mcp)
+  - [6. AI layer: ChatKit, MCP, Core API, and Gateway](#6-ai-layer-chatkit-mcp-core-api-and-gateway)
+  - [7. AI Gateway and capability contracts](#7-ai-gateway-and-capability-contracts)
+  - [8. Runtime and infrastructure repositories](#8-runtime-and-infrastructure-repositories)
+- [Future Phases](#future-phases)
+- [Related Resources](#related-resources)
+
+---
+
 ## Overview
 
 The original system behind Comers was a **Yii2-based monolithic platform** responsible for:
