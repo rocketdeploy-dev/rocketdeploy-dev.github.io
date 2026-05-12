@@ -611,12 +611,24 @@ Powstały lub zostały uporządkowane repozytoria:
 - synchronizacja wątków wiadomości
 - worker tłumaczeń wiadomości
 
+Ważnym elementem tej fazy jest też stopniowe przejście do architektury poliglotycznej.
+
+Legacy nadal działa w stacku PHP/Yii2, ale nowe usługi backendowe i przyszłe mikroserwisy domenowe są projektowane głównie w Node.js / TypeScript / NestJS / Fastify. Dotyczy to nie tylko warstwy AI, ale także elementów core systemu, takich jak `comers-core-api`, oraz planowanych ekstrakcji domen, np. `orders` i `messages`.
+
+Warstwa frontendowa jest rozwijana dwutorowo:
+
+- główne SPA pozostaje kierunkiem opartym o Angular,
+- wybrane micro-frontendy, takie jak obecny czat AI, mogą być budowane w React/Vite.
+
+Dodatkowo wyspecjalizowane runtime’y mogą używać osobnych technologii, jeżeli lepiej pasuje to do ich roli — przykładem jest Python dla backendowego runtime ChatKit.
+
 Efekt:
 
 - repozytoria aplikacyjne nie są już głównym miejscem definicji produkcyjnego runtime
 - procesy tła stały się jawnie opisanymi jednostkami uruchomieniowymi
 - łatwiej zarządzać deploymentem, konfiguracją i odpowiedzialnościami poszczególnych usług
 - architektura jest bardziej gotowa do dalszej konteneryzacji i wydzielania usług
+- nowe capability mogą powstawać w wyspecjalizowanych runtime’ach bez rozbudowywania legacy PHP/Yii2
 
 ---
 
