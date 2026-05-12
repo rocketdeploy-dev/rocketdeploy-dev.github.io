@@ -25,7 +25,7 @@ Projekt dotyczy modernizacji **Comers**, autorskiej platformy do zarządzania sp
 
 System powstał jako wewnętrzna platforma operacyjna wspierająca sieć sklepów internetowych działających w wielu krajach Unii Europejskiej.
 
-Comers pełni rolę centralnego systemu sprzedażowo-integracyjnego, umożliwiając:
+Comers pełni rolę centralnego systemu sprzedażowo-integracyjnego, który nadal jest aktywnie rozwijany. Oprócz klasycznych procesów sprzedażowych system obejmuje dziś także coraz wyraźniejsze granice modułowe, procesy tła oraz pierwsze obszary operacyjnego wsparcia AI. Platforma umożliwia:
 
 - integrację wielu sklepów internetowych,
 - integrację z marketplace’ami (np. Amazon, eBay),
@@ -36,7 +36,10 @@ Comers pełni rolę centralnego systemu sprzedażowo-integracyjnego, umożliwiaj
 - obsługę procesów serwisowych i gwarancyjnych,
 - zarządzanie listingami produktowymi,
 - generowanie faktur,
-- raportowanie operacyjne i analitykę.
+- raportowanie operacyjne i analitykę,
+- tłumaczenie i obsługę wątków wiadomości,
+- wsparcie operatorów przy przygotowywaniu odpowiedzi do klientów,
+- operacyjne użycie AI przez jawne kontrakty i narzędzia domenowe.
 
 Comers jest zaprojektowany jako system wieloorganizacyjny. W ramach jednej instancji może działać wiele organizacji, z których każda posiada:
 
@@ -75,7 +78,7 @@ System nie był eksperymentem — był realnym narzędziem operacyjnym obsługuj
 
 ## Dlaczego modernizacja jest dziś konieczna
 
-Po dekadzie rozwoju system osiągnął naturalny punkt przegięcia architektonicznego.
+Po dekadzie rozwoju system osiągnął naturalny punkt przegięcia architektonicznego. Modernizacja nie jest już wyłącznie planem docelowym — część nowych granic, procesów tła, warstw API i mechanizmów AI działa już w aktywnym runtime platformy.
 
 ### 1. Rosnąca gęstość integracji
 
@@ -181,14 +184,14 @@ Transformacja prowadzona jest w warunkach produkcyjnych.
 
 ### Faza 5 – Operacyjne wsparcie AI
 
-W długim horyzoncie system zostanie rozszerzony o warstwę wsparcia decyzyjnego opartego o AI.
+Pierwotnie AI było traktowane jako długoterminowy kierunek rozwoju. Obecnie pierwsza operacyjna warstwa AI została już wdrożona w wybranych obszarach, przede wszystkim w komunikacji, tłumaczeniach, obsłudze odpowiedzi, narzędziach MCP oraz capability gateway.
 
 AI będzie:
 
 - operować wyłącznie na jawnych kontraktach,
 - generować rekomendacje i podsumowania,
 - wspierać decyzje operacyjne,
-- pełnić rolę warstwy wspomagającej, a nie wykonawczej.
+- pełnić rolę warstwy wspomagającej, a nie niekontrolowanego obejścia logiki systemu.
 
 ---
 
@@ -222,6 +225,23 @@ W ramach dotychczasowych prac:
 - uporządkowano środowisko uruchomieniowe i konfigurację (env-based),
 - wprowadzono pipeline’y CI/CD oraz przygotowanie pod konteneryzację,
 - odświeżono wybrane obszary interfejsu użytkownika.
+
+### Najnowszy etap: granice kontraktowe, AI i runtime
+
+W kolejnej fazie modernizacja wyszła poza samo porządkowanie wybranych modułów wewnątrz monolitu. System zaczął ewoluować w kierunku architektury kontraktowej, w której starsza aplikacja, wewnętrzne API, warstwa Core API, narzędzia AI, gateway oraz procesy tła mają coraz wyraźniejsze odpowiedzialności.
+
+Najważniejsze nowe obszary prac obejmują:
+
+- wydzielenie obszaru `activities` za pomocą API `activities/v1`, modelu odczytu i projekcji `activities_current`,
+- przejście historii aktywności w kierunku append-only audit logu, bez klasycznych aktualizacji i usuwania rekordów,
+- utworzenie nowego boundary `orders` dla synchronizacji zamówień zewnętrznych, danych eBay Fulfillment, terminów wysyłki i odczytu przez Core API oraz MCP,
+- rozbudowę modułu `messages` o tłumaczenia wątków i list wątków, preferencję języka użytkownika, workera tłumaczeń oraz wsparcie AI przy sugerowaniu i komponowaniu odpowiedzi,
+- rozszerzenie istniejącego modułu `notifications` o fasadę Core API i narzędzia MCP działające w kontekście konkretnego użytkownika,
+- wdrożenie pierwszej warstwy operacyjnej AI z osobnymi repozytoriami dla webapp, BFF, ChatKit runtime, MCP oraz AI gateway,
+- wprowadzenie `comers-ai-gateway` jako wewnętrznej warstwy capability dla `translate.v1` i `compose_reply.v1`,
+- przeniesienie definicji runtime do osobnych repozytoriów infrastrukturalnych `comers-infra-ai` i `comers-infra-legacy`.
+
+W praktyce oznacza to, że Comers nie jest już tylko modernizowanym monolitem z kilkoma nowymi modułami. To aktywnie rozwijana platforma operacyjna, w której nowe funkcje i nowe typy konsumentów są podłączane przez jawne kontrakty, a nie przez bezpośredni dostęp do starszej logiki aplikacji.
 
 ### Wybrane widoki platformy Comers
 
@@ -309,16 +329,35 @@ Pełny, techniczny opis zmian:
 
 ---
 
+### Realne możliwości warstwy AI w obecnym etapie
+
+W ostatnim etapie warstwa AI przestała być wyłącznie kierunkiem rozwoju. W systemie działa już asystent operacyjny, który korzysta z jawnych kontraktów i kontrolowanych narzędzi domenowych.
+
+Asystent potrafi odpowiadać na pytania dotyczące realnych danych z systemu oraz wykonywać wybrane akcje. Może czytać listy i szczegóły wiadomości klientów, notyfikacje, informacje o zamówieniach oraz activity log. Może również oznaczać wiadomości i notyfikacje jako przeczytane oraz przenosić je do archiwum.
+
+Szczególnie ważny jest rozwój modułu wiadomości. Comers wspiera tłumaczenie wątków, tytułów i list konwersacji na wybrany język, zapamiętuje preferencję językową użytkownika oraz uruchamia tłumaczenia w tle. AI potrafi zaproponować odpowiedź dla klienta na podstawie kontekstu rozmowy, a także poprawić, uporządkować i przetłumaczyć draft przygotowany przez operatora na docelowy język klienta.
+
+Te funkcje nie zostały dodane jako luźna integracja z modelem AI. Są osadzone w architekturze przez `comers-ai-webapp`, `comers-ai-bff`, `comers-ai-chatkit`, `comers-ai-mcp`, `comers-core-api` i `comers-ai-gateway`. Dzięki temu AI działa przez API, narzędzia i capability contracts, a nie przez bezpośredni dostęp do modeli legacy.
+
+### Gotowość wybranych modułów do wydzielenia
+
+Coraz więcej obszarów systemu ma już własne granice, kontrakty, API, read modele, porty, adaptery i osobne procesy runtime. Dotyczy to szczególnie `messages`, `activities`, `orders`, `notifications`, `shipping` oraz integracji marketplace.
+
+To oznacza, że modernizacja nie polega już tylko na porządkowaniu kodu wewnątrz monolitu. Wybrane moduły są coraz bliżej technicznej gotowości do wydzielenia do osobnych usług, ponieważ nowi konsumenci systemu mogą korzystać z jawnych kontraktów zamiast z wewnętrznych modeli legacy.
+
+---
+
 ## Stan obecny
 
-System pozostaje w pełni operacyjny.
+System pozostaje w pełni operacyjny i jest nadal rozwijany. Obecny stan to etap przejściowy między modularnym monolitem, architekturą kontraktową i pierwszymi wydzielonymi runtime’ami wspierającymi nowe funkcje.
 
 Modernizacja ma charakter przyrostowy:
 
 - granice są formalizowane,
 - kontrakty są wzmacniane,
 - rozwijane są nowe moduły o wyraźnych boundary,
-- przygotowywani są kolejni kandydaci do wydzielenia.
+- przygotowywani są kolejni kandydaci do wydzielenia,
+- nowe warstwy, takie jak Core API, MCP, BFF i AI gateway, są rozwijane jako kontrolowane punkty dostępu do domen systemu.
 
 Część kluczowych elementów transformacji została już wdrożona i opisana w sekcji powyżej.
 
