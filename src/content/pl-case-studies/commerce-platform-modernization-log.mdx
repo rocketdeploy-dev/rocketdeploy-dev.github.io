@@ -85,6 +85,7 @@ Wdrożone elementy:
 - use case’y integracji wiadomości
 
 Dodatkowo:
+
 - obsługa podłączania i odłączania kont
 - obsługa callbacków
 - webhook / endpoint account deletion
@@ -188,6 +189,7 @@ Moduł `notifications` zapewnia:
 - usuwanie
 
 Zawiera:
+
 - własny UI
 - endpointy REST API
 
@@ -304,6 +306,7 @@ Nowe UI zostało wdrożone dla:
 - modułu `notifications`
 
 Dodatkowo:
+
 - uproszczono wybrane legacy widoki
 - częściowo uporządkowano strukturę frontendową
 
@@ -345,14 +348,259 @@ Ten log będzie rozszerzany o kolejne fazy.
 
 ---
 
+## Faza: 2026-03 / 2026-05
+
+### 1. Przejście od modułów do granic kontraktowych
+
+Po pierwszej fazie porządkowania wybranych modułów modernizacja przesunęła się w stronę szerszej architektury kontraktowej.
+
+Coraz więcej obszarów systemu nie jest już tylko wydzielonym folderem lub modułem wewnątrz monolitu. Wybrane domeny otrzymały własne API, read modele, porty, adaptery, procesy tła oraz warstwy pośrednie dla nowych konsumentów.
+
+W praktyce oznacza to, że nowe elementy systemu mogą korzystać z jawnych kontraktów zamiast bezpośrednio odwoływać się do starszych modeli, kontrolerów lub tabel legacy.
+
+Efekt:
+
+- większa separacja odpowiedzialności
+- większa gotowość wybranych modułów do wydzielenia
+- możliwość podłączania nowych konsumentów, takich jak Core API, MCP i AI, bez obchodzenia granic domenowych
+- mocniejszy fundament pod przyszłą ekstrakcję do mikroserwisów
+
+---
+
+### 2. Moduł activities i append-only audit log
+
+Obszar `activities` został wydzielony jako osobny moduł odczytowy z API `activities/v1`.
+
+Wdrożone elementy:
+
+- lista aktywności
+- szczegóły aktywności
+- endpoint filtrów
+- model odczytu
+- mapowanie starych payloadów legacy do jawnych DTO
+- ograniczanie dostępu na podstawie kontekstu sprzedawcy
+- przeniesienie odczytu historii operacji za granicę modułu
+
+Następnie storage aktywności został przebudowany w kierunku append-only.
+
+Zamiast traktować historię operacji jak zwykłe, modyfikowalne rekordy, system zaczął używać modelu opartego o zapis zdarzeń i projekcję aktualnego stanu (`activities_current`).
+
+Efekt:
+
+- activity log stał się bezpieczniejszym audit trailem
+- aktualizacje i usuwanie aktywności zostały zablokowane
+- stare dane są normalizowane za warstwą modułu
+- obszar jest przygotowany do dalszego użycia przez API, AI i przyszłe usługi
+
+---
+
+### 3. Moduł orders i synchronizacja zamówień zewnętrznych
+
+Powstał nowy boundary `orders`, który porządkuje synchronizację i odczyt zamówień zewnętrznych.
+
+Wdrożone elementy:
+
+- append-only fundament synchronizacji zamówień
+- port providerów zewnętrznych
+- śledzenie przebiegów synchronizacji
+- zapis raw payloadów z systemów zewnętrznych
+- snapshoty zamówień i pozycji zamówień
+- external references
+- current-state read modele
+- internal API `orders/v1`
+- read-only boundary w `comers-core-api`
+- narzędzia MCP dla zamówień
+- osobny job synchronizacji zamówień zewnętrznych w runtime legacy
+
+Szczególnie istotna była rozbudowa integracji eBay w stronę Sell Fulfillment API oraz obsługa danych związanych z terminami wysyłki.
+
+Efekt:
+
+- zamówienia zewnętrzne mają bardziej trwały i audytowalny model danych
+- synchronizacja nie opiera się wyłącznie na jednorazowym pobraniu najnowszych rekordów
+- dane o wysyłce i pilności mogą być używane przez API oraz AI
+- moduł `orders` stał się jednym z najważniejszych kandydatów do dalszego wydzielenia
+
+---
+
+### 4. Rozwój modułu messages: tłumaczenia i odpowiedzi wspierane AI
+
+Moduł `messages` został rozszerzony z obszaru synchronizacji i obsługi wątków w kierunku wielojęzycznego, wspieranego przez AI centrum komunikacji.
+
+Wdrożone elementy:
+
+- tłumaczenie pojedynczych wątków
+- tłumaczenie list wątków
+- tłumaczenie tytułów i treści wiadomości
+- zapamiętywanie preferowanego języka tłumaczeń użytkownika
+- worker tłumaczeń działający w tle
+- integracja z `comers-ai-gateway`
+- endpoint kontekstu kompozytora odpowiedzi
+- sugerowanie draftu odpowiedzi na podstawie wątku
+- poprawianie i komponowanie odpowiedzi na podstawie draftu użytkownika
+- tłumaczenie odpowiedzi na docelowy język klienta
+- zachowanie osobnego, jawnego flow wysyłania odpowiedzi
+
+AI nie zostało podłączone bezpośrednio do widoku lub bazy danych. Tłumaczenia i generowanie odpowiedzi przechodzą przez use case’y, adaptery oraz capability gateway.
+
+Efekt:
+
+- operatorzy mogą obsługiwać wiadomości klientów w wielu językach
+- AI pomaga przygotować odpowiedź, ale nie zastępuje jawnego procesu wysyłki
+- tłumaczenia mogą działać jako proces tła
+- komunikacja z klientami stała się jednym z pierwszych realnych obszarów AI-assisted operations w Comers
+
+---
+
+### 5. Rozszerzenie notifications do Core API i MCP
+
+Moduł `notifications` istniał już w poprzedniej fazie modernizacji.
+
+W tej fazie został rozszerzony o integrację z warstwą Core API oraz narzędziami MCP.
+
+Wdrożone elementy:
+
+- fasada notyfikacji w `comers-core-api`
+- narzędzia MCP do listowania notyfikacji
+- odczyt szczegółów notyfikacji
+- oznaczanie notyfikacji jako przeczytane
+- archiwizacja notyfikacji
+- operacje zbiorcze
+- przekazywanie zaufanego kontekstu użytkownika (`X-Internal-User-Id`)
+
+Efekt:
+
+- notyfikacje mogą być obsługiwane przez asystenta AI bez bezpośredniego dostępu do legacy
+- operacje są wykonywane w kontekście konkretnego użytkownika
+- istniejący moduł został rozszerzony o nowe typy konsumentów
+
+---
+
+### 6. Warstwa AI: ChatKit, MCP, Core API i Gateway
+
+W systemie powstała pierwsza realna warstwa operacyjnego wsparcia AI.
+
+Wdrożone elementy:
+
+- `comers-ai-webapp`
+- `comers-ai-bff`
+- `comers-ai-chatkit`
+- `comers-ai-mcp`
+- `comers-ai-gateway`
+- lokalny runtime ChatKit
+- historia wątków rozmów
+- streaming odpowiedzi
+- narzędzia MCP dla messages, notifications i orders
+- integracja MCP z `comers-core-api`
+- capability gateway dla operacji AI
+
+Asystent AI potrafi dziś korzystać z wybranych danych i akcji systemu przez jawne narzędzia domenowe.
+
+Może między innymi:
+
+- czytać listy i szczegóły wiadomości
+- czytać notyfikacje
+- czytać informacje o zamówieniach
+- korzystać z danych activity logu
+- oznaczać wiadomości i notyfikacje jako przeczytane
+- archiwizować wiadomości i notyfikacje
+- wspierać przygotowywanie odpowiedzi do klientów
+
+Kluczową decyzją architektoniczną jest to, że AI nie omija granic aplikacji.
+
+Ścieżka wykonania opiera się na kontraktach:
+
+AI / ChatKit  
+→ MCP  
+→ Core API  
+→ wewnętrzne API i moduły legacy
+
+Efekt:
+
+- AI działa jako kontrolowany konsument systemu
+- narzędzia są ograniczone do jawnie udostępnionych capability
+- wrażliwe operacje są wykonywane w kontekście użytkownika
+- powstała podstawa do dalszego rozwijania agentic operations bez destabilizowania legacy
+
+---
+
+### 7. AI Gateway i capability contracts
+
+`comers-ai-gateway` został wprowadzony jako wewnętrzna warstwa capability dla operacji AI.
+
+Wdrożone capability:
+
+- `translate.v1`
+- `compose_reply.v1`
+
+Gateway odpowiada za:
+
+- ukrycie szczegółów integracji z providerem AI
+- wymuszanie struktury odpowiedzi
+- obsługę OpenAI Responses API
+- trwałe operacje dla tłumaczeń
+- idempotentne tworzenie operacji
+- odczyt statusu operacji
+- background polling przez osobny kontener runtime
+
+Efekt:
+
+- aplikacja nie zależy bezpośrednio od surowego API providera AI
+- długotrwałe operacje tłumaczeń mogą być obsługiwane poza request-response UI
+- capability AI mają własne kontrakty i mogą ewoluować niezależnie
+- gateway stał się miejscem dla kolejnych kontrolowanych funkcji AI
+
+---
+
+### 8. Separacja runtime i repozytoriów infrastrukturalnych
+
+Runtime został wyraźniej oddzielony od kodu aplikacji.
+
+Powstały lub zostały uporządkowane repozytoria:
+
+- `comers-infra-ai`
+- `comers-infra-legacy`
+
+`comers-infra-ai` obejmuje runtime dla:
+
+- AI webapp
+- BFF
+- MCP
+- AI gateway
+- gateway pollera
+- ChatKit runtime
+
+`comers-infra-legacy` obejmuje runtime legacy jako zestaw kontenerów:
+
+- aplikacja
+- web
+- joby cykliczne
+- synchronizacja zamówień zewnętrznych
+- synchronizacja wątków wiadomości
+- worker tłumaczeń wiadomości
+
+Efekt:
+
+- repozytoria aplikacyjne nie są już głównym miejscem definicji produkcyjnego runtime
+- procesy tła stały się jawnie opisanymi jednostkami uruchomieniowymi
+- łatwiej zarządzać deploymentem, konfiguracją i odpowiedzialnościami poszczególnych usług
+- architektura jest bardziej gotowa do dalszej konteneryzacji i wydzielania usług
+
+---
+
 ## Kolejne fazy
 
 Planowane obszary dalszej transformacji:
 
-- ekstrakcja wybranych modułów do usług
-- dalsza separacja integracji
+- dalsza ekstrakcja wybranych modułów do osobnych usług
+- rozwijanie `comers-core-api` jako stabilnej warstwy kontraktowej
+- rozszerzanie MCP o kolejne narzędzia domenowe
+- dalsze wzmacnianie trusted user context dla operacji wykonywanych przez AI
+- rozwijanie `comers-ai-gateway` o kolejne capability
+- dalsza separacja integracji marketplace i shipping
 - zastąpienie części legacy modelu jobów architekturą event-driven
 - głębsza separacja frontendu (SPA / BFF)
+- stopniowe przenoszenie kolejnych obszarów do niezależnych runtime’ów
 
 ---
 
