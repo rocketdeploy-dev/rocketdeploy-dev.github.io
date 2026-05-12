@@ -25,7 +25,7 @@ This project concerns the modernization of **Comers**, a proprietary online sale
 
 The system was originally built as an internal operational platform supporting a network of online stores operating across multiple European Union countries.
 
-Comers serves as a centralized sales and integration system, enabling:
+Comers serves as a centralized sales and integration system that is still actively evolving. In addition to classic sales operations, the system now includes increasingly explicit module boundaries, background processing, and the first areas of operational AI support. The platform enables:
 
 - integration of multiple online stores,
 - integration with marketplaces (e.g. Amazon, eBay),
@@ -36,7 +36,10 @@ Comers serves as a centralized sales and integration system, enabling:
 - service and warranty workflows,
 - product listing management,
 - invoice generation,
-- operational reporting and analytics.
+- operational reporting and analytics,
+- translation and handling of message threads,
+- operator support when preparing customer replies,
+- operational use of AI through explicit contracts and domain tools.
 
 Comers is multi-organization by design. Within a single instance, multiple organizations can operate independently, each with:
 
@@ -75,7 +78,7 @@ The system was not an experiment. It was a real operational tool supporting sale
 
 ## Why Modernization Is Necessary Today
 
-After a decade of growth, the system reached a natural architectural inflection point.
+After a decade of growth, the system reached a natural architectural inflection point. Modernization is no longer only a target plan — some of the new boundaries, background processes, API layers, and AI mechanisms are already running in the active platform runtime.
 
 ### 1. Growing integration density
 
@@ -181,14 +184,14 @@ The transformation is being carried out under live production conditions.
 
 ### Phase 5: Operational AI support
 
-Over the long term, the system will be extended with an AI-assisted decision-support layer.
+Originally, AI was treated as a long-term development direction. Today, the first operational AI layer has already been implemented in selected areas, especially communication, translation, reply handling, MCP tools, and the capability gateway.
 
 AI will:
 
 - operate exclusively on explicit contracts,
 - generate recommendations and summaries,
 - support operational decisions,
-- remain an augmentation layer rather than an execution authority.
+- remain an augmentation layer rather than an uncontrolled bypass of system logic.
 
 ---
 
@@ -221,6 +224,39 @@ Work completed so far includes:
 - cleaning up runtime environment and configuration management (env-based),
 - introducing CI/CD pipelines and preparing for containerization,
 - refreshing selected parts of the user interface.
+
+### Latest stage: contract boundaries, AI, and runtime
+
+In the next phase, modernization moved beyond organizing selected modules inside the monolith. The system started evolving toward a contract-driven architecture in which the legacy application, internal APIs, the Core API layer, AI tools, the gateway, and background processes have increasingly explicit responsibilities.
+
+The most important new areas of work include:
+
+- extracting the `activities` area through the `activities/v1` API, a read model, and the `activities_current` projection,
+- moving activity history toward an append-only audit log without classic record updates or deletes,
+- creating a new `orders` boundary for external order synchronization, eBay Fulfillment data, shipping deadlines, and read access through Core API and MCP,
+- extending the `messages` module with thread and thread-list translation, user language preference, a translation worker, and AI support for suggesting and composing replies,
+- extending the existing `notifications` module with a Core API facade and MCP tools operating in a specific user context,
+- implementing the first operational AI layer with separate repositories for the webapp, BFF, ChatKit runtime, MCP, and AI gateway,
+- introducing `comers-ai-gateway` as an internal capability layer for `translate.v1` and `compose_reply.v1`,
+- moving runtime definitions into dedicated infrastructure repositories: `comers-infra-ai` and `comers-infra-legacy`.
+
+In practice, this means Comers is no longer only a modernized monolith with several new modules. It is an actively evolving operational platform where new features and new types of consumers are connected through explicit contracts instead of direct access to older application logic.
+
+### Real AI capabilities at the current stage
+
+In the latest stage, the AI layer stopped being only a future direction. The system now has an operational assistant that uses explicit contracts and controlled domain tools.
+
+The assistant can answer questions based on real system data and perform selected actions. It can read customer message lists and details, notifications, order information, and the activity log. It can also mark messages and notifications as read and move them to the archive.
+
+The messages module is especially important. Comers supports translation of threads, titles, and conversation lists into a selected language, remembers the user’s language preference, and runs translations in the background. AI can suggest a reply to a customer based on the conversation context, as well as improve, structure, and translate a draft prepared by an operator into the customer’s target language.
+
+These features were not added as a loose integration with an AI model. They are embedded in the architecture through `comers-ai-webapp`, `comers-ai-bff`, `comers-ai-chatkit`, `comers-ai-mcp`, `comers-core-api`, and `comers-ai-gateway`. As a result, AI operates through APIs, tools, and capability contracts instead of direct access to legacy models.
+
+### Readiness of selected modules for extraction
+
+More and more areas of the system now have their own boundaries, contracts, APIs, read models, ports, adapters, and separate runtime processes. This is especially visible in `messages`, `activities`, `orders`, `notifications`, `shipping`, and marketplace integrations.
+
+This means modernization is no longer only about organizing code inside the monolith. Selected modules are increasingly close to technical readiness for extraction into independent services, because new system consumers can use explicit contracts instead of internal legacy models.
 
 ### Selected Comers platform views
 
@@ -310,14 +346,15 @@ Full technical change log:
 
 ## Current State
 
-The system remains fully operational.
+The system remains fully operational and continues to evolve. Its current state sits between a modular monolith, a contract-driven architecture, and the first separated runtimes supporting new capabilities.
 
 Modernization is incremental:
 
 - boundaries are being formalized,
 - contracts are being strengthened,
 - new modules with explicit boundaries are being developed,
-- additional extraction candidates are being prepared.
+- additional extraction candidates are being prepared,
+- new layers such as Core API, MCP, BFF, and the AI gateway are being developed as controlled access points to system domains.
 
 Some of the key transformation elements have already been implemented and are described in the section above.
 
