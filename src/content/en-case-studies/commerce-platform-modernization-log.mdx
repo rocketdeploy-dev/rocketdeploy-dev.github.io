@@ -50,6 +50,7 @@ New modules have been implemented and registered at application level:
 - `notifications`
 
 Each module introduces:
+
 - its own application layer
 - dedicated use cases
 - infrastructure repositories
@@ -78,11 +79,13 @@ Key elements:
 - messaging integration use cases
 
 Additionally:
+
 - support for account connection / disconnection
 - callback handling
 - account deletion webhook endpoint
 
 Effect:
+
 - integration logic is no longer embedded in domain models
 - clear separation between system and external provider
 - ready for extraction into standalone service
@@ -116,6 +119,7 @@ Architecture:
 - use cases for sync, read, reply, reprocess
 
 Effect:
+
 - messaging becomes a **first-class domain**
 - replaces scattered legacy communication logic
 - enables future multi-channel support
@@ -139,6 +143,7 @@ Key architectural elements:
 - separation of source data vs domain model
 
 Effect:
+
 - listings are no longer tightly coupled to integrations
 - clear path to extracting marketplace logic
 - better control over data ingestion lifecycle
@@ -160,6 +165,7 @@ Supported providers:
 - DHL
 
 Effect:
+
 - unified integration layer for carriers
 - simplified extension for new providers
 - elimination of scattered shipping logic
@@ -177,10 +183,12 @@ A new `notifications` module provides:
 - delete operations
 
 Includes:
+
 - dedicated UI
 - REST API endpoints
 
 Effect:
+
 - system communication becomes structured
 - foundation for alerts and operational signaling
 - separation from business workflows
@@ -203,6 +211,7 @@ Examples include:
 - `ShippingIntegrationPort`
 
 Effect:
+
 - transition from implicit dependencies to explicit architecture
 - strong foundation for service extraction
 - improved testability and maintainability
@@ -218,10 +227,12 @@ New ingestion approach introduced:
 - reprocess capabilities implemented
 
 Present in:
+
 - listings
 - messages
 
 Effect:
+
 - improved resilience to integration issues
 - ability to replay and debug data flows
 - no reliance on single-pass processing
@@ -237,6 +248,7 @@ System has been partially migrated to stateless model:
 - local filesystem used only as temporary workspace
 
 Effect:
+
 - removal of persistent local storage dependency
 - readiness for containerized / distributed environments
 - alignment with cloud-native patterns
@@ -255,6 +267,7 @@ Background processing redesigned using:
 - jitter (startup and iteration)
 
 Effect:
+
 - elimination of duplicate executions
 - reduced race conditions
 - improved observability
@@ -272,6 +285,7 @@ System runtime updated and stabilized:
 - improved dependency management
 
 Effect:
+
 - modernized execution environment
 - reduced technical debt
 - better deployment consistency
@@ -286,10 +300,12 @@ New UI introduced for:
 - notifications module
 
 Additionally:
+
 - legacy views simplified
 - frontend structure partially cleaned up
 
 Effect:
+
 - improved usability for operational users
 - more consistent interaction patterns
 - groundwork for future SPA/BFF architecture
@@ -306,6 +322,7 @@ Delivery process improved with:
 - structured runtime environments
 
 Effect:
+
 - repeatable deployments
 - better control over releases
 - preparation for scalable environments
@@ -325,14 +342,259 @@ This log will be extended with future phases.
 
 ---
 
+## Phase: 2026-03 / 2026-05
+
+### 1. From modules to contract boundaries
+
+After the first phase of organizing selected modules, modernization moved toward a broader contract-driven architecture.
+
+More areas of the system are no longer just folders or modules inside the monolith. Selected domains now have their own APIs, read models, ports, adapters, background processes, and intermediate layers for new consumers.
+
+In practice, this means new system elements can use explicit contracts instead of directly referring to older legacy models, controllers, or tables.
+
+Effect:
+
+- stronger separation of responsibilities
+- greater readiness of selected modules for extraction
+- ability to connect new consumers such as Core API, MCP, and AI without bypassing domain boundaries
+- stronger foundation for future extraction into microservices
+
+---
+
+### 2. Activities module and append-only audit log
+
+The `activities` area was extracted as a dedicated read module with the `activities/v1` API.
+
+Implemented elements:
+
+- activity list
+- activity details
+- filters endpoint
+- read model
+- mapping of legacy payloads into explicit DTOs
+- access limiting based on seller context
+- moving operational history reads behind the module boundary
+
+Activity storage was then refactored toward append-only behavior.
+
+Instead of treating operation history as regular mutable records, the system started using a model based on event-like writes and a current-state projection (`activities_current`).
+
+Effect:
+
+- the activity log became a safer audit trail
+- activity updates and deletes were blocked
+- legacy data is normalized behind the module layer
+- the area is prepared for further use by APIs, AI, and future services
+
+---
+
+### 3. Orders module and external order synchronization
+
+A new `orders` boundary was created to organize synchronization and read access for external orders.
+
+Implemented elements:
+
+- append-only order synchronization foundation
+- external provider port
+- sync run tracking
+- raw payload storage for external systems
+- order and order-item snapshots
+- external references
+- current-state read models
+- internal `orders/v1` API
+- read-only boundary in `comers-core-api`
+- MCP tools for orders
+- dedicated external orders synchronization job in the legacy runtime
+
+The eBay integration was especially important here, with movement toward the Sell Fulfillment API and support for shipping-deadline data.
+
+Effect:
+
+- external orders have a more durable and auditable data model
+- synchronization no longer relies only on a single fetch of the latest records
+- shipping and urgency data can be used by APIs and AI
+- the `orders` module became one of the most important candidates for further extraction
+
+---
+
+### 4. Messages evolution: AI-assisted translation and replies
+
+The `messages` module was extended from synchronization and thread handling toward a multilingual, AI-assisted communication center.
+
+Implemented elements:
+
+- translation of individual threads
+- translation of thread lists
+- translation of message titles and content
+- persisted user translation-language preference
+- background translation worker
+- integration with `comers-ai-gateway`
+- reply composer context endpoint
+- suggested reply draft based on thread context
+- improving and composing replies based on an operator draft
+- translating replies into the customer’s target language
+- keeping the final send-reply flow as a separate explicit action
+
+AI was not connected directly to the view layer or database. Translation and reply generation pass through use cases, adapters, and the capability gateway.
+
+Effect:
+
+- operators can handle customer messages in multiple languages
+- AI helps prepare replies without replacing the explicit sending process
+- translations can run as background work
+- customer communication became one of the first real AI-assisted operational areas in Comers
+
+---
+
+### 5. Notifications extended to Core API and MCP
+
+The `notifications` module already existed in the previous modernization phase.
+
+In this phase, it was extended through integration with the Core API layer and MCP tools.
+
+Implemented elements:
+
+- notifications facade in `comers-core-api`
+- MCP tools for listing notifications
+- notification detail reads
+- marking notifications as read
+- archiving notifications
+- bulk operations
+- propagation of trusted user context (`X-Internal-User-Id`)
+
+Effect:
+
+- notifications can be handled by the AI assistant without direct access to legacy
+- operations are executed in the context of a specific user
+- the existing module gained new types of consumers
+
+---
+
+### 6. AI layer: ChatKit, MCP, Core API, and Gateway
+
+The system gained its first real operational AI support layer.
+
+Implemented elements:
+
+- `comers-ai-webapp`
+- `comers-ai-bff`
+- `comers-ai-chatkit`
+- `comers-ai-mcp`
+- `comers-ai-gateway`
+- local ChatKit runtime
+- conversation thread history
+- response streaming
+- MCP tools for messages, notifications, and orders
+- MCP integration with `comers-core-api`
+- capability gateway for AI operations
+
+The AI assistant can now use selected system data and actions through explicit domain tools.
+
+It can, among other things:
+
+- read message lists and details
+- read notifications
+- read order information
+- use activity-log data
+- mark messages and notifications as read
+- archive messages and notifications
+- support preparation of customer replies
+
+A key architectural decision is that AI does not bypass application boundaries.
+
+Execution is based on contracts:
+
+AI / ChatKit  
+→ MCP  
+→ Core API  
+→ internal legacy APIs and modules
+
+Effect:
+
+- AI operates as a controlled system consumer
+- tools are limited to explicitly exposed capabilities
+- sensitive operations are performed in user context
+- a foundation was created for further agentic operations without destabilizing legacy
+
+---
+
+### 7. AI Gateway and capability contracts
+
+`comers-ai-gateway` was introduced as an internal capability layer for AI operations.
+
+Implemented capabilities:
+
+- `translate.v1`
+- `compose_reply.v1`
+
+The gateway is responsible for:
+
+- hiding AI provider integration details
+- enforcing response structure
+- supporting OpenAI Responses API
+- persistent operations for translations
+- idempotent operation creation
+- operation-status reads
+- background polling through a dedicated runtime container
+
+Effect:
+
+- the application does not depend directly on the raw AI provider API
+- long-running translation operations can be handled outside the UI request-response path
+- AI capabilities have their own contracts and can evolve independently
+- the gateway became the place for future controlled AI capabilities
+
+---
+
+### 8. Runtime and infrastructure repository separation
+
+Runtime was separated more clearly from application code.
+
+Created or organized repositories:
+
+- `comers-infra-ai`
+- `comers-infra-legacy`
+
+`comers-infra-ai` covers runtime for:
+
+- AI webapp
+- BFF
+- MCP
+- AI gateway
+- gateway poller
+- ChatKit runtime
+
+`comers-infra-legacy` covers the legacy runtime as a set of containers:
+
+- application
+- web
+- cyclic jobs
+- external order synchronization
+- message thread synchronization
+- message translation worker
+
+Effect:
+
+- application repositories are no longer the primary place for production runtime definitions
+- background processes became explicitly described runtime units
+- deployment, configuration, and service responsibilities are easier to manage
+- the architecture is more ready for further containerization and service extraction
+
+---
+
 ## Future Phases
 
 Planned areas of further transformation:
 
-- extraction of selected modules into services
-- further isolation of integrations
-- replacement of legacy job model with event-driven architecture
-- deeper separation of frontend (SPA/BFF)
+- further extraction of selected modules into independent services
+- development of `comers-core-api` as a stable contract layer
+- expansion of MCP with additional domain tools
+- further strengthening of trusted user context for AI-executed operations
+- development of `comers-ai-gateway` with additional capabilities
+- further separation of marketplace and shipping integrations
+- replacement of part of the legacy job model with event-driven architecture
+- deeper separation of frontend (SPA / BFF)
+- gradual movement of additional areas into independent runtimes
 
 ---
 
