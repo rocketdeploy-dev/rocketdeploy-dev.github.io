@@ -605,12 +605,24 @@ Created or organized repositories:
 - message thread synchronization
 - message translation worker
 
+An important part of this phase is the gradual move toward a polyglot architecture.
+
+The legacy application still runs on PHP/Yii2, but new backend services and future domain microservices are being designed primarily around Node.js / TypeScript / NestJS / Fastify. This applies not only to the AI layer, but also to core system elements such as `comers-core-api`, and to planned domain extractions such as `orders` and `messages`.
+
+The frontend layer is evolving in two directions:
+
+- the main SPA direction remains Angular-based,
+- selected micro-frontends, such as the current AI chat, can be built with React/Vite.
+
+Specialized runtimes may also use separate technologies when they better fit their role — for example, Python for the backend-controlled ChatKit runtime.
+
 Effect:
 
 - application repositories are no longer the primary place for production runtime definitions
 - background processes became explicitly described runtime units
 - deployment, configuration, and service responsibilities are easier to manage
 - the architecture is more ready for further containerization and service extraction
+- new capabilities can be built in specialized runtimes without expanding the legacy PHP/Yii2 application
 
 ---
 
